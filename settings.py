@@ -195,7 +195,14 @@ INSTALLED_APPS = [
     "pinax.apps.voting_extras",
     
     # project
+    "badges",
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        "django_nose",
+    ]
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 

@@ -1,0 +1,8 @@
+#
+# Package requirements for development
+#
+--requirement=project.txt
+
+-e git+http://github.com/jbalogh/django-nose.git#egg=django-nose
+-e git+http://github.com/jbalogh/check.git#egg=check
+# -e git+http://github.com/jbalogh/test-utils.git#egg=test-utils

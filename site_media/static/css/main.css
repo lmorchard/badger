@@ -1,10 +1,13 @@
 /*
  * Global site styles
  */
+body { font-family: "Comic Sans MS"; }
+
 #tabhead { background: #000000; }
 #tabhead .logo { height: 79px; color: #fff; }
+#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -10px -65px; line-height: 79px; padding-left: 240px; text-decoration: none; }
 #tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 40px; font-family: Comic Sans MS; color: #fff; }
-#tabhead .logo img { height: 79px; width: auto; }
+
 ul.tabs li { background-color: #d8d8d8; }
 
 #tabhead .login, #tabhead .login a, #tabhead .login a:visited { color: #ddd; }
@@ -12,4 +15,7 @@ body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.ph
 
 #subnav { background: #eee; border-bottom: 1px solid #999; margin: 0; padding: 0; }
 
+div.groups, div.friends { background: #ddd }
 
+#body { width: auto; padding: 20px 30px 20px 30px }
+#footer { width: auto; padding: 20px 30px 20px 30px }
