@@ -1,0 +1,7 @@
+tmp/
+src/
+pip-log.txt
+settings_local.py
+*.pyc
+*.swp
+*.db
