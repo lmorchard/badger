@@ -4,7 +4,7 @@ It might be nice to gift badges and track achievements for deserving people.
 
 ## FAQ
 * Hasn't this been done before?
-    * Yes, [basically][bravonation].
+    * Yes, [at least once][bravonation].
 * Why are you doing it, then?
     * Because I'd like to:
         1. Revive the idea; 
@@ -14,9 +14,11 @@ It might be nice to gift badges and track achievements for deserving people.
     * Because I want to annoy you into fixing it for me.
     * Also, because it's all still a prototype.
 
-## Credits
+## Credits & Influences
 
 * Much inspiration from [BravoNation][] (R.I.P.)
+* [Scouting Merit Badges](http://meritbadge.org/wiki/index.php/Main_Page) (ie. the originals)
+* [Nerd Merit Badges](http://www.nerdmeritbadges.com/)
 * [Badgers photo!](http://www.flickr.com/photos/66176388@N00/3955963781/)
 
 [bravonation]: http://waxy.org/2007/12/exclusive_yahoo/
