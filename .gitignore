@@ -1,7 +1,8 @@
 tmp/
 src/
+site_media/media/
 pip-log.txt
-settings_local.py
+local_settings.py
 *.pyc
 *.swp
 *.db

@@ -165,23 +165,18 @@ INSTALLED_APPS = [
     "messages",
     "announcements",
     "oembed",
-    "djangodblog",
     "pagination",
     "groups",
-    # "gravatar",
+    "gravatar",
     "threadedcomments",
     "wiki",
-    "swaps",
     "timezones",
     "voting",
     "tagging",
-    "bookmarks",
     "ajax_validation",
     "photologue",
     "avatar",
     "flag",
-    "microblogging",
-    "locations",
     "uni_form",
     "django_sorting",
     "django_markup",
@@ -194,9 +189,7 @@ INSTALLED_APPS = [
     "pinax.apps.profiles",
     "pinax.apps.account",
     "pinax.apps.signup_codes",
-    "pinax.apps.blog",
     "pinax.apps.tribes",
-    "pinax.apps.photos",
     "pinax.apps.topics",
     "pinax.apps.threadedcomments_extras",
     "pinax.apps.voting_extras",
@@ -239,8 +232,8 @@ else:
 
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
-CONTACT_EMAIL = "feedback@example.com"
-SITE_NAME = "Pinax"
+CONTACT_EMAIL = "lorchard@mozilla.com"
+SITE_NAME = "Badger"
 LOGIN_URL = "/account/login/"
 LOGIN_REDIRECT_URLNAME = "what_next"
 

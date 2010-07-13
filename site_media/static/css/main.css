@@ -1,0 +1,15 @@
+/*
+ * Global site styles
+ */
+#tabhead { background: #000000; }
+#tabhead .logo { height: 79px; color: #fff; }
+#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 40px; font-family: Comic Sans MS; color: #fff; }
+#tabhead .logo img { height: 79px; width: auto; }
+ul.tabs li { background-color: #d8d8d8; }
+
+#tabhead .login, #tabhead .login a, #tabhead .login a:visited { color: #ddd; }
+body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.photos #tab_photos, body.tribes #tab_tribes, body.tweets #tab_tweets, body.bookmarks #tab_bookmarks, body.locations #tab_locations, body.inbox #tab_inbox { background: #eee; }
+
+#subnav { background: #eee; border-bottom: 1px solid #999; margin: 0; padding: 0; }
+
+
