@@ -21,7 +21,13 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.create_notice_type(
         "badge_nomination_proposed", 
         _("Badge Nomination Proposed"), 
-        _("someone has nominated someone else to receive a badge for which you are a decision maker")
+        _("someone has been nominated to receive a badge for which you are a decision maker")
+    )
+
+    notification.create_notice_type(
+        "badge_awarded", 
+        _("Badge Awarded"), 
+        _("a badge has been awarded")
     )
 
 signals.post_syncdb.connect(create_notice_types, sender=notification)

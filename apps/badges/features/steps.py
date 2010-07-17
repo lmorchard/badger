@@ -21,6 +21,7 @@ def before_all(sc):
     scc.current_path = None
     scc.current_page = None
     scc.current_form = None
+    scc.name_path_map = {}
 
 @After
 def after_all(sc):
@@ -29,6 +30,10 @@ def after_all(sc):
 ###########################################################################
 # Step definitions
 ###########################################################################
+
+@Given(u'the "(.*)" page is at "(.*)"')
+def establish_page_mapping(name, path):
+    scc.name_path_map[name] = path
 
 @Given(u'a user named "(.*)"')
 def establish_user(username):
@@ -43,14 +48,10 @@ def given_i_am_logged_in_as(username):
     )
     ok_(succ, "login should succeed")
 
-name_path_map = {
-    "create badge": "/badges/create"
-}
-
-@Given(u'I go to the "(.*)" page')
+@Given(u'I go to the "(.*)" page$')
 def i_am_on_named_page(page_name):
-    path = (page_name in name_path_map and 
-        name_path_map[page_name] or page_name)
+    path = (page_name in scc.name_path_map and 
+        scc.name_path_map[page_name] or page_name)
     page = visit_page(path)
 
 @Given(u'"(.*)" creates a badge entitled "(.*)"')
@@ -63,11 +64,31 @@ def user_creates_badge(username, title):
     )
     badge.save()
 
-@Given(u'I go to the badge detail page for "(.*)"')
+@Given(u'I go to the "badge detail" page for "(.*)"')
 def go_to_badge_detail_page(title):
     badge = Badge.objects.get(title__exact=title)
     path = '/badges/details/%s' % badge.slug
     visit_page(path)
+
+@Given(u'"(.*)" nominates "(.*)" for a badge entitled "(.*)" because "(.*)"')
+def create_nomination(nominator_name, nominee_name, badge_title, badge_reason_why):
+    nominee = User.objects.get(username__exact=nominee_name)
+    nominator = User.objects.get(username__exact=nominator_name)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    nomination = BadgeNomination(
+        nominee=nominee,
+        nominator=nominator,
+        badge=badge,
+        reason_why=badge_reason_why
+    )
+    nomination.save()
+
+@When(u'I go to the "(.*)" page$')
+def i_go_to_named_page(page_name):
+    path = (page_name in scc.name_path_map and 
+        scc.name_path_map[page_name] or page_name)
+    page = visit_page(path)
 
 @When(u'I fill in "(.*)" with "(.*)"')
 def fill_form_field(field_name, field_value):
@@ -95,7 +116,6 @@ def fill_form_field(field_name, field_value):
     ok_(len(field) == 1, 'the form field named/labelled "%s" should exist on %s' % (
         field_name, scc.current_path
     ))
-    glc.log.debug("Found field %s - %s" % (field.attr('name'), field))
     scc.current_form[field.attr('name')] = field_value
 
 @When(u'I press "(.*)"')
@@ -104,7 +124,7 @@ def press_form_button(button_name):
     ok_(scc.current_page is not None, "there should be a current page")
 
     field = page('input[value="%s"]' % button_name)
-    glc.log.debug("Found button by value %s - %s" % (button_name, field))
+    ok_(len(field) > 0, 'button "%s" should exist' % button_name)
 
     form = field.parents('form:first')
     form_action = form.attr('action')
@@ -125,6 +145,15 @@ def press_form_button(button_name):
     eq_(200, resp.status_code)
     set_current_page(form_action, resp)
 
+@When(u'I click on "(.*)" in the "(.*)" section')
+def click_link_in_section(link_content, section_title):
+    page = scc.current_page
+    section = find_section_in_page(section_title)
+    link = section.find('a:contains("%s")' % link_content)
+    ok_(len(link) > 0, 'link "%s" should be found in section "%s"' % (link_content, section_title))
+    path = link.attr('href')
+    page = visit_page(path)
+
 @Then(u'I should see no form validation errors')
 def should_see_no_form_validation_errors():
     page = scc.current_page
@@ -140,8 +169,38 @@ def should_see_page_content(expected_content):
         glc.log.debug("Page content: %s" % scc.last_response.content)
         ok_(False, '"%s" should be found in page content' % expected_content)
 
+@Then(u'I should see "(.*)" somewhere in the "(.*)" section')
+def section_content_check(expected_content, section_title):
+    page = scc.current_page
+    section = find_section_in_page(section_title)
+    section_content = section.text()
+    try:
+        pos = section_content.index(expected_content)
+    except ValueError:
+        glc.log.debug("Section content: %s" % section_content)
+        ok_(False, '"%s" should be found in content for section "%s"' % 
+            (expected_content, section_title))
+
+@Then(u'I should not see "(.*)" anywhere in the "(.*)" section')
+def section_no_content_check(expected_content, section_title):
+    page = scc.current_page
+    section = find_section_in_page(section_title)
+    section_content = section.text()
+    try:
+        pos = section_content.index(expected_content)
+        ok_(False, '"%s" should not be found in content for section "%s"' %
+            (expected_content, section_title))
+    except ValueError:
+        pass
+
 @Then(u'I should see a page entitled "(.*)"')
 def should_see_page_title(expected_title):
+    page = scc.current_page
+    hit = page('title:contains("%s")' % expected_title)
+    ok_(len(hit) > 0, '"%s" should be found in page title' % expected_title)
+
+@Then(u'I should see a page whose title contains "(.*)"')
+def page_title_should_contain(expected_title):
     page = scc.current_page
     hit = page('title:contains("%s")' % expected_title)
     ok_(len(hit) > 0, '"%s" should be found in page title' % expected_title)
@@ -153,12 +212,19 @@ def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why
     badge = Badge.objects.get(title__exact=badge_title)
 
     nomination = BadgeNomination.objects.filter(
-        nominee__exact=nominee,
-        nominator__exact=nominator,
-        badge__exact=badge,
+        nominee=nominee, nominator=nominator, badge=badge,
     ).get()
 
     eq_(badge_reason_why, nomination.reason_why)
+
+@Then(u'"(.*)" should be awarded the badge "(.*)"')
+def check_badge_award(awardee_name, badge_title):
+    awardee = User.objects.get(username__exact=awardee_name)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    award = BadgeAward.objects.filter(
+        awardee=awardee, badge=badge
+    ).get()
 
 @Then(u'"(.*)" should receive a "(.*)" notification')
 def check_notifications(username, notification_name):
@@ -168,7 +234,7 @@ def check_notifications(username, notification_name):
         notice_type = NoticeType.objects.filter(display__exact=notification_name).get()
 
     user = User.objects.filter(username__exact=username).get()
-    notices = Notice.objects.notices_for(user).filter(notice_type__exact=notice_type)
+    notices = Notice.objects.notices_for(user).filter(notice_type=notice_type).get()
 
 ###########################################################################
 # Utility functions
@@ -194,6 +260,12 @@ def set_current_page(path, resp):
 
 def visit_page(path, data={}, follow=True, status_code=200, **extra):
     resp = scc.browser.get(path)
-    glc.log.debug("Visiting path %s with status %s" % (path, resp.status_code))
     eq_(status_code, resp.status_code)
     return set_current_page(path, resp)
+
+def find_section_in_page(section_title):
+    page = scc.current_page
+    section = page(':header:contains("%s")' % section_title).parent()
+    ok_(len(section) > 0, "the section %s should be found" % section_title)
+    return section
+

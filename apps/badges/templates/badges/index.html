@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Badge details" %}{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h1>{% trans "Badges" %}</h1>
+        <ul class="badges">
+            {% for badge in badges %}
+                <li><a href="{% url badge_details badge.slug %}">{{ badge.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+{% endblock %}

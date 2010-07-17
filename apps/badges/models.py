@@ -40,11 +40,15 @@ class Badge(models.Model):
 class BadgeNomination(models.Model):
     """Representation of a user nominated to receive a badge"""
     badge = models.ForeignKey(Badge)
-    nominee = models.ForeignKey(User, related_name="nominee", verbose_name=_("nominee"))
+    nominee = models.ForeignKey(User, blank=False, related_name="nominee", verbose_name=_("nominee"))
     nominator = models.ForeignKey(User, related_name="nominator", verbose_name=_("nominator"))
-    reason_why = models.TextField()
+    approved = models.BooleanField(default=False)
+    reason_why = models.TextField(blank=False)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
+
+    def __unicode__(self):
+        return '%s nominated for %s' % (self.nominee.username, self.badge.title)
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()
@@ -53,13 +57,17 @@ class BadgeNomination(models.Model):
 class BadgeAward(models.Model):
     """Representation of a badge awarded to a user"""
     badge = models.ForeignKey(Badge)
-    awardee = models.ForeignKey(User, verbose_name=_("user"))
+    nomination = models.ForeignKey(BadgeNomination)
+    awardee = models.ForeignKey(User, verbose_name=_("awardee"))
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
+    def __unicode__(self):
+        return '%s awarded %s' % (self.awardee.username, self.badge.title)
+
     def save(self, **kwargs):
         self.updated_at = datetime.now()
-        super(Badge, self).save(**kwargs)
+        super(BadgeAward, self).save(**kwargs)
 
 # handle notification of new comments
 from threadedcomments.models import ThreadedComment

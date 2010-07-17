@@ -1,7 +1,6 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-{% load ifsetting_tag %}
 
 {% block head_title %}{% trans "Badge details" %}{% endblock %}
 
@@ -11,17 +10,36 @@
     <div>
         <h2>{{ badge.title }}</h2>
         <p>{{ badge.description }}</p>
-    </div>
 
-    <div>
-        <h2>Nominate someone for this badge</h2>
-        <form action="" method="post">
-            {% csrf_token %}
-            <ul class="fields">
-                {{nomination_form.as_ul}}
-                <li><input type="submit" value="Nominate for badge" /></li>
+        <div>
+            <h3>Awarded to</h3>
+            <ul>
+                {% for award in awards %}
+                    <li>{{ award.awardee }}</li>
+                {% endfor %}
             </ul>
-        </form>
+        </div>
+
+        <div>
+            <h3>Nominations</h3>
+            <ul>
+                {% for nomination in nominations %}
+                    <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee.username %}">{{ nomination.nominee }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <h3>Nominate someone for this badge</h3>
+            <form action="" method="post">
+                {% csrf_token %}
+                <ul class="fields">
+                    {{nomination_form.as_ul}}
+                    <li><input type="submit" value="Nominate for badge" /></li>
+                </ul>
+            </form>
+        </div>
+
     </div>
     
 {% endblock %}
