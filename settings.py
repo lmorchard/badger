@@ -113,6 +113,7 @@ MIDDLEWARE_CLASSES = [
 ROOT_URLCONF = "badger.urls"
 
 TEMPLATE_DIRS = [
+    os.path.join(PROJECT_ROOT, "apps", "badges", "templates"),
     os.path.join(PROJECT_ROOT, "templates"),
     os.path.join(PINAX_ROOT, "templates", PINAX_THEME),
 ]
@@ -169,12 +170,10 @@ INSTALLED_APPS = [
     "groups",
     "gravatar",
     "threadedcomments",
-    "wiki",
     "timezones",
     "voting",
     "tagging",
     "ajax_validation",
-    "photologue",
     "avatar",
     "flag",
     "uni_form",
@@ -195,11 +194,13 @@ INSTALLED_APPS = [
     "pinax.apps.voting_extras",
     
     # project
-    "badges",
+    "badger.apps.about",
+    "badger.apps.badges",
 ]
 
 if DEBUG:
     INSTALLED_APPS += [
+        "lettuce.django",
         "django_nose",
     ]
     TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

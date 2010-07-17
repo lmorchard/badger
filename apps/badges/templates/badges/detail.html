@@ -1,0 +1,27 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load ifsetting_tag %}
+
+{% block head_title %}{% trans "Badge details" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Badge details" %}</h1>
+
+    <div>
+        <h2>{{ badge.title }}</h2>
+        <p>{{ badge.description }}</p>
+    </div>
+
+    <div>
+        <h2>Nominate someone for this badge</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <ul class="fields">
+                {{nomination_form.as_ul}}
+                <li><input type="submit" value="Nominate for badge" /></li>
+            </ul>
+        </form>
+    </div>
+    
+{% endblock %}

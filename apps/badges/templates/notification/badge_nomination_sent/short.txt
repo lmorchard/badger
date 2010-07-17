@@ -1,0 +1,1 @@
+you have proposed that {{nomination.nominee.username}} should be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"

@@ -6,7 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from tagging.models import TaggedItem
-from wiki.models import Article as WikiArticle
+#from wiki.models import Article as WikiArticle
 
 from pinax.apps.account.openid_consumer import PinaxConsumer
 from pinax.apps.topics.models import Topic
@@ -26,6 +26,8 @@ urlpatterns = patterns("",
     url(r"^$", direct_to_template, {
         "template": "homepage.html",
     }, name="home"),
+
+    (r"^badges/", include("badger.apps.badges.urls")),
     
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^account/signup/$", signup_view, name="acct_signup"),
