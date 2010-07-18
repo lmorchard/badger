@@ -5,10 +5,11 @@ Feature: Basic management of badges
 
     Background:
         Given a user named "user1"
-        And a user named "user2"
-        And a user named "user3"
-        And the "create badge" page is at "/badges/create"
-        And the "browse badges" page is at "/badges/"
+            And a user named "user2"
+            And a user named "user3"
+            And there are no existing badges
+            And the "create badge" page is at "/badges/create"
+            And the "browse badges" page is at "/badges/"
 
     Scenario: Create a new badge
         Given I am logged in as "user1"

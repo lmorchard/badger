@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from pinax.apps.profiles.models import Profile
 from pinax.apps.account.models import Account
 from badger.apps.badges.models import Badge, BadgeNomination, BadgeAward, BadgeAwardee
+from mailer.models import MessageLog
 from notification.models import NoticeType, Notice
 
 @Before
@@ -45,6 +46,13 @@ def establish_page_mapping(name, path):
 @Given(u'a user named "(.*)"')
 def establish_user(username):
     user = get_user(username)
+
+@Given(u'there are no existing badges')
+def clear_badges_data():
+    BadgeNomination.objects.all().delete()
+    BadgeAward.objects.all().delete()
+    BadgeAwardee.objects.all().delete()
+    Badge.objects.all().delete()
 
 @Given(u'I am logged in as "(.*)"')
 def given_i_am_logged_in_as(username):
@@ -279,6 +287,13 @@ def check_notifications(username, notification_name):
     user = User.objects.filter(username__exact=username).get()
     notices = Notice.objects.notices_for(user).filter(notice_type=notice_type).all()
     ok_(len(notices) > 0)
+
+@Then(u'"(.*)" should be sent a "(.*)" email')
+def check_sent_email(to_addr, expected_subject):
+    log_entries = MessageLog.objects.filter(to_address__exact=to_addr,
+            subject__contains=expected_subject).all()
+    ok_(len(log_entries)>0, 'an email "%s" to "%s" should be logged' % 
+            (expected_subject, to_addr))
 
 ###########################################################################
 # Utility functions

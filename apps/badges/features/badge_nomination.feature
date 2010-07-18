@@ -7,6 +7,7 @@ Feature: Nominating users to be awarded badges
         Given a user named "user1"
             And a user named "user2"
             And a user named "user3"
+            And there are no existing badges
             And the "create badge" page is at "/badges/create"
             And the "browse badges" page is at "/badges/"
 

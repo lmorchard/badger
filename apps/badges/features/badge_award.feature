@@ -7,6 +7,7 @@ Feature: Awarding, accepting, and rejecting badges
         Given a user named "user1"
             And a user named "user2"
             And a user named "user3"
+            And there are no existing badges
             And the "create badge" page is at "/badges/create"
             And the "browse badges" page is at "/badges/"
         
@@ -35,3 +36,7 @@ Feature: Awarding, accepting, and rejecting badges
 
     @TODO
     Scenario: Badge awardee decides to hide an award after accepting it
+
+    @TODO
+    Scenario: Someone confirms an email address for which badges have been awarded
+
