@@ -1,1 +1,1 @@
-{{nomination.nominator.username}} has nominated {{nomination.nominee.username}} to be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"
+{{nomination.nominator}} has nominated {{nomination.nominee}} to be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"

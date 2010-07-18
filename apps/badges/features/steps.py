@@ -6,11 +6,13 @@ import logging
 from lxml import etree
 from pyquery import PyQuery
 from django.test.client import Client
+from django.core import validators
+from django.core.exceptions import ValidationError
 from nose.tools import assert_equal, with_setup, assert_false, eq_, ok_
 from django.contrib.auth.models import User
 from pinax.apps.profiles.models import Profile
 from pinax.apps.account.models import Account
-from badger.apps.badges.models import Badge, BadgeNomination, BadgeAward
+from badger.apps.badges.models import Badge, BadgeNomination, BadgeAward, BadgeAwardee
 from notification.models import NoticeType, Notice
 
 @Before
@@ -30,6 +32,10 @@ def after_all(sc):
 ###########################################################################
 # Step definitions
 ###########################################################################
+
+@Given(u'TODO')
+def given_tbd():
+    ok_(False, 'TODO')
 
 @Given(u'the "(.*)" page is at "(.*)"')
 def establish_page_mapping(name, path):
@@ -67,7 +73,7 @@ def user_creates_badge(username, title):
 @Given(u'I go to the "badge detail" page for "(.*)"')
 def go_to_badge_detail_page(title):
     badge = Badge.objects.get(title__exact=title)
-    path = '/badges/details/%s' % badge.slug
+    path = '/badges/badge/%s' % badge.slug
     visit_page(path)
 
 @Given(u'"(.*)" nominates "(.*)" for a badge entitled "(.*)" because "(.*)"')
@@ -76,8 +82,11 @@ def create_nomination(nominator_name, nominee_name, badge_title, badge_reason_wh
     nominator = User.objects.get(username__exact=nominator_name)
     badge = Badge.objects.get(title__exact=badge_title)
 
+    awardee, created = BadgeAwardee.objects.get_or_create(user=nominee)
+    awardee.save()
+
     nomination = BadgeNomination(
-        nominee=nominee,
+        nominee=awardee,
         nominator=nominator,
         badge=badge,
         reason_why=badge_reason_why
@@ -169,6 +178,15 @@ def should_see_page_content(expected_content):
         glc.log.debug("Page content: %s" % scc.last_response.content)
         ok_(False, '"%s" should be found in page content' % expected_content)
 
+@Then(u'I should not see "(.*)" anywhere on the page')
+def should_see_not_page_content(expected_content):
+    page_content = scc.last_response.content
+    try:
+        pos = page_content.index(expected_content)
+        ok_(False, '"%s" should be found in page content' % expected_content)
+    except ValueError:
+        pass
+
 @Then(u'I should see "(.*)" somewhere in the "(.*)" section')
 def section_content_check(expected_content, section_title):
     page = scc.current_page
@@ -207,7 +225,14 @@ def page_title_should_contain(expected_title):
 
 @Then(u'"(.*)" should be nominated by "(.*)" for badge "(.*)" because "(.*)"')
 def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why):
-    nominee = User.objects.get(username__exact=nominee_name)
+    
+    try:
+        validators.validate_email(nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(email=nominee_name)
+    except ValidationError:
+        nominee_user = User.objects.get(username__exact=nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(user=nominee_user)
+
     nominator = User.objects.get(username__exact=nominator_name)
     badge = Badge.objects.get(title__exact=badge_title)
 
@@ -219,7 +244,8 @@ def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why
 
 @Then(u'"(.*)" should be awarded the badge "(.*)"')
 def check_badge_award(awardee_name, badge_title):
-    awardee = User.objects.get(username__exact=awardee_name)
+    user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=user)
     badge = Badge.objects.get(title__exact=badge_title)
 
     award = BadgeAward.objects.filter(
@@ -234,7 +260,8 @@ def check_notifications(username, notification_name):
         notice_type = NoticeType.objects.filter(display__exact=notification_name).get()
 
     user = User.objects.filter(username__exact=username).get()
-    notices = Notice.objects.notices_for(user).filter(notice_type=notice_type).get()
+    notices = Notice.objects.notices_for(user).filter(notice_type=notice_type).all()
+    ok_(len(notices) > 0)
 
 ###########################################################################
 # Utility functions

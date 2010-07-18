@@ -24,4 +24,12 @@ Feature: Awarding badges
         And "user3" should be awarded the badge "Nifty badge"
         And "user3" should receive a "Badge Awarded" notification
 
+    Scenario: Badge awardee accepts an award
+        Given TODO
+
+    Scenario: Badge awardee rejects an award
+        Given TODO
+
+    Scenario: Badge awardee has chosen to auto-accept awards
+        Given TODO
 

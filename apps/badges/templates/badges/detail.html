@@ -24,7 +24,7 @@
             <h3>Nominations</h3>
             <ul>
                 {% for nomination in nominations %}
-                    <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee.username %}">{{ nomination.nominee }}</a></li>
+                    <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee %}">{{ nomination.nominee }}</a></li>
                 {% endfor %}
             </ul>
         </div>

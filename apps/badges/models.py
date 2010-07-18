@@ -14,34 +14,50 @@ from tagging.models import Tag
 
 from notification import models as notification
 
+
 class Badge(models.Model):
     """Badge model"""
-    title = models.CharField(_("title"), max_length=255, blank=False, unique=True)
+    title = models.CharField(_("title"), max_length=255,
+        blank=False, unique=True)
     slug = models.SlugField(_("slug"), blank=False, unique=True)
     description = models.TextField(_("description"), blank=False)
     tags = TagField()
     creator = models.ForeignKey(User)
-    creator_ip = models.IPAddressField(
-        _("IP Address of the Creator"),
-        blank = True, null = True
-    )
+    creator_ip = models.IPAddressField(_("IP Address of the Creator"),
+        blank=True, null=True)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
-    
+
     def __unicode__(self):
         return self.title
-    
+
     def save(self, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         self.updated_at = datetime.now()
         super(Badge, self).save(**kwargs)
 
+
+class BadgeAwardee(models.Model):
+    """Representation of a someone awarded a badge, allows identifying people
+    not yet signed up to the site by email address"""
+    user = models.ForeignKey(User, null=True)
+    email = models.EmailField(null=True)
+
+    def __unicode__(self):
+        if self.user:
+            return "%s" % self.user
+        if self.email:
+            return "%s" % self.email
+        return "invalid awardee"
+
 class BadgeNomination(models.Model):
     """Representation of a user nominated to receive a badge"""
     badge = models.ForeignKey(Badge)
-    nominee = models.ForeignKey(User, blank=False, related_name="nominee", verbose_name=_("nominee"))
-    nominator = models.ForeignKey(User, related_name="nominator", verbose_name=_("nominator"))
+    nominee = models.ForeignKey(BadgeAwardee, blank=False,
+        related_name="nominee", verbose_name=_("nominee"))
+    nominator = models.ForeignKey(User, related_name="nominator",
+        verbose_name=_("nominator"))
     approved = models.BooleanField(default=False)
     reason_why = models.TextField(blank=False)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
@@ -54,11 +70,12 @@ class BadgeNomination(models.Model):
         self.updated_at = datetime.now()
         super(BadgeNomination, self).save(**kwargs)
 
+
 class BadgeAward(models.Model):
     """Representation of a badge awarded to a user"""
     badge = models.ForeignKey(Badge)
     nomination = models.ForeignKey(BadgeNomination)
-    awardee = models.ForeignKey(User, verbose_name=_("awardee"))
+    awardee = models.ForeignKey(BadgeAwardee, verbose_name=_("awardee"))
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
@@ -69,8 +86,11 @@ class BadgeAward(models.Model):
         self.updated_at = datetime.now()
         super(BadgeAward, self).save(**kwargs)
 
+
 # handle notification of new comments
 from threadedcomments.models import ThreadedComment
+
+
 def new_comment(sender, instance, **kwargs):
     post = instance.content_object
     if isinstance(post, Badge):

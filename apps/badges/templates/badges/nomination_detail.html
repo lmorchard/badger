@@ -9,14 +9,15 @@
 
     <div>
         <p>
-            {{ nomination.nominee.username }} 
+            {{ nomination.nominee }} 
             has been nominated by
-            {{ nomination.nominator.username }}
+            {{ nomination.nominator }}
             for the badge
             "{{ nomination.badge.title }}"
         </p>
         <form action="" method="post">
             {% csrf_token %}
+            <input type="hidden" name="action" value="approve" />
             <input type="submit" value="Approve" />
         </form>
     </div>
