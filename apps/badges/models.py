@@ -22,6 +22,8 @@ class Badge(models.Model):
     slug = models.SlugField(_("slug"), blank=False, unique=True)
     description = models.TextField(_("description"), blank=False)
     tags = TagField()
+    autoapprove = models.BooleanField(_('automatically approve nominations?'),
+        default=False)
     creator = models.ForeignKey(User)
     creator_ip = models.IPAddressField(_("IP Address of the Creator"),
         blank=True, null=True)
@@ -30,6 +32,39 @@ class Badge(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def nominate(self, nominator, nominee, reason_why):
+        try:
+            nomination = BadgeNomination.objects.filter(badge=self, 
+                    nominator=nominator, nominee=nominee).get()
+        except BadgeNomination.DoesNotExist:
+            nomination = BadgeNomination()
+
+        nomination.badge = self
+        nomination.nominator = nominator
+        nomination.nominee = nominee
+        nomination.reason_why = reason_why
+        nomination.save()
+
+        notes_to_send = [
+            ( nominator, 'badge_nomination_sent'),
+            ( self.creator, 'badge_nomination_proposed'),
+        ]
+
+        if nomination.nominee.user:
+            notes_to_send.append((nomination.nominee.user, 
+                'badge_nomination_received'))
+
+        for note_to_send in notes_to_send:
+            notification.send( 
+                [ note_to_send[0] ], note_to_send[1], 
+                { "nomination": nomination }
+            )
+
+        if self.autoapprove:
+            nomination.approve(self.creator)
+
+        return nomination
 
     def save(self, **kwargs):
         if not self.slug:
@@ -51,6 +86,7 @@ class BadgeAwardee(models.Model):
             return "%s" % self.email
         return "invalid awardee"
 
+
 class BadgeNomination(models.Model):
     """Representation of a user nominated to receive a badge"""
     badge = models.ForeignKey(Badge)
@@ -59,12 +95,32 @@ class BadgeNomination(models.Model):
     nominator = models.ForeignKey(User, related_name="nominator",
         verbose_name=_("nominator"))
     approved = models.BooleanField(default=False)
+    approved_by = models.ForeignKey(User, null=True)
     reason_why = models.TextField(blank=False)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
     def __unicode__(self):
-        return '%s nominated for %s' % (self.nominee.username, self.badge.title)
+        return '%s nominated for %s' % (self.nominee.username,
+                self.badge.title)
+
+    def approve(self, approved_by):
+        self.approved = True
+        self.approved_by = approved_by
+        self.save()
+
+        new_award = BadgeAward(badge=self.badge, awardee=self.nominee,
+                nomination=self)
+        new_award.save()
+
+        if notification:
+            recipients = [approved_by, self.badge.creator]
+            if self.nominee.user:
+                recipients.append(self.nominee.user)
+            notification.send(recipients, 'badge_awarded',
+                    {"award": new_award})
+
+        return new_award
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()
@@ -80,7 +136,7 @@ class BadgeAward(models.Model):
     updated_at = models.DateTimeField(_("updated at"))
 
     def __unicode__(self):
-        return '%s awarded %s' % (self.awardee.username, self.badge.title)
+        return '%s awarded %s' % (self.awardee, self.badge.title)
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()
@@ -95,10 +151,7 @@ def new_comment(sender, instance, **kwargs):
     post = instance.content_object
     if isinstance(post, Badge):
         if notification:
-            notification.send([post.author], "badge_comment", {
-                "user": instance.user,
-                "post": post,
-                "comment": instance
-            })
+            notification.send([post.author], "badge_comment",
+                {"user": instance.user, "post": post, "comment": instance})
 
 models.signals.post_save.connect(new_comment, sender=ThreadedComment)

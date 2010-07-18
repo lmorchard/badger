@@ -25,11 +25,11 @@ Feature: Awarding badges
         And "user3" should receive a "Badge Awarded" notification
 
     Scenario: Badge awardee accepts an award
-        Given TODO
+        Given not implemented
 
     Scenario: Badge awardee rejects an award
-        Given TODO
+        Given not implemented
 
     Scenario: Badge awardee has chosen to auto-accept awards
-        Given TODO
+        Given not implemented
 

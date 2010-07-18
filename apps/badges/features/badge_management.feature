@@ -23,7 +23,7 @@ Feature: Basic management of badges
         Then I should see "Awesome Tester" somewhere on the page
 
     Scenario: Modify an existing badge
-        Given TODO
+        Given not implemented
 
     Scenario: Destroy an existing badge
-        Given TODO
+        Given not implemented

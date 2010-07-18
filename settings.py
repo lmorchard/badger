@@ -201,13 +201,6 @@ INSTALLED_APPS = [
     "badger.apps.badges",
 ]
 
-if DEBUG:
-    INSTALLED_APPS += [
-        "lettuce.django",
-        "django_nose",
-    ]
-    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 ABSOLUTE_URL_OVERRIDES = {
@@ -287,6 +280,14 @@ WIKI_REQUIRES_LOGIN = True
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
+
+if DEBUG:
+    INSTALLED_APPS += [
+        "lettuce.django",
+        "django_nose",
+    ]
+    SOUTH_TESTS_MIGRATE = False
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.

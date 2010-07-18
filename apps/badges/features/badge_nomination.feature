@@ -39,6 +39,17 @@ Feature: Nominating users to be awarded badges
             And "user2" should receive a "Badge Nomination Sent" notification
             And "somebody@example.com" should be sent a "Badge Nomination Received" email
 
-    Scenario: Someone is nominated for a badge set to auto-approve nominations
-        Given TODO
+    Scenario: Someone is nominated for a badge set to auto-approve
+        Given "user1" creates a badge entitled "Ultimate badge"
+            And the badge "Ultimate badge" has "autoapprove" set to "True"
+            And I am logged in as "user2"
+            And I go to the "badge detail" page for "Ultimate badge"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "user3 is awesome"
+            And I press "Nominate for badge"
+        Then I should see no form validation errors
+            And I should see "user3" somewhere in the "Awarded to" section
+            And "user3" should be nominated by "user2" for badge "Ultimate badge" because "user3 is awesome"
+            And "user3" should be awarded the badge "Ultimate badge"
+            And "user3" should receive a "Badge Awarded" notification
 

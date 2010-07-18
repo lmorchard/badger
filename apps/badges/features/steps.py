@@ -33,9 +33,13 @@ def after_all(sc):
 # Step definitions
 ###########################################################################
 
-@Given(u'TODO')
-def given_tbd():
+@Given(u'in progress')
+def given_todo():
     ok_(False, 'TODO')
+
+@Given(u'not implemented')
+def given_tbd():
+    pass
 
 @Given(u'the "(.*)" page is at "(.*)"')
 def establish_page_mapping(name, path):
@@ -68,6 +72,16 @@ def user_creates_badge(username, title):
         description = "Example description", 
         creator = user
     )
+    badge.save()
+
+@Given(u'the badge "(.*)" has "(.*)" set to "(.*)"')
+def set_badge_prop(title, name, value):
+    badge = Badge.objects.filter(title__exact=title).get()
+    if value == 'True':
+        value = True
+    if value == 'False':
+        value = False
+    setattr(badge, name, value)
     badge.save()
 
 @Given(u'I go to the "badge detail" page for "(.*)"')
@@ -143,10 +157,13 @@ def press_form_button(button_name):
     if not form_method: 
         form_method = 'post'
 
-    scc.current_form['csrfmiddlewaretoken'] = \
-        page('input[name=csrfmiddlewaretoken]').val()
+    # Scoop up hidden fields into current form.
+    for field in form.find('input[type=hidden]'):
+        name, value = field.name, field.value
+        if name not in scc.current_form:
+            scc.current_form[name] = value
 
-    if form_method == 'post':
+    if form_method.lower() == 'post':
         resp = scc.browser.post(form_action, scc.current_form, follow=True)
     else:
         resp = scc.browser.get(form_action, scc.current_form, follow=True)
@@ -221,7 +238,10 @@ def should_see_page_title(expected_title):
 def page_title_should_contain(expected_title):
     page = scc.current_page
     hit = page('title:contains("%s")' % expected_title)
-    ok_(len(hit) > 0, '"%s" should be found in page title' % expected_title)
+    cond = (len(hit) > 0)
+    if not cond:
+        glc.log.debug("PAGE CONTENT: %s", scc.last_response.content)
+    ok_(cond, '"%s" should be found in page title' % expected_title)
 
 @Then(u'"(.*)" should be nominated by "(.*)" for badge "(.*)" because "(.*)"')
 def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why):

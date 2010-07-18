@@ -11,10 +11,11 @@ from django.core.exceptions import ValidationError
 class BadgeForm(forms.ModelForm):
     class Meta:
         model = Badge
-        fields = ('title', 'description', 'tags')
+        fields = ('title', 'description', 'autoapprove', 'tags')
 
 def username_or_email_validator(value):
     pass
+
 
 class UsernameOrEmailField(forms.CharField):
 
@@ -39,6 +40,7 @@ class UsernameOrEmailField(forms.CharField):
                 return user
             except User.DoesNotExist:
                 return None
+
 
 class BadgeNominationForm(forms.Form):
     nominee = UsernameOrEmailField(
