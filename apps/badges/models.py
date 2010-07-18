@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 
@@ -13,6 +14,7 @@ from tagging.fields import TagField
 from tagging.models import Tag
 
 from notification import models as notification
+from mailer import send_mail
 
 
 class Badge(models.Model):
@@ -61,6 +63,17 @@ class Badge(models.Model):
                 { "nomination": nomination }
             )
 
+        if nomination.nominee.email:
+            context = {"nomination": nomination}
+            subject = render_to_string(
+                "badges/nomination_email_subject.txt", context)
+            # remove superfluous line breaks
+            subject = "".join(subject.splitlines())
+            message = render_to_string(
+                "badges/nomination_email_message.txt", context)
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+                      [nomination.nominee.email], priority="high")
+
         if self.autoapprove:
             nomination.approve(self.creator)
 
@@ -73,9 +86,28 @@ class Badge(models.Model):
         super(Badge, self).save(**kwargs)
 
 
+class BadgeAwardeeManager(models.Manager):
+    """Manager additions to account for User-or-email queries"""
+
+    def get_by_user_or_email(self, value):
+        if type(value) is User:
+            awardee = BadgeAwardee.objects.get(user=value)
+        else:
+            awardee = BadgeAwardee.objects.get(email=value)
+        return awardee
+
+    def get_or_create_by_user_or_email(self, value):
+        if type(value) is User:
+            awardee, created = BadgeAwardee.objects.get_or_create(user=value)
+        else:
+            awardee, created = BadgeAwardee.objects.get_or_create(email=value)
+        return (awardee, created)
+
+
 class BadgeAwardee(models.Model):
     """Representation of a someone awarded a badge, allows identifying people
     not yet signed up to the site by email address"""
+    objects = BadgeAwardeeManager()
     user = models.ForeignKey(User, null=True)
     email = models.EmailField(null=True)
 
@@ -101,8 +133,7 @@ class BadgeNomination(models.Model):
     updated_at = models.DateTimeField(_("updated at"))
 
     def __unicode__(self):
-        return '%s nominated for %s' % (self.nominee.username,
-                self.badge.title)
+        return '%s nominated for %s' % (self.nominee, self.badge.title)
 
     def approve(self, approved_by):
         self.approved = True
@@ -114,11 +145,22 @@ class BadgeNomination(models.Model):
         new_award.save()
 
         if notification:
-            recipients = [approved_by, self.badge.creator]
+            recipients = [approved_by, self.nominator, self.badge.creator]
             if self.nominee.user:
                 recipients.append(self.nominee.user)
             notification.send(recipients, 'badge_awarded',
                     {"award": new_award})
+
+        if self.nominee.email:
+            context = {"award": new_award}
+            subject = render_to_string(
+                "badges/award_email_subject.txt", context)
+            # remove superfluous line breaks
+            subject = "".join(subject.splitlines())
+            message = render_to_string(
+                "badges/award_email_message.txt", context)
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+                      [self.nominee.email], priority="high")
 
         return new_award
 

@@ -51,16 +51,14 @@ def badge_details(request, badge_slug):
     badge = get_object_or_404(Badge, slug=badge_slug)
 
     if request.method == "POST":
+
         nomination_form = BadgeNominationForm(request.POST)
+        nomination_form.context = {"badge": badge, "nominator": request.user}
         if nomination_form.is_valid():
             nominee_value = nomination_form.cleaned_data['nominee']
-            if type(nominee_value) is User:
-                badge_awardee, created = \
-                    BadgeAwardee.objects.get_or_create(user=nominee_value)
-            else:
-                badge_awardee, created = \
-                    BadgeAwardee.objects.get_or_create(email=nominee_value)
-
+            badge_awardee, created = \
+                BadgeAwardee.objects.get_or_create_by_user_or_email(
+                        nominee_value)
             nomination = badge.nominate(request.user, badge_awardee,
                     nomination_form.cleaned_data['reason_why'])
 

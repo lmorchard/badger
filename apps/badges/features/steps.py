@@ -12,8 +12,9 @@ from nose.tools import assert_equal, with_setup, assert_false, eq_, ok_
 from django.contrib.auth.models import User
 from pinax.apps.profiles.models import Profile
 from pinax.apps.account.models import Account
-from badger.apps.badges.models import Badge, BadgeNomination, BadgeAward, BadgeAwardee
-from mailer.models import MessageLog
+from badger.apps.badges.models import Badge, BadgeNomination
+from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from mailer.models import Message, MessageLog
 from notification.models import NoticeType, Notice
 
 @Before
@@ -118,6 +119,12 @@ def i_go_to_named_page(page_name):
         scc.name_path_map[page_name] or page_name)
     page = visit_page(path)
 
+@When(u'I go to the "badge detail" page for "(.*)"')
+def when_i_go_to_badge_detail_page(title):
+    badge = Badge.objects.get(title__exact=title)
+    path = '/badges/badge/%s' % badge.slug
+    visit_page(path)
+
 @When(u'I fill in "(.*)" with "(.*)"')
 def fill_form_field(field_name, field_value):
     """Look for the named field and fill it"""
@@ -187,9 +194,13 @@ def click_link_in_section(link_content, section_title):
 
 @Then(u'I should see no form validation errors')
 def should_see_no_form_validation_errors():
-    page = scc.current_page
-    error_lists = page('ul.errorlist')
+    error_lists = scc.current_page('ul.errorlist')
     eq_(0, len(error_lists), 'there should be no error lists')
+    
+@Then(u'I should see form validation errors')
+def should_see_form_validation_errors():
+    error_lists = scc.current_page('ul.errorlist')
+    ok_(len(error_lists) > 0, 'there should be one or more error lists')
     
 @Then(u'I should see "(.*)" somewhere on the page')
 def should_see_page_content(expected_content):
@@ -290,7 +301,7 @@ def check_notifications(username, notification_name):
 
 @Then(u'"(.*)" should be sent a "(.*)" email')
 def check_sent_email(to_addr, expected_subject):
-    log_entries = MessageLog.objects.filter(to_address__exact=to_addr,
+    log_entries = Message.objects.filter(to_address__exact=to_addr,
             subject__contains=expected_subject).all()
     ok_(len(log_entries)>0, 'an email "%s" to "%s" should be logged' % 
             (expected_subject, to_addr))
