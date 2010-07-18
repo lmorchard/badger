@@ -35,11 +35,8 @@ def after_all(sc):
 
 @Given(u'in progress')
 def given_todo():
+    """Step indicating a feature under development, fails tests as a reminder"""
     ok_(False, 'TODO')
-
-@Given(u'not implemented')
-def given_tbd():
-    pass
 
 @Given(u'the "(.*)" page is at "(.*)"')
 def establish_page_mapping(name, path):

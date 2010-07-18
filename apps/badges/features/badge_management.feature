@@ -22,8 +22,8 @@ Feature: Basic management of badges
         When I go to the "browse badges" page
         Then I should see "Awesome Tester" somewhere on the page
 
+    @TODO
     Scenario: Modify an existing badge
-        Given not implemented
 
+    @TODO
     Scenario: Destroy an existing badge
-        Given not implemented

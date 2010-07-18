@@ -33,6 +33,9 @@ I'll assume you're a bit of a Django hacker here, but this might help kick thing
     * `python manage.py syncdb`
     * `python manage.py runserver`
 * If anything goes wrong, you're probably better informed than I am to fix it.
+* Using Freshen for tests, I've been using this command:
+    * `python manage.py test --with-freshen -wapps/badges/features/ -lnose.badger -v2 --tags=~@TODO`
+    * This runs the Freshen feature tests, with log output enabled, and skips the scenarios tagged as @TODO
 
 [virtualenv]: http://pypi.python.org/pypi/virtualenv
 [pip]: http://pip.openplans.org/
