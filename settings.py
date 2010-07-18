@@ -173,6 +173,7 @@ INSTALLED_APPS = [
     "timezones",
     "voting",
     "tagging",
+    "microblogging",
     "ajax_validation",
     "avatar",
     "flag",
@@ -193,6 +194,8 @@ INSTALLED_APPS = [
     "pinax.apps.threadedcomments_extras",
     "pinax.apps.voting_extras",
     
+    "south",
+
     # project
     "badger.apps.about",
     "badger.apps.badges",
