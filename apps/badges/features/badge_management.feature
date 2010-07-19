@@ -1,4 +1,4 @@
-Feature: Basic management of badges
+Feature: Badge creation and management
     As a nice person with badge ideas
     I want to be able to manage badges
     In order to allow myself and others to reward interesting behavior
@@ -28,3 +28,6 @@ Feature: Basic management of badges
 
     @TODO
     Scenario: Destroy an existing badge
+
+    @TODO
+    Scenario: Badges should accept image uploads

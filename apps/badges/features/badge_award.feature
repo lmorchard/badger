@@ -1,4 +1,4 @@
-Feature: Dealing with approving and rejecting badge awards through nominations
+Feature: Approving and rejecting badge awards
     As a nice person
     I want to be able to award badges
     In order to reward interesting behavior
@@ -33,7 +33,8 @@ Feature: Dealing with approving and rejecting badge awards through nominations
             And I go to the "badge detail" page for "Nifty badge"
         When I click on "user3" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
-        When I press "Reject"
+        When I fill in "Reason why" with "Your niftiness is lacking"
+            And I press "Reject"
         Then I should see a page whose title contains "Badge detail"
             And I should not see the "Awarded to" section
             And I should not see the "nominations" section
@@ -41,19 +42,20 @@ Feature: Dealing with approving and rejecting badge awards through nominations
             And "user2" should receive a "Badge Nomination Rejected" notification
             And "user3" should receive a "Badge Nomination Rejected" notification
 
-    Scenario: User must be badge creator to see or approve nominations
+    Scenario: Badge nomination rejection should require a reason
         Given "user1" creates a badge entitled "Nifty badge"
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
-            And I am logged in as "user4"
-        When I go to the "badge detail" page for "Nifty badge"
-        Then I should not see the "nominations" section
-        Given I am logged in as "user1"
-        When I go to the "badge detail" page for "Nifty badge"
-        Then I should see "user3" somewhere in the "nominations" section
-        Given I am logged in as "user3"
+            And I am logged in as "user1"
+            And I go to the "badge detail" page for "Nifty badge"
         When I click on "user3" in the "nominations" section
-        Then I should see a status code of "403"
-        Given I am logged in as "user1"
+        Then I should see a page whose title contains "Badge nomination"
+        When I press "Reject"
+        Then I should see form validation errors
+
+    Scenario: User must be badge creator to approve a nomination
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And I am logged in as "user1"
         When I go to the "badge detail" page for "Nifty badge"
             And I click on "user3" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
@@ -61,5 +63,24 @@ Feature: Dealing with approving and rejecting badge awards through nominations
         When I press "Approve"
         Then I should see a status code of "403"
 
-    @TODO
-    Scenario: Badge nomination approval and rejection should require a reason
+    Scenario: A badge nominator can reject own nomination
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And I am logged in as "user1"
+        When I go to the "badge detail" page for "Nifty badge"
+            And I click on "user3" in the "nominations" section
+        Then I should see a page whose title contains "Badge nomination"
+        Given I am logged in as "user2"
+        When I press "Reject"
+        Then I should see a status code of "200"
+
+    Scenario: A badge nominee can reject own nomination
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And I am logged in as "user1"
+        When I go to the "badge detail" page for "Nifty badge"
+            And I click on "user3" in the "nominations" section
+        Then I should see a page whose title contains "Badge nomination"
+        Given I am logged in as "user3"
+        When I press "Reject"
+        Then I should see a status code of "200"

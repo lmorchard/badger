@@ -1,4 +1,4 @@
-Feature: Nominating users to be awarded badges
+Feature: Nominating people for badges
     As a nice person
     I want to be able to nominate people to be awarded badges
     In order to reward interesting behavior
@@ -7,6 +7,7 @@ Feature: Nominating users to be awarded badges
         Given a user named "user1"
             And a user named "user2"
             And a user named "user3"
+            And a user named "user4"
             And there are no existing badges
             And the "create badge" page is at "/badges/create"
             And the "browse badges" page is at "/badges/"
@@ -42,6 +43,10 @@ Feature: Nominating users to be awarded badges
             And "user2" should receive a "Badge Nomination Sent" notification
             And "somebody@example.com" should be sent a "Badge Nomination Received" email
 
+    @TODO
+    Scenario: Nomination email to non-member should include sign up invitation
+        Given in progress
+
     Scenario: Someone is nominated for a badge set to auto-approve
         Given "user1" creates a badge entitled "Ultimate badge"
             And the badge "Ultimate badge" has "autoapprove" set to "True"
@@ -74,3 +79,56 @@ Feature: Nominating users to be awarded badges
             And I press "Nominate for badge"
         Then I should see form validation errors
 
+    Scenario: User must be badge creator to see nominations listed
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+        Given I am logged in as "user2"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "nominations" section
+        Given I am logged in as "user3"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "nominations" section
+        Given I am logged in as "user4"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "nominations" section
+        Given I am logged in as "user1"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should see "user3" somewhere in the "nominations" section
+
+    Scenario: User can be a nominator or nominee to see related nomination
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And I am logged in as "user4"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "nominations" section
+        Given I am logged in as "user1"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should see "user3" somewhere in the "nominations" section
+        Given I am logged in as "user3"
+        When I click on "user3" in the "nominations" section
+        Then I should see a status code of "200"
+            And I should see a page whose title contains "Badge nomination"
+        Given I am logged in as "user2"
+        When I reload the page
+        Then I should see a status code of "200"
+            And I should see a page whose title contains "Badge nomination"
+
+    @TODO
+    Scenario: Badges can be set to deny self-nomination
+        Given # So that a 3rd party or creator must nominate
+        Given in progress
+
+    @TODO
+    Scenario: Badges can be set as a surprise, so nominee gets no notifications
+        Given # Only the creator and nominator are involved
+        Given # That way, the nominee is surprised by the ultimate award
+        Given in progress
+
+    @TODO
+    Scenario: Badges can be assigned a secret claim code for auto-nomination
+        Given in progress
+        Given # Code should be short and easy for mobile typing
+        Given # Say 6 letters and numbers: 36 ** 6 == 2176782336
+        Given # To be written on a whiteboard at an event
+        Given # To be encoded as a QR code on a patch/sticker
+        Given # Only the badge creator can see the code

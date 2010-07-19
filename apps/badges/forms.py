@@ -12,7 +12,6 @@ from django.core.exceptions import ValidationError
 
 
 class MyModelForm(forms.ModelForm):
-
     def as_ul(self):
         "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
         return self._html_output(
@@ -24,7 +23,6 @@ class MyModelForm(forms.ModelForm):
 
 
 class MyForm(forms.Form):
-
     def as_ul(self):
         "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
         return self._html_output(
@@ -39,6 +37,7 @@ class BadgeForm(MyModelForm):
     class Meta:
         model = Badge
         fields = ('title', 'description', 'autoapprove', 'tags')
+
 
 def username_or_email_validator(value):
     pass
@@ -95,3 +94,10 @@ class BadgeNominationForm(MyForm):
             pass
 
         return cleaned_data
+
+
+class BadgeNominationDecisionForm(MyForm):
+    reason_why = forms.CharField(required=True,
+        #widget=forms.widgets.Textarea(),
+        help_text=_('briefly explain your decision'))
+

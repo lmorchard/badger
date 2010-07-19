@@ -28,4 +28,3 @@ Feature: Managing badge awards on a user's profile
 
     @TODO
     Scenario: Badge awards are displayed on a user's profile page
-

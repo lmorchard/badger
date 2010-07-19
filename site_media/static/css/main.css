@@ -75,6 +75,9 @@ form ul.fields li input[type=checkbox] {
     width: 2em;
     height: 2em;
 }
+form ul.fields li input[type=text] {
+    width: 48ex;
+}
 form ul.fields li textarea {
     height: 8em;
 }

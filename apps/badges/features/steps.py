@@ -40,6 +40,10 @@ def given_todo():
     """Step indicating a feature under development, fails tests as a reminder"""
     ok_(False, 'TODO')
 
+@Given(u'#')
+def ignored_comment():
+    pass
+
 @Given(u'the "(.*)" page is at "(.*)"')
 def establish_page_mapping(name, path):
     scc.name_path_map[name] = path
@@ -119,6 +123,10 @@ def i_go_to_named_page(page_name):
         scc.name_path_map[page_name] or page_name)
     page = visit_page(path)
 
+@When(u'I reload the page')
+def page_reload():
+    page = visit_page(scc.current_path)
+
 @When(u'I go to the "badge detail" page for "(.*)"')
 def when_i_go_to_badge_detail_page(title):
     badge = Badge.objects.get(title__exact=title)
@@ -159,9 +167,14 @@ def press_form_button(button_name):
     ok_(scc.current_page is not None, "there should be a current page")
 
     field = page('input[value="%s"]' % button_name)
+    button_value = field.val()
     if len(field) == 0:
         field = page('button:contains("%s")' % button_name)
+        button_value = field.text()
     ok_(len(field) > 0, 'button "%s" should exist' % button_name)
+
+    button_name = field.attr('name')
+    scc.current_form[button_name] = button_value
 
     form = field.parents('form:first')
     form_action = form.attr('action')
@@ -206,8 +219,7 @@ def should_see_form_validation_errors():
 
 @Then(u'I should see a status code of "(.*)"')
 def status_code_check(expected_code):
-    cond = int(expected_code) == scc.last_response.status_code 
-    ok_(cond)
+    eq_(int(expected_code), scc.last_response.status_code)
 
 @Then(u'I should see "(.*)" somewhere on the page')
 def should_see_page_content(expected_content):

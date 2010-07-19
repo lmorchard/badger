@@ -152,6 +152,17 @@ class BadgeNomination(models.Model):
     def __unicode__(self):
         return '%s nominated for %s' % (self.nominee, self.badge.title)
 
+    def allows_viewing_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.badge.creator:
+            return True
+        if self.nominee.user and user == self.nominee.user:
+            return True
+        if user == self.nominator:
+            return True
+        return False
+
     def allows_approval_by(self, user):
         if user.is_staff or user.is_superuser:
             return True
@@ -159,7 +170,18 @@ class BadgeNomination(models.Model):
             return True
         return False
 
-    def approve(self, approved_by):
+    def allows_rejection_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.badge.creator:
+            return True
+        if self.nominee.user and user == self.nominee.user:
+            return True
+        if user == self.nominator:
+            return True
+        return False
+
+    def approve(self, approved_by, reason_why=''):
         self.approved = True
         self.approved_by = approved_by
         self.save()

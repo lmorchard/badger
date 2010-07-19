@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from badger.apps.badges.models import Badge, BadgeNomination
 from badger.apps.badges.models import BadgeAward, BadgeAwardee
 from badger.apps.badges.forms import BadgeForm, BadgeNominationForm
-
+from badger.apps.badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
 
 
@@ -101,13 +101,24 @@ def nomination_details(request, badge_slug, nomination_name):
     nomination = get_object_or_404(BadgeNomination, badge=badge,
             nominee=nominee)
 
-    if not nomination.allows_approval_by(request.user):
+    perms = {
+        "viewing": nomination.allows_viewing_by(request.user),
+        "approval": nomination.allows_approval_by(request.user),
+        "rejection": nomination.allows_rejection_by(request.user)
+    }
+
+    if not perms['viewing']:
         return HttpResponseForbidden(_('access denied'))
 
     if request.method == "POST":
 
-        if request.POST.get('action', None) == 'approve':
-            new_award = nomination.approve(request.user)
+        decision_form = BadgeNominationDecisionForm(request.POST)
+
+        if request.POST.get('action_approve', None) is not None:
+            if not perms['approval']:
+                return HttpResponseForbidden(_('access denied'))
+            new_award = nomination.approve(request.user, 
+                    request.POST.get('reason_why', ''))
             messages.add_message(
                 request, messages.SUCCESS,
                 ugettext("nomination approved for %s" % (new_award))
@@ -116,16 +127,24 @@ def nomination_details(request, badge_slug, nomination_name):
                 'badger.apps.badges.views.badge_details', args=(badge.slug,)
             ))
 
-        if request.POST.get('action', None) == 'reject':
-            messages.add_message(
-                request, messages.SUCCESS,
-                ugettext("nomination rejected for %s" % (nomination))
-            )
-            nomination.reject(request.user)
-            return HttpResponseRedirect(reverse(
-                'badger.apps.badges.views.badge_details', args=(badge.slug,)
-            ))
+        if decision_form.is_valid() and request.POST.get('action_reject', None) is not None:
+                if not perms["rejection"]:
+                    return HttpResponseForbidden(_('access denied'))
+                messages.add_message(
+                    request, messages.SUCCESS,
+                    ugettext("nomination rejected for %s" % (nomination))
+                )
+                nomination.reject(request.user, 
+                        decision_form.cleaned_data['reason_why'])
+                return HttpResponseRedirect(reverse(
+                    'badger.apps.badges.views.badge_details', args=(badge.slug,)
+                ))
+    
+    else:
+        decision_form = BadgeNominationDecisionForm()
 
     return render_to_response('badges/nomination_detail.html', {
-        'nomination': nomination
+        'nomination': nomination,
+        'decision_form': decision_form,
+        'permissions': perms
     }, context_instance=RequestContext(request))
