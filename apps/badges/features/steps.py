@@ -40,10 +40,6 @@ def given_todo():
     """Step indicating a feature under development, fails tests as a reminder"""
     ok_(False, 'TODO')
 
-@Given(u'#')
-def ignored_comment():
-    pass
-
 @Given(u'the "(.*)" page is at "(.*)"')
 def establish_page_mapping(name, path):
     scc.name_path_map[name] = path

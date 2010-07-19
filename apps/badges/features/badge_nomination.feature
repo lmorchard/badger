@@ -115,20 +115,20 @@ Feature: Nominating people for badges
 
     @TODO
     Scenario: Badges can be set to deny self-nomination
-        Given # So that a 3rd party or creator must nominate
+        # So that a 3rd party or creator must nominate
         Given in progress
 
     @TODO
     Scenario: Badges can be set as a surprise, so nominee gets no notifications
-        Given # Only the creator and nominator are involved
-        Given # That way, the nominee is surprised by the ultimate award
+        # Only the creator and nominator are involved
+        # That way, the nominee is surprised by the ultimate award
         Given in progress
 
     @TODO
     Scenario: Badges can be assigned a secret claim code for auto-nomination
         Given in progress
-        Given # Code should be short and easy for mobile typing
-        Given # Say 6 letters and numbers: 36 ** 6 == 2176782336
-        Given # To be written on a whiteboard at an event
-        Given # To be encoded as a QR code on a patch/sticker
-        Given # Only the badge creator can see the code
+        # Code should be short and easy for mobile typing
+        # Say 6 letters and numbers: 36 ** 6 == 2176782336
+        # To be written on a whiteboard at an event
+        # To be encoded as a QR code on a patch/sticker
+        # Only the badge creator can see the code

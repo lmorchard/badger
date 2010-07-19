@@ -5,16 +5,16 @@ Feature: Badge collaboration
 
     @TODO
     Scenario: Badges should offer an image editor
-        Given # Whiz-bang HTML5 image editor / clip art composer
+        # Whiz-bang HTML5 image editor / clip art composer
 
     @TODO
     Scenario: Badge creators should be able to mark badge elements as help-wanted
-        Given # A help-wanted flag indicates a badge needs help
-        Given # Help wanted from writers, illustrators, programmers, delegates
+        # A help-wanted flag indicates a badge needs help
+        # Help wanted from writers, illustrators, programmers, delegates
 
     @TODO
     Scenario: Badge elements marked as help-wanted should be browseable
-        Given # A writer should be able to find badges in need of description
-        Given # An illustrator should be able to find badges in need of images
-        Given # A programmer should be able to find badges in need of rules
-        Given # Users should be able to find badges in need of delegates
+        # A writer should be able to find badges in need of description
+        # An illustrator should be able to find badges in need of images
+        # A programmer should be able to find badges in need of rules
+        # Users should be able to find badges in need of delegates
