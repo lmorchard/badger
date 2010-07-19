@@ -1,4 +1,5 @@
 from django.db.models import signals, get_app
+from south.signals import post_migrate
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_noop as _
 
@@ -25,9 +26,17 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     )
 
     notification.create_notice_type(
+        "badge_nomination_rejected", 
+        _("Badge Nomination Rejected"), 
+        _("a decision maker for a badge has rejected a nomination for award")
+    )
+
+    notification.create_notice_type(
         "badge_awarded", 
         _("Badge Awarded"), 
         _("a badge has been awarded")
     )
 
 signals.post_syncdb.connect(create_notice_types, sender=notification)
+post_migrate.connect(create_notice_types, sender=notification)
+

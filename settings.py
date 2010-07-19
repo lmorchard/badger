@@ -170,11 +170,13 @@ INSTALLED_APPS = [
     "groups",
     "gravatar",
     "threadedcomments",
+    "wiki",
     "timezones",
     "voting",
     "tagging",
     "microblogging",
     "ajax_validation",
+    "photologue",
     "avatar",
     "flag",
     "uni_form",
@@ -190,6 +192,7 @@ INSTALLED_APPS = [
     "pinax.apps.account",
     "pinax.apps.signup_codes",
     "pinax.apps.tribes",
+    "pinax.apps.photos",
     "pinax.apps.topics",
     "pinax.apps.threadedcomments_extras",
     "pinax.apps.voting_extras",
@@ -283,7 +286,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 if DEBUG:
     INSTALLED_APPS += [
-        "lettuce.django",
         "django_nose",
     ]
     SOUTH_TESTS_MIGRATE = False

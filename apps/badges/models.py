@@ -27,7 +27,7 @@ class Badge(models.Model):
     autoapprove = models.BooleanField(_('Approve all nominations?'), 
         default=False, 
         help_text=_('If checked, all nominations will automatically be approved'))
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(User, blank=False)
     creator_ip = models.IPAddressField(_("IP Address of the Creator"),
         blank=True, null=True)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
@@ -119,8 +119,8 @@ class BadgeAwardee(models.Model):
     """Representation of a someone awarded a badge, allows identifying people
     not yet signed up to the site by email address"""
     objects = BadgeAwardeeManager()
-    user = models.ForeignKey(User, null=True)
-    email = models.EmailField(null=True)
+    user = models.ForeignKey(User, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
 
     class Meta:
         unique_together = ('user','email')
@@ -188,13 +188,14 @@ class BadgeNomination(models.Model):
 
         return new_award
 
-    def reject(self, rejected_by):
+    def reject(self, rejected_by, reason_why=''):
         if notification:
             recipients = [rejected_by, self.nominator, self.badge.creator]
             if self.nominee.user:
                 recipients.append(self.nominee.user)
             notification.send(recipients, 'badge_nomination_rejected', 
-                    {"nomination": self})
+                    {"nomination": self, 'rejected_by': rejected_by,
+                        "reason_why": reason_why})
 
         try:
             # Try deleting any existing award associated with this nomination

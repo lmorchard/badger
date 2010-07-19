@@ -1,4 +1,4 @@
-Feature: Dealing with badge awards
+Feature: Dealing with approving and rejecting badge awards through nominations
     As a nice person
     I want to be able to award badges
     In order to reward interesting behavior
@@ -26,6 +26,21 @@ Feature: Dealing with badge awards
             And "user3" should be awarded the badge "Nifty badge"
             And "user3" should receive a "Badge Awarded" notification
 
+    Scenario: Badge creator rejects a nomination to award a badge
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And I am logged in as "user1"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I click on "user3" in the "nominations" section
+        Then I should see a page whose title contains "Badge nomination"
+        When I press "Reject"
+        Then I should see a page whose title contains "Badge detail"
+            And I should not see the "Awarded to" section
+            And I should not see the "nominations" section
+            And "user1" should receive a "Badge Nomination Rejected" notification
+            And "user2" should receive a "Badge Nomination Rejected" notification
+            And "user3" should receive a "Badge Nomination Rejected" notification
+
     Scenario: User must be badge creator to see or approve nominations
         Given "user1" creates a badge entitled "Nifty badge"
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
@@ -47,16 +62,4 @@ Feature: Dealing with badge awards
         Then I should see a status code of "403"
 
     @TODO
-    Scenario: Badge creator rejects a nomination to award a badge
-
-    @TODO
-    Scenario: Badge creator delegates approval of nomination to another user
-
-    @TODO
-    Scenario: Badge delegate rejects a nomination to award a badge
-
-    @TODO
-    Scenario: Badge delegate approves a nomination to award a badge
-
-    @TODO
-    Scenario: Badge creator revokes approval delegation for another user
+    Scenario: Badge nomination approval and rejection should require a reason
