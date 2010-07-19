@@ -8,35 +8,46 @@
     <h1>{% trans "Badge details" %}</h1>
 
     <div>
-        <h2>{{ badge.title }}</h2>
-        <p>{{ badge.description }}</p>
-
         <div>
-            <h3>Awarded to</h3>
-            <ul>
-                {% for award in awards %}
-                    <li>{{ award.awardee }}</li>
-                {% endfor %}
-            </ul>
+            <h2>{{ badge.title }}</h2>
+            <p>{{ badge.description }}</p>
+            <p>{{ badge.creator }}</p>
         </div>
 
-        <div>
-            <h3>Nominations</h3>
-            <ul>
-                {% for nomination in nominations %}
-                    <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee %}">{{ nomination.nominee }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% if awards %}
+            <div>
+                <h3>Awarded to</h3>
+                <ul>
+                    {% for award in awards %}
+                        <li>{{ award.awardee }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if nominations %}
+            <div>
+                <h3>Pending nominations</h3>
+                <ul>
+                    {% for nomination in nominations %}
+                        <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee %}">{{ nomination.nominee }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
         <div>
             <h3>Nominate someone for this badge</h3>
             <form action="" method="post">
-                {% csrf_token %}
-                <ul class="fields">
-                    {{nomination_form.as_ul}}
-                    <li><input type="submit" value="Nominate for badge" /></li>
-                </ul>
+                <fieldset><legend>Nomination details</legend>
+                    {% csrf_token %}
+                    <ul class="fields">
+                        {{nomination_form.as_ul}}
+                        <li class="submit">
+                            <button type="submit">Nominate for badge</button>
+                        </li>
+                    </ul>
+                </fieldset>
             </form>
         </div>
 

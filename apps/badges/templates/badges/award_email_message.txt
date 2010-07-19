@@ -1,0 +1,1 @@
+{{award.awardee.email}} has been awarded {{award.badge}}

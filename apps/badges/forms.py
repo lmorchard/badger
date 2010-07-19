@@ -11,7 +11,31 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 
 
-class BadgeForm(forms.ModelForm):
+class MyModelForm(forms.ModelForm):
+
+    def as_ul(self):
+        "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
+        return self._html_output(
+            normal_row = u'<li%(html_class_attr)s>%(label)s %(field)s<p class="help">%(help_text)s</p>%(errors)s</li>',
+            error_row = u'<li>%s</li>',
+            row_ender = '</li>',
+            help_text_html = u' %s',
+            errors_on_separate_row = False)
+
+
+class MyForm(forms.Form):
+
+    def as_ul(self):
+        "Returns this form rendered as HTML <li>s -- excluding the <ul></ul>."
+        return self._html_output(
+            normal_row = u'<li%(html_class_attr)s>%(label)s %(field)s<p class="help">%(help_text)s</p>%(errors)s</li>',
+            error_row = u'<li>%s</li>',
+            row_ender = '</li>',
+            help_text_html = u' %s',
+            errors_on_separate_row = False)
+
+
+class BadgeForm(MyModelForm):
     class Meta:
         model = Badge
         fields = ('title', 'description', 'autoapprove', 'tags')
@@ -45,27 +69,27 @@ class UsernameOrEmailField(forms.CharField):
                 return None
 
 
-class BadgeNominationForm(forms.Form):
-    nominee = UsernameOrEmailField(
-        max_length=100, required=True,
-        help_text=_('any email address or registered user name')
-    )
-    reason_why = forms.CharField(widget=forms.widgets.Textarea(), required=True)
+class BadgeNominationForm(MyForm):
+    nominee = UsernameOrEmailField(max_length=100, required=True,
+        help_text=_('member user name or any email address'))
+    reason_why = forms.CharField(required=True,
+        widget=forms.widgets.Textarea(),
+        help_text=_('describe how this person has come to deserve this award'))
 
     def clean(self):
         """Ensure that duplicate nominations are not accepted"""
         cleaned_data = super(BadgeNominationForm, self).clean()
         
         try:
-            nominee = BadgeAwardee.objects.get_by_user_or_email(
-                    self.cleaned_data['nominee'])
-            existing_nomination = BadgeNomination.objects.get(
-                badge=self.context['badge'], 
-                nominator=self.context['nominator'],
-                nominee=nominee
-            )
-            raise ValidationError(
-                _('This person has already been nominated for this badge.'))
+            if 'nominee' in self.cleaned_data:
+                nominee = BadgeAwardee.objects.get_by_user_or_email(
+                        self.cleaned_data['nominee'])
+                existing_nomination = BadgeNomination.objects.get(
+                    badge=self.context['badge'], 
+                    nominee=nominee
+                )
+                raise ValidationError(
+                    _('This person has already been nominated for this badge.'))
 
         except ObjectDoesNotExist:
             pass

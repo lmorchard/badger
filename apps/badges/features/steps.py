@@ -159,6 +159,8 @@ def press_form_button(button_name):
     ok_(scc.current_page is not None, "there should be a current page")
 
     field = page('input[value="%s"]' % button_name)
+    if len(field) == 0:
+        field = page('button:contains("%s")' % button_name)
     ok_(len(field) > 0, 'button "%s" should exist' % button_name)
 
     form = field.parents('form:first')
@@ -180,7 +182,7 @@ def press_form_button(button_name):
     else:
         resp = scc.browser.get(form_action, scc.current_form, follow=True)
 
-    eq_(200, resp.status_code)
+    #eq_(200, resp.status_code)
     set_current_page(form_action, resp)
 
 @When(u'I click on "(.*)" in the "(.*)" section')
@@ -201,7 +203,12 @@ def should_see_no_form_validation_errors():
 def should_see_form_validation_errors():
     error_lists = scc.current_page('ul.errorlist')
     ok_(len(error_lists) > 0, 'there should be one or more error lists')
-    
+
+@Then(u'I should see a status code of "(.*)"')
+def status_code_check(expected_code):
+    cond = int(expected_code) == scc.last_response.status_code 
+    ok_(cond)
+
 @Then(u'I should see "(.*)" somewhere on the page')
 def should_see_page_content(expected_content):
     page_content = scc.last_response.content
@@ -242,6 +249,16 @@ def section_no_content_check(expected_content, section_title):
         ok_(False, '"%s" should not be found in content for section "%s"' %
             (expected_content, section_title))
     except ValueError:
+        pass
+
+@Then(u'I should not see the "(.*)" section')
+def section_missing_check(section_title):
+    page = scc.current_page
+    try:
+        section = find_section_in_page(section_title)
+        if section:
+            ok_(False, 'found the "%s" section' % section_title)
+    except:
         pass
 
 @Then(u'I should see a page entitled "(.*)"')
@@ -324,13 +341,16 @@ def get_user(username, password=None, email=None):
 def set_current_page(path, resp):
     scc.last_response = resp
     scc.current_path = path
-    scc.current_page = PyQuery(resp.content)
+    try:
+        scc.current_page = PyQuery(resp.content)
+    except:
+        scc.current_page = None
     scc.current_form = {}
     return scc.current_page
 
 def visit_page(path, data={}, follow=True, status_code=200, **extra):
     resp = scc.browser.get(path)
-    eq_(status_code, resp.status_code)
+    #eq_(status_code, resp.status_code)
     return set_current_page(path, resp)
 
 def find_section_in_page(section_title):

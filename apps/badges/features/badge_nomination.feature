@@ -20,11 +20,13 @@ Feature: Nominating users to be awarded badges
             And I press "Nominate for badge"
         Then I should see no form validation errors
             And I should see "user3 nominated" somewhere on the page
-            And I should see "user3" somewhere in the "Nominations" section
             And "user3" should be nominated by "user2" for badge "Awesome badge" because "user3 is awesome"
             And "user1" should receive a "Badge Nomination Proposed" notification
             And "user2" should receive a "Badge Nomination Sent" notification
             And "user3" should receive a "Badge Nomination Received" notification
+        Given I am logged in as "user1"
+            And I go to the "badge detail" page for "Awesome badge"
+        Then I should see "user3" somewhere in the "nominations" section
 
     Scenario: A user nominates someone who has not signed up to the site
         Given "user1" creates a badge entitled "More awesome badge"
@@ -62,7 +64,10 @@ Feature: Nominating users to be awarded badges
             And I fill in "Reason why" with "user3 is awesome"
             And I press "Nominate for badge"
         Then I should see no form validation errors
-            And I should see "user3" somewhere in the "Nominations" section
+        Given I am logged in as "user1"
+        When I go to the "badge detail" page for "Ultimate badge"
+        Then I should see "user3" somewhere in the "nominations" section
+        Given I am logged in as "user2"
         When I go to the "badge detail" page for "Ultimate badge"
             And I fill in "Nominee" with "user3"
             And I fill in "Reason why" with "user3 is awesome"

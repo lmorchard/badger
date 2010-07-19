@@ -1,17 +1,26 @@
 /*
  * Global site styles
  */
-body { font-family: "Comic Sans MS"; }
+body { font-family: "Helvetica"; font-size: 13px; }
+
 
 #tabhead { background: #000000; }
-#tabhead .logo { height: 79px; color: #fff; }
-#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -10px -65px; line-height: 79px; padding-left: 240px; text-decoration: none; }
-#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 40px; font-family: Comic Sans MS; color: #fff; }
+#tabhead .logo { height: 59px; color: #fff; }
+#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -10px -65px; line-height: 59px; padding-left: 240px; text-decoration: none; }
+#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 40px; color: #fff; }
 
 ul.tabs li { background-color: #d8d8d8; }
 
 #tabhead .login, #tabhead .login a, #tabhead .login a:visited { color: #ddd; }
 body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.photos #tab_photos, body.tribes #tab_tribes, body.tweets #tab_tweets, body.bookmarks #tab_bookmarks, body.locations #tab_locations, body.inbox #tab_inbox { background: #eee; }
+
+#tabhead .login {
+    background: #333;
+    padding: 10px 10px 10px 10px;
+    right: 0px; top: 0px;
+    border-left: 1px solid #666;
+    border-bottom: 1px solid #666;
+}
 
 #subnav { background: #eee; border-bottom: 1px solid #999; margin: 0; padding: 0; }
 
@@ -19,3 +28,78 @@ div.groups, div.friends { background: #ddd }
 
 #body { width: auto; padding: 20px 30px 20px 30px }
 #footer { width: auto; padding: 20px 30px 20px 30px }
+
+ul.form_row {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+ul.form_row li {
+    list-style: none;
+    display: inline;
+}
+ul.form_row li form {
+    display: inline;
+}
+
+form fieldset {
+    width: 50%;
+    margin: 0.5em;
+}
+form fieldset legend {
+    font-weight: bold;
+    font-size: 1.15em;
+}
+form ul.fields { 
+    padding: 0; margin: 0 
+}
+form ul.fields li { 
+    list-style: none; 
+    clear: both;
+    margin: 0.5em 0 0.5em 0;
+    position: relative;
+}
+form ul.fields li p.help {
+    margin: -0.125em 0 0 14ex;
+    color: #999; 
+}
+form ul.fields li ul.errorlist {
+    margin: -0.125em 0 0 14ex; 
+}
+form ul.fields li label { 
+    width: 12ex;
+    padding: 0.5em 0.25em 0 0;
+    float: left;
+    text-align: right;
+}
+form ul.fields li input[type=checkbox] {
+    width: 2em;
+    height: 2em;
+}
+form ul.fields li textarea {
+    height: 8em;
+}
+button { 
+    font-family: "Helvetica"; font-size: 1.125em; font-weight: bold; 
+    padding: 0.5em 1em 0.5em 1em;
+    border: 1px solid #999;
+    cursor: pointer;
+}
+form ul.fields li.submit {
+    padding: 1em 0 0 13ex;
+}
+form fieldset.wide_fields {
+    width: 66%;
+}
+form fieldset.wide_fields ul.fields li ul.errorlist {
+    margin: -0.125em 0 0 24ex; 
+}
+form fieldset.wide_fields ul.fields li p.help {
+    margin: -0.125em 0 0 24ex;
+}
+form fieldset.wide_fields ul.fields li label {
+    width: 22ex;
+}
+form fieldset.wide_fields ul.fields li.submit {
+    padding: 1em 0 0 23ex;
+}
+

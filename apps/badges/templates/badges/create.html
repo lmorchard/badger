@@ -10,10 +10,12 @@
 
     <form action="" method="post">
         {% csrf_token %}
-        <ul class="fields">
-            {{form.as_ul}}
-            <li><input type="submit" value="Create" /></li>
-        </ul>
+        <fieldset class="wide_fields"><legend>Badge details</legend>
+            <ul class="fields">
+                {{form.as_ul}}
+                <li class="submit"><button type="submit">Create</button></li>
+            </ul>
+        </fieldset>
     </form>
     
 {% endblock %}

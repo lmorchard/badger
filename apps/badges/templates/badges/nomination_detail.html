@@ -15,11 +15,18 @@
             for the badge
             "{{ nomination.badge.title }}"
         </p>
-        <form action="" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="approve" />
-            <input type="submit" value="Approve" />
-        </form>
+        <ul class="form_row">
+            <li><form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="approve" />
+                <button type="submit">Approve</button>
+            </form></li>
+            <li><form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="reject" />
+                <button type="submit">Reject</button>
+            </form></li>
+        </ul>
     </div>
     
 {% endblock %}

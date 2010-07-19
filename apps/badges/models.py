@@ -24,16 +24,27 @@ class Badge(models.Model):
     slug = models.SlugField(_("slug"), blank=False, unique=True)
     description = models.TextField(_("description"), blank=False)
     tags = TagField()
-    autoapprove = models.BooleanField(_('automatically approve nominations?'),
-        default=False)
+    autoapprove = models.BooleanField(_('Approve all nominations?'), 
+        default=False, 
+        help_text=_('If checked, all nominations will automatically be approved'))
     creator = models.ForeignKey(User)
     creator_ip = models.IPAddressField(_("IP Address of the Creator"),
         blank=True, null=True)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
+    class Meta:
+        unique_together = ('title','slug')
+
     def __unicode__(self):
         return self.title
+
+    def allows_nomination_listing_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.creator:
+            return True
+        return False
 
     def nominate(self, nominator, nominee, reason_why):
         try:
@@ -111,6 +122,9 @@ class BadgeAwardee(models.Model):
     user = models.ForeignKey(User, null=True)
     email = models.EmailField(null=True)
 
+    class Meta:
+        unique_together = ('user','email')
+
     def __unicode__(self):
         if self.user:
             return "%s" % self.user
@@ -132,8 +146,18 @@ class BadgeNomination(models.Model):
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
+    class Meta:
+        unique_together = ('badge','nominee','nominator')
+
     def __unicode__(self):
         return '%s nominated for %s' % (self.nominee, self.badge.title)
+
+    def allows_approval_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.badge.creator:
+            return True
+        return False
 
     def approve(self, approved_by):
         self.approved = True
@@ -163,6 +187,24 @@ class BadgeNomination(models.Model):
                       [self.nominee.email], priority="high")
 
         return new_award
+
+    def reject(self, rejected_by):
+        if notification:
+            recipients = [rejected_by, self.nominator, self.badge.creator]
+            if self.nominee.user:
+                recipients.append(self.nominee.user)
+            notification.send(recipients, 'badge_nomination_rejected', 
+                    {"nomination": self})
+
+        try:
+            # Try deleting any existing award associated with this nomination
+            existing_award = BadgeAward.objects.get(
+                    badge=self.badge, awardee=self.nominee, nomination=self)
+            existing_award.delete()
+        except BadgeAward.DoesNotExist:
+            pass
+
+        self.delete()
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()

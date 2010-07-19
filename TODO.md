@@ -6,3 +6,5 @@
 * Autocomplete on user names for badge nomination
 
 * Allow badger app to be more reusable by checking for installation of notification, etc?
+
+* Improve emails and notifications to contain links as calls to action for approval / acceptance of badges

@@ -15,9 +15,6 @@ It might be nice to gift badges and track achievements for deserving people.
         1. Revive the idea; 
         2. Make it more generative and participatory;
         3. Introduce automated web-wide scanning for achievement conditions.
-* Why's it all Comic Sans?
-    * Because I want to annoy you into fixing it for me.
-    * Also, because it's all still a prototype, and you shouldn't take it seriously yet.
 
 ## Hacking
 

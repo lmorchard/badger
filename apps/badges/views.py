@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.contrib import messages
@@ -71,7 +72,11 @@ def badge_details(request, badge_slug):
     else:
         nomination_form = BadgeNominationForm()
 
-    nominations = BadgeNomination.objects.filter(badge=badge, approved=False)
+    if badge.allows_nomination_listing_by(request.user):
+        nominations = BadgeNomination.objects.filter(badge=badge, approved=False)
+    else:
+        nominations = None
+
     awards = BadgeAward.objects.filter(badge=badge)
 
     return render_to_response('badges/detail.html', {
@@ -96,13 +101,27 @@ def nomination_details(request, badge_slug, nomination_name):
     nomination = get_object_or_404(BadgeNomination, badge=badge,
             nominee=nominee)
 
+    if not nomination.allows_approval_by(request.user):
+        return HttpResponseForbidden(_('access denied'))
+
     if request.method == "POST":
+
         if request.POST.get('action', None) == 'approve':
             new_award = nomination.approve(request.user)
             messages.add_message(
                 request, messages.SUCCESS,
                 ugettext("nomination approved for %s" % (new_award))
             )
+            return HttpResponseRedirect(reverse(
+                'badger.apps.badges.views.badge_details', args=(badge.slug,)
+            ))
+
+        if request.POST.get('action', None) == 'reject':
+            messages.add_message(
+                request, messages.SUCCESS,
+                ugettext("nomination rejected for %s" % (nomination))
+            )
+            nomination.reject(request.user)
             return HttpResponseRedirect(reverse(
                 'badger.apps.badges.views.badge_details', args=(badge.slug,)
             ))
