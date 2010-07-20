@@ -24,6 +24,10 @@ Feature: Badge creation and management
         Then I should see "Awesome Tester" somewhere on the page
 
     @TODO
+    Scenario: A badge is flagged as unlisted and hidden from search
+        # For surprises, hidden achievements
+
+    @TODO
     Scenario: Modify an existing badge
 
     @TODO

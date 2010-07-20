@@ -1,5 +1,8 @@
 """ """
 # -*- coding: utf-8 -*-
+
+# TODO: Refactor this into separate step modules for web, badges, profiles
+
 from freshen import *
 
 import logging
@@ -16,6 +19,10 @@ from badger.apps.badges.models import Badge, BadgeNomination
 from badger.apps.badges.models import BadgeAward, BadgeAwardee
 from mailer.models import Message, MessageLog
 from notification.models import NoticeType, Notice
+
+###########################################################################
+# Hooks
+###########################################################################
 
 @Before
 def before_all(sc):
@@ -325,7 +332,7 @@ def check_notifications(username, notification_name):
     ok_(len(notices) > 0)
 
 @Then(u'"(.*)" should be sent a "(.*)" email')
-def check_sent_email(to_addr, expected_subject):
+def check_queued_email(to_addr, expected_subject):
     log_entries = Message.objects.filter(to_address__exact=to_addr,
             subject__contains=expected_subject).all()
     ok_(len(log_entries)>0, 'an email "%s" to "%s" should be logged' % 

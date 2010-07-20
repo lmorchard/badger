@@ -17,3 +17,6 @@ Feature: A badge should accept karma on various dimensions
 
     @TODO
     Scenario: Someone thinks a badge is abusive or spam
+
+    @TODO
+    Scenario: View top 10 lists of happiest, best liked badges
