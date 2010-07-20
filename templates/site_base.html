@@ -26,7 +26,8 @@
 {% block login %}
     {% if user.is_authenticated %}
         Welcome, <a href="{% url profile_detail user %}" title="Profile details">{% ifopenid %}<img src="{{ STATIC_URL }}images/openid-icon.png" alt="Logged in with OpenID" />{% endifopenid %}<b>{% user_display user %}</b></a> | 
-        <a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a> | 
+        <a href="{% url notification_notices %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a> | 
+        {# <a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a> | #}
         {% if user.is_staff %}<a href="/admin/">{% trans "Admin panel" %}</a> | {% endif %}
         <a href="{% url acct_email %}">{% trans "Account settings" %}</a> | 
         <a href="/openid/logout/?next={% url acct_logout %}">{% trans "Log out" %}</a>
