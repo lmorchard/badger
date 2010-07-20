@@ -12,20 +12,24 @@ Feature: Managing badge awards on a user's profile
             And the "create badge" page is at "/badges/create"
             And the "browse badges" page is at "/badges/"
         
-    @TODO
     Scenario: Badge awardee accepts an award
+        Given in progress
 
-    @TODO
     Scenario: Badge awardee rejects an award
+        Given in progress
+
+    Scenario: Badge awards are displayed on a user's profile page
+        Given in progress
 
     @TODO
     Scenario: Badge awardee has chosen to auto-accept awards
+        Given in progress
 
     @TODO
     Scenario: Badge awardee decides to hide an award after accepting it
+        Given in progress
 
     @TODO
     Scenario: Someone confirms an email address for which badges have been awarded
+        Given in progress
 
-    @TODO
-    Scenario: Badge awards are displayed on a user's profile page

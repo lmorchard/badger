@@ -1,13 +1,18 @@
 /*
  * Global site styles
  */
-body { font-family: "Helvetica"; font-size: 13px; }
-
+body { font-family: "Comic Sans MS"; font-size: 13px; }
+body #body button { 
+    font-family: "Comic Sans MS"; font-size: 1.125em; font-weight: bold; 
+    padding: 0.5em 1em 0.5em 1em;
+    border: 1px solid #999;
+    cursor: pointer;
+}
 
 #tabhead { background: #000000; }
-#tabhead .logo { height: 59px; color: #fff; }
-#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -10px -65px; line-height: 59px; padding-left: 240px; text-decoration: none; }
-#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 40px; color: #fff; }
+#tabhead .logo { height: 79px; color: #fff; }
+#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -5px -55px; line-height: 79px; padding-left: 240px; text-decoration: none; }
+#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 50px; color: #fff; }
 
 ul.tabs li { background-color: #d8d8d8; }
 
@@ -54,12 +59,7 @@ form ul.fields li label {
 form ul.fields li input[type=checkbox] { width: 2em; height: 2em; }
 form ul.fields li input[type=text] { width: 48ex; }
 form ul.fields li textarea { height: 8em; }
-button { 
-    font-family: "Helvetica"; font-size: 1.125em; font-weight: bold; 
-    padding: 0.5em 1em 0.5em 1em;
-    border: 1px solid #999;
-    cursor: pointer;
-}
+
 form ul.fields li.submit { padding: 1em 0 0 16ex; }
 form fieldset.wide_fields { }
 form fieldset.wide_fields ul.fields li ul.errorlist { margin: -0.125em 0 0 24ex; }
