@@ -41,6 +41,17 @@
             {% if is_me %}
                 <p><a href="{% url profile_edit %}" rel="facebox">Edit profile</a></p>
             {% endif %}
+
+            <div class="badge_awards clearfix">
+                <ul class="badges">
+                    {% for award in awards %}
+                        <li>
+                            <a href="{{award.badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
+                            <a href="{{award.badge.get_absolute_url}}" class="name">{{award.badge.title}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
             
             {% if user.is_authenticated %}
                 

@@ -27,82 +27,76 @@ body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.ph
 div.groups, div.friends { background: #ddd }
 
 #body { width: auto; padding: 20px 30px 20px 30px }
+#body .crumbs { margin: -10px 0 1em 0 }
 #footer { width: auto; padding: 20px 30px 20px 30px }
 
-ul.form_row {
-    padding: 0 0 0 0;
-    margin: 0 0 0 0;
-}
-ul.form_row li {
-    list-style: none;
-    display: inline;
-}
-ul.form_row li form {
-    display: inline;
-}
+ul.form_row { padding: 0 0 0 0; margin: 0 0 0 0; }
+ul.form_row li { list-style: none; display: inline; }
+ul.form_row li form { display: inline; }
 
-form fieldset {
-    width: 50%;
-    margin: 0.5em;
-}
-form fieldset legend {
-    font-weight: bold;
-    font-size: 1.15em;
-}
-form ul.fields { 
-    padding: 0; margin: 0 
-}
+form fieldset { margin: 0.5em; border: 1px solid #ccc; }
+form fieldset legend { font-weight: bold; font-size: 0.95em; }
+form ul.fields { padding: 0; margin: 0 }
 form ul.fields li { 
     list-style: none; 
     clear: both;
     margin: 0.5em 0 0.5em 0;
     position: relative;
 }
-form ul.fields li p.help {
-    margin: -0.125em 0 0 14ex;
-    color: #999; 
-}
-form ul.fields li ul.errorlist {
-    margin: -0.125em 0 0 14ex; 
-}
+form ul.fields li p.help { margin: -0.125em 0 0 16ex; color: #999; }
+form ul.fields li ul.errorlist { margin: -0.125em 0 0 16ex; }
 form ul.fields li label { 
-    width: 12ex;
+    width: 15ex;
     padding: 0.5em 0.25em 0 0;
     float: left;
     text-align: right;
 }
-form ul.fields li input[type=checkbox] {
-    width: 2em;
-    height: 2em;
-}
-form ul.fields li input[type=text] {
-    width: 48ex;
-}
-form ul.fields li textarea {
-    height: 8em;
-}
+form ul.fields li input[type=checkbox] { width: 2em; height: 2em; }
+form ul.fields li input[type=text] { width: 48ex; }
+form ul.fields li textarea { height: 8em; }
 button { 
     font-family: "Helvetica"; font-size: 1.125em; font-weight: bold; 
     padding: 0.5em 1em 0.5em 1em;
     border: 1px solid #999;
     cursor: pointer;
 }
-form ul.fields li.submit {
-    padding: 1em 0 0 13ex;
-}
-form fieldset.wide_fields {
-    width: 66%;
-}
-form fieldset.wide_fields ul.fields li ul.errorlist {
-    margin: -0.125em 0 0 24ex; 
-}
-form fieldset.wide_fields ul.fields li p.help {
-    margin: -0.125em 0 0 24ex;
-}
-form fieldset.wide_fields ul.fields li label {
-    width: 22ex;
-}
-form fieldset.wide_fields ul.fields li.submit {
-    padding: 1em 0 0 23ex;
-}
+form ul.fields li.submit { padding: 1em 0 0 16ex; }
+form fieldset.wide_fields { }
+form fieldset.wide_fields ul.fields li ul.errorlist { margin: -0.125em 0 0 24ex; }
+form fieldset.wide_fields ul.fields li p.help { margin: -0.125em 0 0 24ex; }
+form fieldset.wide_fields ul.fields li label { width: 22ex; }
+form fieldset.wide_fields ul.fields li.submit { padding: 1em 0 0 23ex; }
+
+.badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; float: left; }
+.badge.full h2 { margin: 0; padding: 0.25em 0 0.25em 0; text-align: center; background: #ddd; }
+.badge.full .image { width: 100%; text-align: center;}
+.badge.full .image img { margin: 1em; }
+.badge.full p.description { border-top: 4px solid #ddd; padding: 0.75em 0.75em 0.75em 0.75em; margin: 0; text-align: center; }
+.badge.full .metadata { border-top: 4px solid #ddd; background: #ddd; text-align: right; }
+.badge.full .metadata .creator { padding: 0.5em; margin: 0; font-size: 0.85em; }
+.badge.full .metadata .creator .fn { }
+
+ul.sections { margin-left: 375px; }
+ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
+
+#body .ui-widget { font-family: inherit; font-size: 1em; }
+
+.badge_detail .profiles { margin: 0; padding: 0; text-align: center; }
+.badge_detail .profiles li { float: left; margin: 0.25em; }
+.badge_detail .profiles li { }
+.badge_detail .profiles li .avatar { display: block; width: 100px; height: 90px; }
+.badge_detail .profiles li .avatar img { }
+.badge_detail .profiles li .fn { display: block }
+
+.badge_index .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
+.badge_index .badges li { float: left; margin: 0.25em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px;}
+.badge_index .badges li .icon { display: block; width: 100%; height: 90px; border-bottom: 4px solid #ccc; }
+.badge_index .badges li .icon img { padding: 0.25em; }
+.badge_index .badges li .name { display: block; font-weight: bold; padding: 0.25em 0.5em; background: #ccc }
+
+.badge_awards .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
+.badge_awards .badges li { float: left; margin: 0.25em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px;}
+.badge_awards .badges li .icon { display: block; width: 100%; height: 90px; border-bottom: 4px solid #ccc; }
+.badge_awards .badges li .icon img { padding: 0.25em; }
+.badge_awards .badges li .name { display: block; font-weight: bold; padding: 0.25em 0.5em; background: #ccc }
 

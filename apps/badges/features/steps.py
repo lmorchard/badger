@@ -364,6 +364,8 @@ def visit_page(path, data={}, follow=True, status_code=200, **extra):
 def find_section_in_page(section_title):
     page = scc.current_page
     section = page(':header:contains("%s")' % section_title).parent()
+    if len(section) == 0:
+        section = page('.%s' % section_title)
     ok_(len(section) > 0, "the section %s should be found" % section_title)
     return section
 

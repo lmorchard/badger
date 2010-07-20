@@ -6,11 +6,17 @@
 
 {% block body %}
 
-    <div>
+    <div class="badge_index clearfix">
         <h1>{% trans "Badges" %}</h1>
+
+        <p><a href="{% url create_badge %}">Create a new badge</a></p>
+
         <ul class="badges">
             {% for badge in badges %}
-                <li><a href="{% url badge_details badge.slug %}">{{ badge.title }}</a></li>
+                <li>
+                    <a href="{{badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
+                    <a href="{{badge.get_absolute_url}}" class="name">{{badge.title}}</a>
+                </li>
             {% endfor %}
         </ul>
     </div>

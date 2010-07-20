@@ -15,6 +15,7 @@ from badger.apps.badges.models import BadgeAward, BadgeAwardee
 from badger.apps.badges.forms import BadgeForm, BadgeNominationForm
 from badger.apps.badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def index(request):
@@ -25,6 +26,17 @@ def index(request):
         'badges': badges
     }, context_instance=RequestContext(request))
 
+import pinax.apps.profiles.views
+def profile(request, username, template_name="profiles/profile.html", extra_context=None):
+    try:
+        user = User.objects.get(username=username)
+        awardee = BadgeAwardee.objects.get(user=user)
+        awards = BadgeAward.objects.filter(awardee=awardee).all()
+    except ObjectDoesNotExist:
+        awards = []
+    return pinax.apps.profiles.views.profile(request, username, template_name, {
+        "awards": awards
+    })
 
 @login_required
 def create(request):

@@ -1,56 +1,96 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load account_tags %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load threadedcommentstags %}
 
 {% block head_title %}{% trans "Badge details" %}{% endblock %}
 
 {% block body %}
-    <h1>{% trans "Badge details" %}</h1>
+    <div class="badge_detail">
 
-    <div>
-        <div>
-            <h2>{{ badge.title }}</h2>
-            <p>{{ badge.description }}</p>
-            <p>{{ badge.creator }}</p>
+        <div class="crumbs">
+            <a href="{% url badge_index %}">Badges</a> 
+            &gt;
+            <b>{{ badge.title }}</b>
         </div>
 
-        {% if awards %}
-            <div>
-                <h3>Awarded to</h3>
-                <ul>
-                    {% for award in awards %}
-                        <li>{{ award.awardee }}</li>
-                    {% endfor %}
-                </ul>
+        <div class="badge full">
+            <h2><a href="{{badge.get_absolute_url}}">{{ badge.title }}</a></h2>
+            <div class="image"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="192" height="192" /></div>
+            <p class="description">{{ badge.description }}</p>
+            <div class="metadata">
+                <p class="creator">Created by: 
+                    <a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a></p>
             </div>
-        {% endif %}
+        </div>
 
-        {% if nominations %}
-            <div>
-                <h3>Pending nominations</h3>
-                <ul>
-                    {% for nomination in nominations %}
-                        <li><a href="{% url badge_nomination nomination.badge.slug nomination.nominee %}">{{ nomination.nominee }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
+        <ul class="sections">
 
-        <div>
-            <h3>Nominate someone for this badge</h3>
-            <form action="" method="post">
-                <fieldset><legend>Nomination details</legend>
-                    {% csrf_token %}
-                    <ul class="fields">
-                        {{nomination_form.as_ul}}
-                        <li class="submit">
-                            <button type="submit">Nominate for badge</button>
-                        </li>
+            {% if awards %}
+                <li class="awarded_to">
+                    <h3>Claimed by ({{ awards|length }})</h3>
+                    <ul class="profiles">
+                        {% for award in awards %}
+                            {% if award.awardee.user %}
+                                <li>
+                                    <a href="{{ award.awardee.user.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.awardee.user 80 %}" alt="Photo of {{ other_user }}" class="photo" /></a>
+                                    <a href="{{ award.awardee.user.get_absolute_url }}" class="fn">{{ award.awardee }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
                     </ul>
-                </fieldset>
-            </form>
-        </div>
+                </li>
+            {% endif %}
+
+            <li class="nomination_form">
+                <h3>Nominate someone for this badge</h3>
+                <form action="" method="post">
+                    <fieldset><legend>Nomination details</legend>
+                        {% csrf_token %}
+                        <ul class="fields">
+                            {{nomination_form.as_ul}}
+                            <li class="submit">
+                                <button type="submit">Nominate for badge</button>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </form>
+            </li>
+
+            {% if nominations %}
+                <li class="nominations">
+                    <h3>Pending nominations ({{ nominations|length }})</h3>
+                    <ul class="profiles">
+                        {% for nomination in nominations %}
+                            {% if nomination.nominee.user %}
+                                <li>
+                                    <a href="{{ nomination.nominee.user.get_absolute_url }}" class="avatar"><img src="{% avatar_url nomination.nominee.user 80 %}" alt="Photo of {{ other_user }}" class="photo" /></a>
+                                    <a href="{{ nomination.nominee.user.get_absolute_url }}" class="fn">{{ nomination.nominee }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
+
+        </ul>
 
     </div>
     
 {% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.sections').accordion({ 
+            'header': '> li > h3'
+        });
+    });
+</script>
+{% endblock %}
+
