@@ -63,39 +63,78 @@ def badge_details(request, badge_slug):
     """Show details on a badge"""
     badge = get_object_or_404(Badge, slug=badge_slug)
 
+    nomination_form = BadgeNominationForm()
+
     if request.method == "POST":
 
-        nomination_form = BadgeNominationForm(request.POST)
-        nomination_form.context = {"badge": badge, "nominator": request.user}
-        if nomination_form.is_valid():
-            nominee_value = nomination_form.cleaned_data['nominee']
-            badge_awardee, created = \
-                BadgeAwardee.objects.get_or_create_by_user_or_email(
-                        nominee_value)
-            nomination = badge.nominate(request.user, badge_awardee,
-                    nomination_form.cleaned_data['reason_why'])
+        try:
+            unclaimed_award = BadgeAward.objects.get(
+                    awardee__user=request.user, badge=badge)
+            if unclaimed_award.allows_claim_by(request.user):
+                
+                if request.POST.get('action_claim_award', None) is not None:
+                    unclaimed_award.claim(request.user)
+                    messages.add_message(request, messages.SUCCESS,
+                        _("badge award claimed"))
+                    return HttpResponseRedirect(reverse(
+                        'profile_detail', args=(request.user.username,)))
+                
+                elif request.POST.get('action_reject_award', None) is not None:
+                    unclaimed_award.reject(request.user)
+                    messages.add_message(request, messages.SUCCESS,
+                        _("badge award rejected"))
+                    return HttpResponseRedirect(reverse(
+                        'badger.apps.badges.views.badge_details', 
+                        args=(badge.slug,)))
 
-            messages.add_message(request, messages.SUCCESS,
-                ugettext("%s nominated for %s" % (nomination.nominee, badge)))
+                elif request.POST.get('action_ignore_award', None) is not None:
+                    unclaimed_award.ignore(request.user)
+                    messages.add_message(request, messages.SUCCESS,
+                        _("badge award ignored"))
+                    return HttpResponseRedirect(reverse(
+                        'badger.apps.badges.views.badge_details', 
+                        args=(badge.slug,)))
 
-            return HttpResponseRedirect(reverse(
-                'badger.apps.badges.views.badge_details', args=(badge.slug,)))
+        except BadgeAward.DoesNotExist:
+            pass
 
-    else:
-        nomination_form = BadgeNominationForm()
+        if request.POST.get('action_nominate', None) is not None:
+
+            nomination_form = BadgeNominationForm(request.POST)
+            nomination_form.context = {"badge": badge, "nominator": request.user}
+            if nomination_form.is_valid():
+                nominee_value = nomination_form.cleaned_data['nominee']
+                badge_awardee, created = \
+                    BadgeAwardee.objects.get_or_create_by_user_or_email(
+                            nominee_value)
+                nomination = badge.nominate(request.user, badge_awardee,
+                        nomination_form.cleaned_data['reason_why'])
+
+                messages.add_message(request, messages.SUCCESS,
+                    ugettext("%s nominated for %s" % (nomination.nominee, badge)))
+
+                return HttpResponseRedirect(reverse(
+                    'badger.apps.badges.views.badge_details', args=(badge.slug,)))
 
     if badge.allows_nomination_listing_by(request.user):
         nominations = BadgeNomination.objects.filter(badge=badge, approved=False)
     else:
         nominations = None
 
-    awards = BadgeAward.objects.filter(badge=badge)
+    awards = BadgeAward.objects.filter(badge=badge, claimed=True)
+
+    if not request.user.is_authenticated():
+        unclaimed_awards = []
+    else:
+        unclaimed_awards = BadgeAward.objects.filter(claimed=False,
+                ignored=False, badge=badge, awardee__user=request.user)
 
     return render_to_response('badges/detail.html', {
         'badge': badge,
         'nomination_form': nomination_form,
         'nominations': nominations,
-        'awards': awards
+        'awards': awards,
+        'unclaimed_awards': unclaimed_awards
     }, context_instance=RequestContext(request))
 
 

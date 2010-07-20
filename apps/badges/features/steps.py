@@ -120,6 +120,15 @@ def create_nomination(nominator_name, nominee_name, badge_title, badge_reason_wh
     )
     nomination.save()
 
+@Given(u'"(.*)" approves the nomination of "(.*)" for a badge entitled "(.*)" because "(.*)"')
+def approve_nomination(approver_name, nominee_name, badge_title, reason_why):
+    nominee_user = User.objects.get(username__exact=nominee_name)
+    nominee = BadgeAwardee.objects.get(user=nominee_user)
+    approver = User.objects.get(username__exact=approver_name)
+    badge = Badge.objects.get(title__exact=badge_title)
+    nomination = BadgeNomination.objects.get(badge=badge, nominee=nominee)
+    nomination.approve(approver, reason_why)
+
 @When(u'I go to the "(.*)" page$')
 def i_go_to_named_page(page_name):
     path = (page_name in scc.name_path_map and 
@@ -173,6 +182,9 @@ def press_form_button(button_name):
     button_value = field.val()
     if len(field) == 0:
         field = page('button:contains("%s")' % button_name)
+        button_value = field.text()
+    if len(field) == 0:
+        field = page('*[name="%s"]' % button_name)
         button_value = field.text()
     ok_(len(field) > 0, 'button "%s" should exist' % button_name)
 
@@ -238,7 +250,7 @@ def should_see_not_page_content(expected_content):
     page_content = scc.last_response.content
     try:
         pos = page_content.index(expected_content)
-        ok_(False, '"%s" should be found in page content' % expected_content)
+        ok_(False, '"%s" should NOT be found in page content' % expected_content)
     except ValueError:
         pass
 
@@ -265,6 +277,14 @@ def section_no_content_check(expected_content, section_title):
             (expected_content, section_title))
     except ValueError:
         pass
+
+@Then(u'I should see the "(.*)" section')
+def section_present_check(section_title):
+    page = scc.current_page
+    try:
+        section = find_section_in_page(section_title)
+    except:
+        ok_(False, 'did not find the "%s" section' % section_title)
 
 @Then(u'I should not see the "(.*)" section')
 def section_missing_check(section_title):
@@ -310,6 +330,25 @@ def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why
 
     eq_(badge_reason_why, nomination.reason_why)
 
+@Then(u'"(.*)" should not be nominated for the badge "(.*)"')
+def check_not_nominated(nominee_name, badge_title):
+    
+    try:
+        validators.validate_email(nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(email=nominee_name)
+    except ValidationError:
+        nominee_user = User.objects.get(username__exact=nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(user=nominee_user)
+
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    try:
+        nomination = BadgeNomination.objects.get(nominee=nominee, badge=badge)
+        ok_(False, '"%s" should not be nominated for "%s"' % 
+                (nominee_name, badge_title))
+    except BadgeNomination.DoesNotExist:
+        pass
+
 @Then(u'"(.*)" should be awarded the badge "(.*)"')
 def check_badge_award(awardee_name, badge_title):
     user = User.objects.get(username__exact=awardee_name)
@@ -319,6 +358,19 @@ def check_badge_award(awardee_name, badge_title):
     award = BadgeAward.objects.filter(
         awardee=awardee, badge=badge
     ).get()
+
+@Then(u'"(.*)" should not be awarded the badge "(.*)"')
+def check_no_badge_award(awardee_name, badge_title):
+    user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=user)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    try:
+        award = BadgeAward.objects.get(awardee=awardee, badge=badge)
+        ok_(False, '"%s" should not be awarded "%s"' % 
+                (awardee_name, badge_title))
+    except BadgeAward.DoesNotExist:
+        pass
 
 @Then(u'"(.*)" should receive a "(.*)" notification')
 def check_notifications(username, notification_name):

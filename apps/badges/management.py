@@ -37,6 +37,24 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
         _("a badge has been awarded")
     )
 
+    notification.create_notice_type(
+        "badge_award_claimed", 
+        _("Badge Award Claimed"), 
+        _("a badge award has been claimed")
+    )
+
+    notification.create_notice_type(
+        "badge_award_rejected", 
+        _("Badge Award Rejected"), 
+        _("a badge award has been rejected")
+    )
+
+    notification.create_notice_type(
+        "badge_award_ignored", 
+        _("Badge Award Ignored"), 
+        _("a badge award has been ignored")
+    )
+
 signals.post_syncdb.connect(create_notice_types, sender=notification)
 post_migrate.connect(create_notice_types, sender=notification)
 

@@ -18,6 +18,7 @@
     
     <div class="left_panel">
         <div class="vcard">
+
             <div id="profile_avatar">
                 <div><img src="{% avatar_url other_user 80 %}" alt="Photo of {{ other_user }}" class="photo" /></div>
                 {% if is_me %}
@@ -41,17 +42,20 @@
             {% if is_me %}
                 <p><a href="{% url profile_edit %}" rel="facebox">Edit profile</a></p>
             {% endif %}
-
-            <div class="badge_awards clearfix">
-                <ul class="badges">
-                    {% for award in awards %}
-                        <li>
-                            <a href="{{award.badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
-                            <a href="{{award.badge.get_absolute_url}}" class="name">{{award.badge.title}}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+        
+            {% if awards %}
+                <div class="badge_awards clearfix">
+                    <h2>Badges claimed</h2>
+                    <ul class="badges">
+                        {% for award in awards %}
+                            <li>
+                                <a href="{{award.badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
+                                <a href="{{award.badge.get_absolute_url}}" class="name">{{award.badge.title}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
             
             {% if user.is_authenticated %}
                 

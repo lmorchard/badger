@@ -21,10 +21,12 @@ Feature: Approving and rejecting badge awards
         Then I should see a page whose title contains "Badge nomination"
         When I press "Approve"
         Then I should see a page whose title contains "Badge detail"
-            And I should see "user3" somewhere in the "awarded_to" section
             And I should not see the "nominations" section
             And "user3" should be awarded the badge "Nifty badge"
             And "user3" should receive a "Badge Awarded" notification
+        Given I am logged in as "user3"
+            And I go to the "badge detail" page for "Nifty badge"
+        Then I should see the "claim_badge" section
 
     Scenario: User must be badge creator to approve a nomination
         Given "user1" creates a badge entitled "Nifty badge"

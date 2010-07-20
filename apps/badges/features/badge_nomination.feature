@@ -56,10 +56,12 @@ Feature: Nominating people for badges
             And I fill in "Reason why" with "user3 is awesome"
             And I press "Nominate for badge"
         Then I should see no form validation errors
-            And I should see "user3" somewhere in the "awarded_to" section
             And "user3" should be nominated by "user2" for badge "Ultimate badge" because "user3 is awesome"
             And "user3" should be awarded the badge "Ultimate badge"
             And "user3" should receive a "Badge Awarded" notification
+        Given I am logged in as "user3"
+            And I go to the "badge detail" page for "Ultimate badge"
+        Then I should see the "claim_badge" section
 
     Scenario: Someone is nominated twice for the same badge
         Given "user1" creates a badge entitled "Ultimate badge"

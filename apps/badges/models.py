@@ -144,9 +144,10 @@ class BadgeNomination(models.Model):
         related_name="nominee", verbose_name=_("nominee"))
     nominator = models.ForeignKey(User, related_name="nominator",
         verbose_name=_("nominator"))
+    reason_why = models.TextField(blank=False, default='')
     approved = models.BooleanField(default=False)
     approved_by = models.ForeignKey(User, null=True)
-    reason_why = models.TextField(blank=False)
+    approved_why = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
@@ -155,6 +156,10 @@ class BadgeNomination(models.Model):
 
     def __unicode__(self):
         return '%s nominated for %s' % (self.nominee, self.badge.title)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('badge_nomination', [self.badge.slug, self.nominee]) 
 
     def allows_viewing_by(self, user):
         if user.is_staff or user.is_superuser:
@@ -243,6 +248,12 @@ class BadgeAward(models.Model):
     badge = models.ForeignKey(Badge)
     nomination = models.ForeignKey(BadgeNomination)
     awardee = models.ForeignKey(BadgeAwardee, verbose_name=_("awardee"))
+    claimed = models.BooleanField(_('Award claimed?'), 
+        default=False, help_text=_('If checked, the badge award is claimed.'))
+    ignored = models.BooleanField(_('Award ignored?'), 
+        default=False, help_text=_('If checked, the badge award is ignored.'))
+    hidden = models.BooleanField(_('Badge hidden?'), 
+        default=False, help_text=_('If checked, the badge award will be invisible.'))
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
@@ -252,6 +263,48 @@ class BadgeAward(models.Model):
     def save(self, **kwargs):
         self.updated_at = datetime.now()
         super(BadgeAward, self).save(**kwargs)
+
+    def allows_claim_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.awardee.user:
+            return True
+        return False
+
+    def claim(self, whom_by):
+        self.claimed = True
+        self.save()
+
+        if notification:
+            recipients = [self.awardee.user, self.nomination.nominator, 
+                    self.badge.creator]
+            notification.send(recipients, 'badge_award_claimed', 
+                    {"award": self})
+
+    def reject(self, whom_by):
+        if notification:
+            recipients = [self.awardee.user, self.nomination.nominator, 
+                    self.badge.creator]
+            notification.send(recipients, 'badge_award_rejected', 
+                    {"award": self})
+
+        self.nomination.delete()
+        self.delete()
+
+    def ignore(self, whom_by):
+        self.ignored = True
+        self.save()
+
+        if notification:
+            recipients = [self.awardee.user]
+            notification.send(recipients, 'badge_award_ignored', 
+                    {"award": self})
+
+    def hide(self):
+        pass
+
+    def show(self):
+        pass
 
 
 # handle notification of new comments
