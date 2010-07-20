@@ -1,6 +1,6 @@
 tmp/
 src/
-site_media/media/
+site_media/
 pip-log.txt
 local_settings.py
 *.pyc
