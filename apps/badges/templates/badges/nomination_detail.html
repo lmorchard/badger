@@ -19,7 +19,7 @@
 
         <form action="" method="POST" id="nomination-form" class="uniForm">
             {% csrf_token %}
-            <fieldset class="inlineLabels"><legend>Nomination decision</legend>
+            <fieldset class="inlineLabels">
                 {{ decision_form|as_uni_form }}
                 <div class="form_block">
                     {% if permissions.approval %}

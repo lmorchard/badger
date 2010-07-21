@@ -10,10 +10,11 @@
 
     <form action="" method="POST" id="badge-form" class="uniForm">
         {% csrf_token %}
-        <fieldset class="inlineLabels"><legend>Badge details</legend>
+        <fieldset class="inlineLabels">
             {{ form|as_uni_form }}
             <div class="form_block">
-                <button type="submit">{% trans "Create" %}</button>
+                <input type="submit" name="action_create" 
+                    value="{% trans "Create" %}" />
             </div>
         </fieldset>
     </form>

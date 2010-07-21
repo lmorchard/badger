@@ -5,6 +5,7 @@ body { font-family: "Comic Sans MS"; font-size: 13px; }
 body #body button { 
     font-family: "Comic Sans MS"; font-size: 1.125em; font-weight: bold; 
     padding: 0.5em 1em 0.5em 1em;
+    margin: 5px;
     border: 1px solid #999;
     cursor: pointer;
 }
@@ -35,37 +36,11 @@ div.groups, div.friends { background: #ddd }
 #body .crumbs { margin: -10px 0 1em 0 }
 #footer { width: auto; padding: 20px 30px 20px 30px }
 
-ul.form_row { padding: 0 0 0 0; margin: 0 0 0 0; }
-ul.form_row li { list-style: none; display: inline; }
-ul.form_row li form { display: inline; }
-
-form fieldset { margin: 0.5em; border: 1px solid #ccc; }
-form fieldset legend { font-weight: bold; font-size: 0.95em; }
-form ul.fields { padding: 0; margin: 0 }
-form ul.fields li { 
-    list-style: none; 
-    clear: both;
-    margin: 0.5em 0 0.5em 0;
-    position: relative;
-}
-form ul.fields li p.help { margin: -0.125em 0 0 16ex; color: #999; }
-form ul.fields li ul.errorlist { margin: -0.125em 0 0 16ex; }
-form ul.fields li label { 
-    width: 15ex;
-    padding: 0.5em 0.25em 0 0;
-    float: left;
-    text-align: right;
-}
-form ul.fields li input[type=checkbox] { width: 2em; height: 2em; }
-form ul.fields li input[type=text] { width: 48ex; }
-form ul.fields li textarea { height: 8em; }
-
-form ul.fields li.submit { padding: 1em 0 0 16ex; }
-form fieldset.wide_fields { }
-form fieldset.wide_fields ul.fields li ul.errorlist { margin: -0.125em 0 0 24ex; }
-form fieldset.wide_fields ul.fields li p.help { margin: -0.125em 0 0 24ex; }
-form fieldset.wide_fields ul.fields li label { width: 22ex; }
-form fieldset.wide_fields ul.fields li.submit { padding: 1em 0 0 23ex; }
+form.uniForm fieldset.inlineLabels label { width: 26ex; text-align: right; margin-right: 1ex}
+form.uniForm fieldset.inlineLabels .formHint { margin-left: 31ex; }
+body #body form.uniForm fieldset.inlineLabels .form_block button:first-child { margin-left: 25.5ex; }
+form.uniForm fieldset.inlineLabels .form_block input[type="submit"]:first-child { margin-left: 19.5ex; }
+form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:14pt; margin:20px 0; }
 
 .badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; float: left; }
 .badge.full h2 { margin: 0; padding: 0.25em 0 0.25em 0; text-align: center; background: #ddd; }

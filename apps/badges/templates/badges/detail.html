@@ -38,7 +38,7 @@
                         {% csrf_token %}
                         <fieldset>
                             <p>You are eligible to claim this badge! What would you like to do about it?</p>
-                            <div class="form_block">
+                            <div>
                                 <button type="submit" name="action_claim_award">Claim</button>
                                 <button type="submit" name="action_reject_award">Reject</button>
                                 <button type="submit" name="action_ignore_award">Ignore</button>
@@ -68,10 +68,10 @@
                 <h3>Nominate someone for this badge</h3>
                 <form action="" method="POST" id="nomination-form" class="uniForm">
                     {% csrf_token %}
-                    <fieldset class="inlineLabels"><legend>Nomination details</legend>
+                    <fieldset class="inlineLabels">
                         {{ nomination_form|as_uni_form }}
                         <div class="form_block">
-                            <button type="submit" name="action_nominate">Nominate for badge</button>
+                            <input type="submit" name="action_nominate" value="Nominate for badge" />
                         </div>
                     </fieldset>
                 </form>
