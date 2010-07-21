@@ -34,17 +34,15 @@
             {% if unclaimed_awards %}
                 <li class="claim_badge">
                     <h3>Claim this badge</h3>
-                    <form action="" method="post">
-                        <fieldset><legend>Claim decision</legend>
-                            {% csrf_token %}
+                    <form action="" method="POST" id="nomination-claim-form" class="uniForm">
+                        {% csrf_token %}
+                        <fieldset>
                             <p>You are eligible to claim this badge! What would you like to do about it?</p>
-                            <ul class="fields">
-                                <li class="submit">
-                                    <button type="submit" name="action_claim_award">Claim</button>
-                                    <button type="submit" name="action_reject_award">Reject</button>
-                                    <button type="submit" name="action_ignore_award">Ignore</button>
-                                </li>
-                            </ul>
+                            <div class="form_block">
+                                <button type="submit" name="action_claim_award">Claim</button>
+                                <button type="submit" name="action_reject_award">Reject</button>
+                                <button type="submit" name="action_ignore_award">Ignore</button>
+                            </div>
                         </fieldset>
                     </form>
                 </li>
@@ -68,15 +66,13 @@
 
             <li class="nomination_form">
                 <h3>Nominate someone for this badge</h3>
-                <form action="" method="post">
-                    <fieldset><legend>Nomination details</legend>
-                        {% csrf_token %}
-                        <ul class="fields">
-                            {{nomination_form.as_ul}}
-                            <li class="submit">
-                                <button type="submit" name="action_nominate">Nominate for badge</button>
-                            </li>
-                        </ul>
+                <form action="" method="POST" id="nomination-form" class="uniForm">
+                    {% csrf_token %}
+                    <fieldset class="inlineLabels"><legend>Nomination details</legend>
+                        {{ nomination_form|as_uni_form }}
+                        <div class="form_block">
+                            <button type="submit" name="action_nominate">Nominate for badge</button>
+                        </div>
                     </fieldset>
                 </form>
             </li>
@@ -110,8 +106,7 @@
         $('.sections').accordion({ 
             'header': '> li > h3',
             'active': (errors.length == 0) ?
-                '.sections li:first h3' : 
-                '.sections .nomination_form h3'
+                '.sections li:first h3' : '.sections .nomination_form h3'
         });
     });
 </script>

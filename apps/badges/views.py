@@ -27,11 +27,12 @@ def index(request):
     }, context_instance=RequestContext(request))
 
 import pinax.apps.profiles.views
-def profile(request, username, template_name="profiles/profile.html", extra_context=None):
+def profile(request, username, template_name="profiles/profile.html", 
+        extra_context=None):
     try:
         user = User.objects.get(username=username)
         awardee = BadgeAwardee.objects.get(user=user)
-        awards = BadgeAward.objects.filter(awardee=awardee).all()
+        awards = BadgeAward.objects.filter(awardee=awardee, claimed=True).all()
     except ObjectDoesNotExist:
         awards = []
     return pinax.apps.profiles.views.profile(request, username, template_name, {

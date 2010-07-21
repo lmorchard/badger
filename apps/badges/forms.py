@@ -9,7 +9,7 @@ from badger.apps.badges.models import Badge, BadgeNomination
 from badger.apps.badges.models import BadgeAwardee, BadgeAward
 from django.core import validators
 from django.core.exceptions import ValidationError
-
+from uni_form.helpers import FormHelper, Submit, Reset
 
 class MyModelForm(forms.ModelForm):
     def as_ul(self):
@@ -34,6 +34,7 @@ class MyForm(forms.Form):
 
 
 class BadgeForm(MyModelForm):
+
     class Meta:
         model = Badge
         fields = ('title', 'description', 'autoapprove', 'tags')

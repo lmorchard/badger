@@ -11,6 +11,7 @@ from pyquery import PyQuery
 from django.test.client import Client
 from django.core import validators
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from nose.tools import assert_equal, with_setup, assert_false, eq_, ok_
 from django.contrib.auth.models import User
 from pinax.apps.profiles.models import Profile
@@ -222,15 +223,21 @@ def click_link_in_section(link_content, section_title):
     path = link.attr('href')
     page = visit_page(path)
 
+@When(u'I go to the profile page for "(.*)"')
+def visit_profile_page(user_name):
+    visit_page(reverse('profile_detail', args=[user_name]))
+
 @Then(u'I should see no form validation errors')
 def should_see_no_form_validation_errors():
-    error_lists = scc.current_page('ul.errorlist')
-    eq_(0, len(error_lists), 'there should be no error lists')
+    error_fields = scc.current_page('.errorField')
+    eq_(0, len(error_fields), 'there should be no error fields')
+    eq_(0, len(scc.current_page('#errorMsg')), 'there should be no error msg')
     
 @Then(u'I should see form validation errors')
 def should_see_form_validation_errors():
-    error_lists = scc.current_page('ul.errorlist')
-    ok_(len(error_lists) > 0, 'there should be one or more error lists')
+    error_fields = scc.current_page('.errorField')
+    ok_(len(error_fields) > 0 or len(scc.current_page('#errorMsg')) > 0, 
+            'there should be one or more error fields')
 
 @Then(u'I should see a status code of "(.*)"')
 def status_code_check(expected_code):

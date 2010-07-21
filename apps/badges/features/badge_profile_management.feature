@@ -47,6 +47,9 @@ Feature: Managing badge awards on a user profile
             And "user3" should not be nominated for the badge "Nifty badge"
             And I should not see the "claimed_by" section
             And I should not see "Claim this badge" anywhere on the page
+        When I go to the profile page for "user3"
+        Then I should not see "Nifty badge" anywhere on the page
+
 
     Scenario: Badge awardee ignores an award
         Given "user1" creates a badge entitled "Nifty badge"
@@ -62,6 +65,8 @@ Feature: Managing badge awards on a user profile
             And I should not see "Claim this badge" anywhere on the page
             And "user3" should be awarded the badge "Nifty badge"
             And "user3" should be nominated by "user2" for badge "Nifty badge" because "user3 is Nifty"
+        When I go to the profile page for "user3"
+        Then I should not see "Nifty badge" anywhere on the page
 
     @TODO
     Scenario: Badge awardee has chosen to auto-accept awards

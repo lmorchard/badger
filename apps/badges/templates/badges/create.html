@@ -1,21 +1,21 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-{% load ifsetting_tag %}
+{% load uni_form_tags %}
 
 {% block head_title %}{% trans "Create a badge" %}{% endblock %}
 
 {% block body %}
     <h1>{% trans "Create a badge" %}</h1>
 
-    <form action="" method="post">
+    <form action="" method="POST" id="badge-form" class="uniForm">
         {% csrf_token %}
-        <fieldset class="wide_fields"><legend>Badge details</legend>
-            <ul class="fields">
-                {{form.as_ul}}
-                <li class="submit"><button type="submit">Create</button></li>
-            </ul>
+        <fieldset class="inlineLabels"><legend>Badge details</legend>
+            {{ form|as_uni_form }}
+            <div class="form_block">
+                <button type="submit">{% trans "Create" %}</button>
+            </div>
         </fieldset>
     </form>
-    
+
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load uni_form_tags %}
 
 {% block head_title %}{% trans "Badge nomination" %}{% endblock %}
 
@@ -16,20 +17,18 @@
             "{{ nomination.badge.title }}"
         </p>
 
-        <form action="" method="post">
-            <fieldset><legend>Nomination decision</legend>
-                {% csrf_token %}
-                <ul class="fields">
-                    {{decision_form.as_ul}}
-                    <li class="submit">
-                        {% if permissions.approval %}
-                            <button type="submit" name="action_approve">Approve</button>
-                        {% endif %}
-                        {% if permissions.rejection %}
-                            <button type="submit" name="action_reject">Reject</button>
-                        {% endif %}
-                    </li>
-                </ul>
+        <form action="" method="POST" id="nomination-form" class="uniForm">
+            {% csrf_token %}
+            <fieldset class="inlineLabels"><legend>Nomination decision</legend>
+                {{ decision_form|as_uni_form }}
+                <div class="form_block">
+                    {% if permissions.approval %}
+                        <button type="submit" name="action_approve">Approve</button>
+                    {% endif %}
+                    {% if permissions.rejection %}
+                        <button type="submit" name="action_reject">Reject</button>
+                    {% endif %}
+                </div>
             </fieldset>
         </form>
 
