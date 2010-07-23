@@ -200,9 +200,10 @@ def press_form_button(button_name):
     if not form_method: 
         form_method = 'post'
 
-    # Scoop up hidden fields into current form.
-    for field in form.find('input[type=hidden]'):
-        name, value = field.name, field.value
+    for field in form.find('input,textarea,select'):
+        p_field = PyQuery(field)
+        name, value = p_field.attr('name'), p_field.val()
+        if value is None: value = ''
         if name not in scc.current_form:
             scc.current_form[name] = value
 
@@ -218,7 +219,9 @@ def press_form_button(button_name):
 def click_link_in_section(link_content, section_title):
     page = scc.current_page
     section = find_section_in_page(section_title)
-    link = section.find('a:contains("%s")' % link_content)
+    link = section.find('a.%s' % link_content)
+    if len(link) == 0:
+        link = section.find('a:contains("%s")' % link_content)
     ok_(len(link) > 0, 'link "%s" should be found in section "%s"' % (link_content, section_title))
     path = link.attr('href')
     page = visit_page(path)
@@ -236,8 +239,10 @@ def should_see_no_form_validation_errors():
 @Then(u'I should see form validation errors')
 def should_see_form_validation_errors():
     error_fields = scc.current_page('.errorField')
-    ok_(len(error_fields) > 0 or len(scc.current_page('#errorMsg')) > 0, 
-            'there should be one or more error fields')
+    cond = len(error_fields) > 0 or len(scc.current_page('#errorMsg')) > 0
+    if not cond:
+        glc.log.debug("FORM CONTENT %s" % scc.last_response.content)
+    ok_(cond, 'there should be one or more error fields')
 
 @Then(u'I should see a status code of "(.*)"')
 def status_code_check(expected_code):
@@ -317,6 +322,14 @@ def page_title_should_contain(expected_title):
     if not cond:
         glc.log.debug("PAGE CONTENT: %s", scc.last_response.content)
     ok_(cond, '"%s" should be found in page title' % expected_title)
+
+@Then(u'there should be no badge "(.*)"')
+def badge_missing_check(badge_title):
+    try:
+        badge = Badge.objects.get(title__exact=badge_title)
+        ok_(False, 'the badge "%s" should not exist' % badge_title)
+    except Badge.DoesNotExist:
+        pass
 
 @Then(u'"(.*)" should be nominated by "(.*)" for badge "(.*)" because "(.*)"')
 def check_nomination(nominee_name, nominator_name, badge_title, badge_reason_why):
@@ -429,9 +442,9 @@ def visit_page(path, data={}, follow=True, status_code=200, **extra):
 
 def find_section_in_page(section_title):
     page = scc.current_page
-    section = page(':header:contains("%s")' % section_title).parent()
+    section = page('.%s' % section_title)
     if len(section) == 0:
-        section = page('.%s' % section_title)
+        section = page(':header:contains("%s")' % section_title).parent()
     ok_(len(section) > 0, "the section %s should be found" % section_title)
     return section
 

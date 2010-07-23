@@ -29,6 +29,7 @@
             <div class="metadata">
                 <p class="creator">Created by: 
                     <a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a></p>
+                    {% if permissions.editing %}<a class="edit_badge" href="{% url badge_edit badge.slug %}">Edit</a>{% endif %}
             </div>
         </div>
 

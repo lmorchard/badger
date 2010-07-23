@@ -51,6 +51,9 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
 .badge.full .metadata .creator { padding: 0.5em; margin: 0; font-size: 0.85em; }
 .badge.full .metadata .creator .fn { }
 
+.badge_detail .badge { position: relative; }
+.badge_detail .badge .edit_badge { position: absolute; right: 5px; top: 2px; background: #fff; padding: 2px 5px; font-size: 0.9em; display: block }
+
 ul.sections { margin-left: 375px; }
 ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 

@@ -68,6 +68,13 @@ class Badge(models.Model):
     def get_absolute_url(self):
         return ('badge_details', [self.slug]) 
 
+    def allows_editing_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.creator:
+            return True
+        return False
+
     def allows_nomination_listing_by(self, user):
         if user.is_staff or user.is_superuser:
             return True

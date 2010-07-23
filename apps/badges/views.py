@@ -70,12 +70,50 @@ def create(request):
         'form': form
     }, context_instance=RequestContext(request))
 
+@login_required
+def edit(request, badge_slug):
+    badge = get_object_or_404(Badge, slug=badge_slug)
+
+    perms = {
+        'editing': badge.allows_editing_by(request.user)
+    }
+
+    if not perms['editing']:
+        return HttpResponseForbidden(_('access denied'))
+
+    if request.method == "POST":
+        form = BadgeForm(request.POST, instance=badge)
+        if form.is_valid():
+            new_badge = form.save(commit=False)
+            new_badge.creator = request.user
+            new_badge.slug = slugify(new_badge.title)
+            if 'main_image' in request.FILES:
+                path = badge_file_path(slug=new_badge.slug, 
+                    filename=hashlib.md5(request.FILES['main_image'].name).hexdigest())
+                new_badge.main_image = path
+                new_file = new_badge.main_image.storage.save(path, 
+                    request.FILES['main_image'])
+            new_badge.save()
+            return HttpResponseRedirect(reverse(
+                'badger.apps.badges.views.badge_details',
+                args=(new_badge.slug,)
+            ))
+    else:
+        form = BadgeForm(instance=badge)
+
+    return render_to_response('badges/edit.html', {
+        'form': form
+    }, context_instance=RequestContext(request))
 
 def badge_details(request, badge_slug):
     """Show details on a badge"""
     badge = get_object_or_404(Badge, slug=badge_slug)
 
     nomination_form = BadgeNominationForm()
+
+    perms = {
+        'editing': badge.allows_editing_by(request.user)
+    }
 
     if request.method == "POST":
 
@@ -146,6 +184,7 @@ def badge_details(request, badge_slug):
         'nomination_form': nomination_form,
         'nominations': nominations,
         'awards': awards,
+        'permissions': perms,
         'unclaimed_awards': unclaimed_awards
     }, context_instance=RequestContext(request))
 

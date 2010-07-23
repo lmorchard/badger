@@ -1,0 +1,22 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}{% trans "Badge edit" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Edit badge" %}</h1>
+
+    <form enctype="multipart/form-data" action="" method="POST" id="badge-form" class="uniForm">
+        {% csrf_token %}
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+            <div class="form_block">
+                <input type="submit" name="action_save" 
+                    value="{% trans "Save" %}" />
+            </div>
+        </fieldset>
+    </form>
+
+{% endblock %}
