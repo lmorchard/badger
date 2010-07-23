@@ -63,7 +63,9 @@ Feature: Nominating people for badges
             And I go to the "badge detail" page for "Ultimate badge"
         Then I should see the "claim_badge" section
 
+    @TODO
     Scenario: Someone is nominated twice for the same badge
+        Given in progress
         Given "user1" creates a badge entitled "Ultimate badge"
             And I am logged in as "user2"
             And I go to the "badge detail" page for "Ultimate badge"
@@ -80,6 +82,12 @@ Feature: Nominating people for badges
             And I fill in "Reason why" with "user3 is awesome"
             And I press "Nominate for badge"
         Then I should see form validation errors
+
+    @TODO
+    Scenario: A badge can be set to allow multiple nominations and awards
+        # Actually, maybe I should allow multiple nominations / awards of the
+        # same badge and collapse the duplicates with a list of nominators.
+        Given in progress
 
     Scenario: User must be badge creator to see nominations listed
         Given "user1" creates a badge entitled "Nifty badge"

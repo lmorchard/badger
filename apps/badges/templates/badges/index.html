@@ -1,5 +1,7 @@
 {% extends "site_base.html" %}
 
+{% load badge_tags %}
+
 {% load i18n %}
 
 {% block head_title %}{% trans "Badge details" %}{% endblock %}
@@ -14,7 +16,7 @@
         <ul class="badges">
             {% for badge in badges %}
                 <li>
-                    <a href="{{badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
+                    <a href="{{badge.get_absolute_url}}" class="icon">{% badge_image badge 80 %}</a>
                     <a href="{{badge.get_absolute_url}}" class="name">{{badge.title}}</a>
                 </li>
             {% endfor %}

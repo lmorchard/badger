@@ -1,9 +1,12 @@
 """Models for the badge application"""
+import os
+import os.path
 from datetime import datetime
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.files.base import ContentFile
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -16,6 +19,23 @@ from tagging.models import Tag
 from notification import models as notification
 from mailer import send_mail
 
+from badger.apps.badges import BADGE_STORAGE_DIR, BADGE_RESIZE_METHOD
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+try:
+    from PIL import Image
+except ImportError:
+    import Image
+
+
+def badge_file_path(instance=None, filename=None, slug=None):
+    slug = slug or instance.slug
+    return os.path.join(BADGE_STORAGE_DIR, slug, filename)
+
 
 class Badge(models.Model):
     """Badge model"""
@@ -23,6 +43,11 @@ class Badge(models.Model):
         blank=False, unique=True)
     slug = models.SlugField(_("slug"), blank=False, unique=True)
     description = models.TextField(_("description"), blank=False)
+    main_image = models.ImageField(_("main image"),
+            max_length=1024, upload_to=badge_file_path, 
+            blank=True, null=True,
+            help_text=_('Main image for badge; should be square and 256x256 ' +
+                    'or larger; will be automatically resized and cropped'))
     tags = TagField()
     autoapprove = models.BooleanField(_('Approve all nominations?'), 
         default=False, 
@@ -49,6 +74,42 @@ class Badge(models.Model):
         if user == self.creator:
             return True
         return False
+
+    def thumbnail_exists(self, size):
+        if not self.main_image or not self.main_image.name:
+            return False
+        return self.main_image.storage.exists(self.main_image_name(size))
+    
+    def create_thumbnail(self, size):
+        try:
+            orig = self.main_image.storage.open(self.main_image.name, 'rb').read()
+            image = Image.open(StringIO(orig))
+        except IOError:
+            return # What should we do here?  Render a "sorry, didn't work" img?
+        (w, h) = image.size
+        if w != size or h != size:
+            if w > h:
+                diff = (w - h) / 2
+                image = image.crop((diff, 0, w - diff, h))
+            else:
+                diff = (h - w) / 2
+                image = image.crop((0, diff, w, h - diff))
+            image = image.resize((size, size), BADGE_RESIZE_METHOD)
+            if image.mode != "RGB":
+                image = image.convert("RGB")
+            thumb = StringIO()
+            image.save(thumb, "JPEG")
+            thumb_file = ContentFile(thumb.getvalue())
+        else:
+            thumb_file = ContentFile(orig)
+        thumb = self.main_image.storage.save(self.main_image_name(size), thumb_file)
+    
+    def main_image_url(self, size=256):
+        return self.main_image.storage.url(self.main_image_name(size))
+    
+    def main_image_name(self, size):
+        return os.path.join(BADGE_STORAGE_DIR, self.slug,
+            'resized', str(size), self.main_image.name)
 
     def nominate(self, nominator, nominee, reason_why):
         try:

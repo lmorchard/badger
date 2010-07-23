@@ -37,7 +37,7 @@ class BadgeForm(MyModelForm):
 
     class Meta:
         model = Badge
-        fields = ('title', 'description', 'autoapprove', 'tags')
+        fields = ('title', 'description', 'main_image', 'autoapprove', 'tags')
 
 
 def username_or_email_validator(value):

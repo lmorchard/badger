@@ -1,9 +1,12 @@
+import hashlib
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -12,6 +15,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from badger.apps.badges.models import Badge, BadgeNomination
 from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from badger.apps.badges.models import badge_file_path
 from badger.apps.badges.forms import BadgeForm, BadgeNominationForm
 from badger.apps.badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
@@ -47,6 +51,13 @@ def create(request):
         if form.is_valid():
             new_badge = form.save(commit=False)
             new_badge.creator = request.user
+            new_badge.slug = slugify(new_badge.title)
+            if 'main_image' in request.FILES:
+                path = badge_file_path(slug=new_badge.slug, 
+                    filename=hashlib.md5(request.FILES['main_image'].name).hexdigest())
+                new_badge.main_image = path
+                new_file = new_badge.main_image.storage.save(path, 
+                    request.FILES['main_image'])
             new_badge.save()
             return HttpResponseRedirect(reverse(
                 'badger.apps.badges.views.badge_details',

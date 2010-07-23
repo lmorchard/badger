@@ -8,7 +8,7 @@
 {% block body %}
     <h1>{% trans "Create a badge" %}</h1>
 
-    <form action="" method="POST" id="badge-form" class="uniForm">
+    <form enctype="multipart/form-data" action="" method="POST" id="badge-form" class="uniForm">
         {% csrf_token %}
         <fieldset class="inlineLabels">
             {{ form|as_uni_form }}

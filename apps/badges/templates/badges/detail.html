@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load account_tags %}
 {% load avatar_tags %}
+{% load badge_tags %}
 {% load uni_form_tags %}
 {% load group_tags %}
 {% load tagging_tags %}
@@ -21,7 +22,9 @@
 
         <div class="badge full">
             <h2><a href="{{badge.get_absolute_url}}">{{ badge.title }}</a></h2>
-            <div class="image"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="192" height="192" /></div>
+            <div class="image">
+                {% badge_image badge 256 %}
+            </div>
             <p class="description">{{ badge.description }}</p>
             <div class="metadata">
                 <p class="creator">Created by: 

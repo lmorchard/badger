@@ -73,6 +73,10 @@ Feature: Managing badge awards on a user profile
         Given in progress
 
     @TODO
+    Scenario: Badge awardee chooses to auto-accept awards in the future
+        Given in progress
+
+    @TODO
     Scenario: Badge awardee decides to hide an award after accepting it
         Given in progress
 
