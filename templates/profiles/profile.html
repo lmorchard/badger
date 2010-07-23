@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load account_tags %}
 {% load avatar_tags %}
+{% load badge_tags %}
 {% load uni_form_tags %}
 {% load group_tags %}
 {% load tagging_tags %}
@@ -49,7 +50,7 @@
                     <ul class="badges">
                         {% for award in awards %}
                             <li>
-                                <a href="{{award.badge.get_absolute_url}}" class="icon"><img src="{{ STATIC_URL }}img/example-badge.jpg" width="80" height="80" /></a>
+                                <a href="{{award.badge.get_absolute_url}}" class="icon">{% badge_image award.badge 80 %}</a>
                                 <a href="{{award.badge.get_absolute_url}}" class="name">{{award.badge.title}}</a>
                             </li>
                         {% endfor %}

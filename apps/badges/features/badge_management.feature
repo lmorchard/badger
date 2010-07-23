@@ -41,4 +41,4 @@ Feature: Badge creation and management
         And I fill in "Description" with "This is an awesome badge for awesome testers"
         And I fill in "Main image" with "garbage"
         # Ugh. Stumped here on how to actually test an image upload.
-        # This only checks the presence of the field.
+        # This only checks for the presence of the field.

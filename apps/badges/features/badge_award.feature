@@ -86,3 +86,6 @@ Feature: Approving and rejecting badge awards
         Given I am logged in as "user3"
         When I press "Reject"
         Then I should see a status code of "200"
+
+    @TODO
+    Scenario: Badge awards should be browsable at a unique URL

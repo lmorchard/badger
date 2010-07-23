@@ -85,8 +85,7 @@ Feature: Managing badge awards on a user profile
         Given in progress
 
     @TODO
-    @maybe
-    Scenario: User wants to claim a previously ignored badge
+    Scenario: User wants to claim a previously ignored badge award
         # Rejection deletes the award, but ignore just hides it
         # Provide a way to undo the ignore decision?
         # A link in "award ignored" notification leads back to the hidden award
