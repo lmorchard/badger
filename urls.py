@@ -10,8 +10,6 @@ from tagging.models import TaggedItem
 
 from pinax.apps.account.openid_consumer import PinaxConsumer
 from pinax.apps.topics.models import Topic
-from pinax.apps.tribes.models import Tribe
-
 
 
 handler500 = "pinax.views.server_error"
@@ -41,7 +39,6 @@ urlpatterns = patterns("",
     (r"^notices/", include("notification.urls")),
     (r"^messages/", include("messages.urls")),
     (r"^announcements/", include("announcements.urls")),
-    (r"^tribes/", include("pinax.apps.tribes.urls")),
     (r"^comments/", include("threadedcomments.urls")),
     (r"^robots.txt$", include("robots.urls")),
     (r"^i18n/", include("django.conf.urls.i18n")),
@@ -64,9 +61,6 @@ urlpatterns = patterns("",
 tagged_models = (
     dict(title="Topics",
         query=lambda tag: TaggedItem.objects.get_by_model(Topic, tag),
-    ),
-    dict(title="Tribes",
-        query=lambda tag: TaggedItem.objects.get_by_model(Tribe, tag),
     ),
 )
 tagging_ext_kwargs = {
