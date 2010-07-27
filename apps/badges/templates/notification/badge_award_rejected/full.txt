@@ -1,0 +1,1 @@
+{% load i18n %}{% load account_tags %}{% load badge_tags %}{% awardee_display award.awardee as awardee_display %}{% blocktrans with award.badge.title as badge_title %}{{ awardee_display }} has declined to accept the badge "{{ badge_title }}"{% endblocktrans %}

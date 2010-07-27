@@ -1,2 +1,9 @@
-{{rejected_by}} has rejected {{nomination.nominator}}'s nomination of {{nomination.nominee}} to be awarded the badge "{{nomination.badge.title}}" because "{{reason_why}}"
-
+{% load i18n %}
+{% load account_tags %}
+{% load badge_tags %}
+{% user_display rejected_by as rejected_by_display %}
+{% user_display nomination.nominator as nominator_display %}
+{% awardee_display nominee as nominee_display %}
+{% url profile_detail username=rejected_by.username as rejected_by_url %}
+{% url profile_detail username=nomination.nominator.username as nominator_url %}
+{% blocktrans with nominee.get_absolute_url as nominee_url and nominee.display as nominee_display and nomination.get_absolute_url as nomination_url and nomination.badge.get_absolute_url as badge_url and nomination.badge.title as badge_title %}<a href="{{ rejected_by_url }}">{{ rejected_by_display }}</a> has rejected <a href="{{ nominator_url }}">{{ nominator_display }}</a>'s nomination of <a href="{{ nominee_url }}">{{ nominee_display }}</a> for the badge <a href="{{ badge_url }}">{{ badge_title }}</a> because "{{ reason_why }}".{% endblocktrans %}

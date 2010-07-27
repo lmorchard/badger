@@ -1,1 +1,7 @@
-{{nomination.nominator}} has nominated <strong>you</strong> to be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"
+{% load i18n %}
+{% load account_tags %}
+{% load badge_tags %}
+{% awardee_display nomination.nominee as nominee_display %}
+{% user_display nomination.nominator as nominator_display %}
+{% url profile_detail username=nomination.nominator.username as nominator_url %}
+{% blocktrans with nomination.awardee.get_absolute_url as nominee_url and nominee.display as nominee_display and nomination.get_absolute_url as nomination_url and nomination.badge.get_absolute_url as badge_url and nomination.badge.get_absolute_url as award_url and nomination.badge.title as badge_title and nomination.reason_why as reason_why %}<a href="{{ nominator_url }}">{{ nominator_display }}</a> has nominated <strong>you</strong> for the badge <a href="{{ badge_url }}">{{ badge_title }}</a> because "<a href="{{ nomination_url }}">{{ reason_why }}</a>".{% endblocktrans %}

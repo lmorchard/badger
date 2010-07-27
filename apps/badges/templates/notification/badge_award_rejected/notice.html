@@ -1,1 +1,5 @@
-{{ award.awardee }} has rejected the badge "{{ award.badge.title }}"
+{% load i18n %}
+{% load account_tags %}
+{% load badge_tags %}
+{% awardee_display award.awardee as awardee_display %}
+{% blocktrans with award.awardee.get_absolute_url as awardee_url and award.awardee.display as awardee_display and award.badge.get_absolute_url as badge_url and award.badge.title as badge_title %}<a href="{{ awardee_url }}">{{ awardee_display }}</a> has declined to accept the badge <a href="{{ badge_url }}">{{ badge_title }}</a>.{% endblocktrans %}

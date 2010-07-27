@@ -1,0 +1,3 @@
+{% load i18n %}{% load account_tags %}{% load badge_tags %}{% awardee_display award.awardee as awardee_display %}{% user_display award.nomination.nominator as nominator_display %}{% blocktrans with award.get_absolute_url as award_url and award.badge.title as badge_title %}{{ awardee_display }} has claimed the badge "{{ badge_title }}"
+
+http://{{ current_site }}{{ award_url }}{% endblocktrans %}

@@ -1,1 +1,0 @@
-{{nomination.nominator}} has nominated you to be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"

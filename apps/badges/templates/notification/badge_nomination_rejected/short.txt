@@ -1,1 +1,0 @@
-{{rejected_by}} has rejected {{nomination.nominator}}'s nomination of {{nomination.nominee}} to be awarded the badge "{{nomination.badge.title}}" because "{{reason_why}}"

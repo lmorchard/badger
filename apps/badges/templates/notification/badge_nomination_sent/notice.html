@@ -1,1 +1,7 @@
-you have nominated {{nomination.nominee}} to be awarded the badge "{{nomination.badge.title}}" because "{{nomination.reason_why}}"
+{% load i18n %}
+{% load account_tags %}
+{% load badge_tags %}
+{% awardee_display nomination.nominee as nominee_display %}
+{% blocktrans with nomination.nominee.get_absolute_url as nominee_url and nomination.get_absolute_url as nomination_url and nomination.badge.get_absolute_url as badge_url and nomination.badge.title as badge_title and nomination.reason_why as reason_why %}
+<strong>You</strong> have nominated <a href="{{ nominee_url }}">{{ nominee_display }}</a> for the badge <a href="{{ badge_url }}">{{ badge_title }}</a> because "<a href="{{ nomination_url }}">{{ reason_why }}</a>".
+{% endblocktrans %}

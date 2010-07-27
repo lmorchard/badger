@@ -143,7 +143,7 @@ class Badge(models.Model):
         for note_to_send in notes_to_send:
             notification.send( 
                 [ note_to_send[0] ], note_to_send[1], 
-                { "nomination": nomination }
+                { "nomination": nomination, "nominee": nominee }
             )
 
         if nomination.nominee.email:
@@ -196,6 +196,19 @@ class BadgeAwardee(models.Model):
 
     class Meta:
         unique_together = ('user','email')
+
+    def get_absolute_url(self):
+        if self.user:
+            return reverse("profile_detail", args=[self.user.username])
+        elif self.email:
+            return 'mailto:%s' % self.email
+
+    def display(self):
+        if self.user:
+            return "%s" % self.user
+        if self.email:
+            return "%s" % self.email
+        return "invalid awardee"
 
     def __unicode__(self):
         if self.user:
@@ -293,8 +306,9 @@ class BadgeNomination(models.Model):
             if self.nominee.user:
                 recipients.append(self.nominee.user)
             notification.send(recipients, 'badge_nomination_rejected', 
-                    {"nomination": self, 'rejected_by': rejected_by,
-                        "reason_why": reason_why})
+                    {'nomination': self, 'nominee': self.nominee,
+                        'rejected_by': rejected_by,
+                        'reason_why': reason_why})
 
         try:
             # Try deleting any existing award associated with this nomination
@@ -327,6 +341,9 @@ class BadgeAward(models.Model):
 
     def __unicode__(self):
         return '%s awarded %s' % (self.awardee, self.badge.title)
+
+    def get_absolute_url(self):
+        return self.badge.get_absolute_url()
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()

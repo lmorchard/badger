@@ -1,0 +1,3 @@
+{% load i18n %}{% load account_tags %}{% load badge_tags %}{% awardee_display nomination.nominee as nominee_display %}{% user_display nomination.nominator as nominator_display %}{% blocktrans with nomination.get_absolute_url as nomination_url and nomination.badge.title as badge_title and nomination.reason_why as reason_why %}{{ nominator_display }} has nominated {{ nominee_display }} to be awarded the badge "{{badge_title}}" because "{{reason_why}}"
+
+http://{{ current_site }}{{ nomination_url }}{% endblocktrans %}
