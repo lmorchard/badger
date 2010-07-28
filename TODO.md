@@ -1,5 +1,9 @@
 # TODO
 
+* Strip out more unused Pinax apps / features
+** No "tribes" or "friends"?
+* Fix notifications with proper links to take action
+
 * HTML5 badge image editor / composer
 * Nominate and award badges to people who aren't site members
     * Allow claiming of awards after sign up

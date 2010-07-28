@@ -43,10 +43,6 @@ Feature: Nominating people for badges
             And "user2" should receive a "Badge Nomination Sent" notification
             And "somebody@example.com" should be sent a "Badge Nomination Received" email
 
-    @TODO
-    Scenario: Nomination email to non-member should include sign up invitation
-        Given in progress
-
     Scenario: Someone is nominated for a badge set to auto-approve
         Given "user1" creates a badge entitled "Ultimate badge"
             And the badge "Ultimate badge" has "autoapprove" set to "True"
@@ -63,8 +59,27 @@ Feature: Nominating people for badges
             And I go to the "badge detail" page for "Ultimate badge"
         Then I should see the "claim_badge" section
 
-    @TODO
-    Scenario: Someone is nominated twice for the same badge
+    Scenario: Nomination should not display nomination form, once approved
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is nominated for nifty"
+            And I am logged in as "user1"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I click on "user3" in the "nominations" section
+        Then I should see a page whose title contains "Badge nomination"
+        When I press "Approve"
+        Then I should see a page whose title contains "Badge detail"
+            And I should not see the "nominations" section
+            And "user3" should be awarded the badge "Nifty badge"
+            And "user3" should receive a "Badge Awarded" notification
+        When I click on "Inbox" in the "login" section
+            And I click on "user3 is nominated for nifty" in the "Notices" section
+        Then I should see a page whose title contains "Badge nomination"
+            And I should not see "Reason why" anywhere in the "Badge nomination" section
+            And I should not see "Reject" anywhere in the "Badge nomination" section
+
+    @current
+    Scenario: A subsequent nomination for a unique badge is a second
+        # Multiple nominations should be allowed for a unique badge, but as "seconded"
         Given in progress
         Given "user1" creates a badge entitled "Ultimate badge"
             And I am logged in as "user2"
@@ -83,10 +98,8 @@ Feature: Nominating people for badges
             And I press "Nominate for badge"
         Then I should see form validation errors
 
-    @TODO
-    Scenario: A badge can be set to allow multiple nominations and awards
-        # Actually, maybe I should allow multiple nominations / awards of the
-        # same badge and collapse the duplicates with a list of nominators.
+    @current
+    Scenario: Multiple separate nominations can be submitted for a non-unique badge
         Given in progress
 
     Scenario: User must be badge creator to see nominations listed

@@ -50,7 +50,6 @@ Feature: Managing badge awards on a user profile
         When I go to the profile page for "user3"
         Then I should not see "Nifty badge" anywhere on the page
 
-
     Scenario: Badge awardee ignores an award
         Given "user1" creates a badge entitled "Nifty badge"
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"

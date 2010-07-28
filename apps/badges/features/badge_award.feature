@@ -88,4 +88,12 @@ Feature: Approving and rejecting badge awards
         Then I should see a status code of "200"
 
     @TODO
+    @next
     Scenario: Badge awards should be browsable at a unique URL
+        Given in progress
+
+    @TODO
+    @next
+    Scenario: Award email to non-member should include claim code
+        Given in progress
+

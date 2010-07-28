@@ -106,20 +106,12 @@ def go_to_badge_detail_page(title):
 
 @Given(u'"(.*)" nominates "(.*)" for a badge entitled "(.*)" because "(.*)"')
 def create_nomination(nominator_name, nominee_name, badge_title, badge_reason_why):
-    nominee = User.objects.get(username__exact=nominee_name)
     nominator = User.objects.get(username__exact=nominator_name)
+    nominee = User.objects.get(username__exact=nominee_name)
     badge = Badge.objects.get(title__exact=badge_title)
-
-    awardee, created = BadgeAwardee.objects.get_or_create(user=nominee)
-    awardee.save()
-
-    nomination = BadgeNomination(
-        nominee=awardee,
-        nominator=nominator,
-        badge=badge,
-        reason_why=badge_reason_why
-    )
-    nomination.save()
+    badge_awardee, created = \
+        BadgeAwardee.objects.get_or_create_by_user_or_email(nominee)
+    nomination = badge.nominate(nominator, badge_awardee, badge_reason_why)
 
 @Given(u'"(.*)" approves the nomination of "(.*)" for a badge entitled "(.*)" because "(.*)"')
 def approve_nomination(approver_name, nominee_name, badge_title, reason_why):
@@ -222,6 +214,8 @@ def click_link_in_section(link_content, section_title):
     link = section.find('a.%s' % link_content)
     if len(link) == 0:
         link = section.find('a:contains("%s")' % link_content)
+    if len(link) == 0:
+        glc.log.debug("FORM CONTENT %s" % scc.last_response.content)
     ok_(len(link) > 0, 'link "%s" should be found in section "%s"' % (link_content, section_title))
     path = link.attr('href')
     page = visit_page(path)

@@ -41,8 +41,19 @@ Feature: Badge creation and management
             And there should be no badge "Nifty badge"
 
     @TODO
-    Scenario: Destroy an existing badge
+    Scenario: Awardees should be notified when a badge has been modified
+        # If a badge is modified, awardees should be notified, in case they no
+        # longer like the badge. Or, in case it's gotten more awesome.
+        Given in progress
+
+    @TODO
+    Scenario: Destroy an existing badge, before any awards have been approved
         # Only allow for non-admins if no nominations or awards have been issued?
+        Given in progress
+
+    @TODO
+    Scenario: A badge cannot be delete after it has been awarded
+        Given in progress
 
     Scenario: Badges should accept image uploads
         Given I am logged in as "user1"
@@ -50,5 +61,5 @@ Feature: Badge creation and management
             And I fill in "Title" with "Awesome Tester"
             And I fill in "Description" with "This is an awesome badge for awesome testers"
             And I fill in "Main image" with "garbage"
-        # Ugh. Stumped here on how to actually test an image upload.
+        # Ugh. Stumped here on how best to actually test an image upload.
         # This only checks for the presence of the field.

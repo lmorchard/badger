@@ -167,7 +167,8 @@ def badge_details(request, badge_slug):
                     'badger.apps.badges.views.badge_details', args=(badge.slug,)))
 
     if badge.allows_nomination_listing_by(request.user):
-        nominations = BadgeNomination.objects.filter(badge=badge, approved=False)
+        nominations = BadgeNomination.objects.filter(badge=badge, 
+                nominee__email=None, approved=False)
     else:
         nominations = None
 
