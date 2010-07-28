@@ -281,6 +281,8 @@ WIKI_REQUIRES_LOGIN = True
 # following URL: https://developer.yahoo.com/wsregapp/
 # YAHOO_MAPS_API_KEY = ""
 
+AUTO_GENERATE_AVATAR_SIZES = (80,32,24,)
+
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }

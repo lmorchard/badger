@@ -117,38 +117,8 @@ def badge_details(request, badge_slug):
 
     if request.method == "POST":
 
-        try:
-            unclaimed_award = BadgeAward.objects.get(
-                    awardee__user=request.user, badge=badge)
-            if unclaimed_award.allows_claim_by(request.user):
-                
-                if request.POST.get('action_claim_award', None) is not None:
-                    unclaimed_award.claim(request.user)
-                    messages.add_message(request, messages.SUCCESS,
-                        _("badge award claimed"))
-                    return HttpResponseRedirect(reverse(
-                        'profile_detail', args=(request.user.username,)))
-                
-                elif request.POST.get('action_reject_award', None) is not None:
-                    unclaimed_award.reject(request.user)
-                    messages.add_message(request, messages.SUCCESS,
-                        _("badge award rejected"))
-                    return HttpResponseRedirect(reverse(
-                        'badger.apps.badges.views.badge_details', 
-                        args=(badge.slug,)))
-
-                elif request.POST.get('action_ignore_award', None) is not None:
-                    unclaimed_award.ignore(request.user)
-                    messages.add_message(request, messages.SUCCESS,
-                        _("badge award ignored"))
-                    return HttpResponseRedirect(reverse(
-                        'badger.apps.badges.views.badge_details', 
-                        args=(badge.slug,)))
-
-        except BadgeAward.DoesNotExist:
-            pass
-
-        if request.POST.get('action_nominate', None) is not None:
+        if (request.user.is_authenticated and 
+            request.POST.get('action_nominate', None) is not None):
 
             nomination_form = BadgeNominationForm(request.POST)
             nomination_form.context = {"badge": badge, "nominator": request.user}
@@ -166,11 +136,16 @@ def badge_details(request, badge_slug):
                 return HttpResponseRedirect(reverse(
                     'badger.apps.badges.views.badge_details', args=(badge.slug,)))
 
-    if badge.allows_nomination_listing_by(request.user):
+    if not request.user.is_authenticated():
+        nominations = None
+    elif badge.allows_nomination_listing_by(request.user):
+        # List all nominations for this badge
         nominations = BadgeNomination.objects.filter(badge=badge, 
                 nominee__email=None, approved=False)
     else:
-        nominations = None
+        # List only own nominations for this badge
+        nominations = BadgeNomination.objects.filter(badge=badge, 
+                nominator=request.user, approved=False)
 
     awards = BadgeAward.objects.filter(badge=badge, claimed=True)
 
@@ -180,7 +155,7 @@ def badge_details(request, badge_slug):
         unclaimed_awards = BadgeAward.objects.filter(claimed=False,
                 ignored=False, badge=badge, awardee__user=request.user)
 
-    return render_to_response('badges/detail.html', {
+    return render_to_response('badges/badge_detail.html', {
         'badge': badge,
         'nomination_form': nomination_form,
         'nominations': nominations,
@@ -189,20 +164,11 @@ def badge_details(request, badge_slug):
         'unclaimed_awards': unclaimed_awards
     }, context_instance=RequestContext(request))
 
-
-def nomination_details(request, badge_slug, nomination_name):
+def nomination_details(request, badge_slug, nomination_id):
     """Display details on a nomination"""
     badge = get_object_or_404(Badge, slug=badge_slug)
 
-    try:
-        validators.validate_email(nomination_name)
-        nominee = get_object_or_404(BadgeAwardee, email=nomination_name)
-    except ValidationError:
-        nominee_user = User.objects.get(username__exact=nomination_name)
-        nominee = get_object_or_404(BadgeAwardee, user=nominee_user)
-
-    nomination = get_object_or_404(BadgeNomination, badge=badge,
-            nominee=nominee)
+    nomination = get_object_or_404(BadgeNomination, badge=badge, id=nomination_id)
 
     perms = {
         "viewing": nomination.allows_viewing_by(request.user),
@@ -215,6 +181,7 @@ def nomination_details(request, badge_slug, nomination_name):
 
     if request.method == "POST":
 
+        do_jump = False
         decision_form = BadgeNominationDecisionForm(request.POST)
 
         if request.POST.get('action_approve', None) is not None:
@@ -226,22 +193,30 @@ def nomination_details(request, badge_slug, nomination_name):
                 request, messages.SUCCESS,
                 ugettext("nomination approved for %s" % (new_award))
             )
-            return HttpResponseRedirect(reverse(
-                'badger.apps.badges.views.badge_details', args=(badge.slug,)
-            ))
+            do_jump = True
 
         if decision_form.is_valid() and request.POST.get('action_reject', None) is not None:
-                if not perms["rejection"]:
-                    return HttpResponseForbidden(_('access denied'))
-                messages.add_message(
-                    request, messages.SUCCESS,
-                    ugettext("nomination rejected for %s" % (nomination))
-                )
-                nomination.reject(request.user, 
-                        decision_form.cleaned_data['reason_why'])
-                return HttpResponseRedirect(reverse(
-                    'badger.apps.badges.views.badge_details', args=(badge.slug,)
-                ))
+            if not perms["rejection"]:
+                return HttpResponseForbidden(_('access denied'))
+            messages.add_message(
+                request, messages.SUCCESS,
+                ugettext("nomination rejected for %s" % (nomination))
+            )
+            nomination.reject(request.user, 
+                    decision_form.cleaned_data['reason_why'])
+            do_jump = 'badge'
+
+        if do_jump is not False:
+            if do_jump is True:
+                jump_val = request.POST.get('jump', 'award')
+            else:
+                jump_val = do_jump
+            if jump_val == 'badge':
+                return HttpResponseRedirect(reverse('badge_details', 
+                    args=(badge.slug,)))
+            else:
+                return HttpResponseRedirect(reverse('badge_nomination', 
+                     args=(badge.slug, nomination.id,)))
     
     else:
         decision_form = BadgeNominationDecisionForm()
@@ -249,5 +224,72 @@ def nomination_details(request, badge_slug, nomination_name):
     return render_to_response('badges/nomination_detail.html', {
         'nomination': nomination,
         'decision_form': decision_form,
+        'permissions': perms
+    }, context_instance=RequestContext(request))
+
+def award_list(request, badge_slug, awardee_name):
+    return HttpResponse("LIST OF AWARDS")
+
+def award_details(request, badge_slug, awardee_name, award_id):
+    """Display details on an award"""
+    badge = get_object_or_404(Badge, slug=badge_slug)
+
+    try:
+        validators.validate_email(awardee_name)
+        awardee = get_object_or_404(BadgeAwardee, email=awardee_name)
+    except ValidationError:
+        awardee_user = User.objects.get(username__exact=awardee_name)
+        awardee = get_object_or_404(BadgeAwardee, user=awardee_user)
+
+    award = get_object_or_404(BadgeAward, badge=badge, awardee=awardee,
+            id=award_id)
+
+    perms = {
+        "viewing": award.allows_viewing_by(request.user),
+        "claim": award.allows_claim_by(request.user)
+    }
+
+    if not perms['viewing']:
+        return HttpResponseForbidden(_('access denied'))
+
+    if request.method == "POST":
+        do_jump = False
+
+        if award.claimed == False and award.allows_claim_by(request.user):
+                
+            if request.POST.get('action_claim_award', None) is not None:
+                award.claim(request.user)
+                messages.add_message(request, messages.SUCCESS,
+                    _("badge award claimed"))
+                do_jump = True
+            
+            elif request.POST.get('action_reject_award', None) is not None:
+                award.reject(request.user)
+                messages.add_message(request, messages.SUCCESS,
+                    _("badge award rejected"))
+                do_jump = "badge"
+
+            elif request.POST.get('action_ignore_award', None) is not None:
+                award.ignore(request.user)
+                messages.add_message(request, messages.SUCCESS,
+                    _("badge award ignored"))
+                do_jump = True
+
+        if do_jump is not False:
+            if do_jump is True:
+                jump_val = request.POST.get('jump', 'award')
+            else:
+                jump_val = do_jump
+            if jump_val == 'badge':
+                return HttpResponseRedirect(reverse('badge_details', 
+                    args=(badge.slug,)))
+            else:
+                return HttpResponseRedirect(reverse('award_detail', 
+                     args=(award.badge.slug, award.awardee, award.id,)))
+
+    return render_to_response('badges/award_detail.html', {
+        'badge': badge, 
+        'award': award, 
+        'awardee': awardee,
         'permissions': perms
     }, context_instance=RequestContext(request))

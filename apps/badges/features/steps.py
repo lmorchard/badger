@@ -33,6 +33,7 @@ def before_all(sc):
     scc.current_path = None
     scc.current_page = None
     scc.current_form = None
+    scc.current_form_context = None
     scc.name_path_map = {}
 
 @After
@@ -119,8 +120,20 @@ def approve_nomination(approver_name, nominee_name, badge_title, reason_why):
     nominee = BadgeAwardee.objects.get(user=nominee_user)
     approver = User.objects.get(username__exact=approver_name)
     badge = Badge.objects.get(title__exact=badge_title)
-    nomination = BadgeNomination.objects.get(badge=badge, nominee=nominee)
+    nomination = BadgeNomination.objects.get(
+            badge=badge, nominee=nominee)
     nomination.approve(approver, reason_why)
+
+@Given(u'"(.*)" approves "(.*)"\'s nomination of "(.*)" for a badge entitled "(.*)" because "(.*)"')
+def approve_exact_nomination(approver_name, nominator_name, nominee_name, badge_title, reason_why):
+    approver_user = User.objects.get(username=approver_name)
+    nominator_user = User.objects.get(username=nominator_name)
+    nominee_user = User.objects.get(username=nominee_name)
+    nominee = BadgeAwardee.objects.get(user=nominee_user)
+    badge = Badge.objects.get(title__exact=badge_title)
+    nomination = BadgeNomination.objects.get(badge=badge, 
+            nominee=nominee, nominator=nominator_user)
+    nomination.approve(approver_user, reason_why)
 
 @When(u'I go to the "(.*)" page$')
 def i_go_to_named_page(page_name):
@@ -166,31 +179,72 @@ def fill_form_field(field_name, field_value):
     ))
     scc.current_form[field.attr('name')] = field_value
 
+@When(u'I find the form containing "(.*)" in the "(.*)" section')
+def find_context_form_by_section(context_content, section_title):
+    section = find_section_in_page(section_title)
+    form = section.find('form *:contains("%s")' % context_content).parents('form')
+    ok_(len(form) > 0, "the form containing '%s' should be found" % context_content)
+    scc.current_form_context = form
+    return form
+
+@When(u'I find the form containing "(.*)" somewhere on the page')
+def find_context_form(context_content):
+    page = scc.current_page
+    form = page('form *:contains("%s")' % context_content).parents('form')
+    ok_(len(form) > 0, "the form containing '%s' should be found" % context_content)
+    scc.current_form_context = form
+    return form
+
 @When(u'I press "(.*)"')
 def press_form_button(button_name):
     page = scc.current_page
     ok_(scc.current_page is not None, "there should be a current page")
 
-    field = page('input[value="%s"]' % button_name)
-    button_value = field.val()
-    if len(field) == 0:
-        field = page('button:contains("%s")' % button_name)
-        button_value = field.text()
-    if len(field) == 0:
-        field = page('*[name="%s"]' % button_name)
-        button_value = field.text()
-    ok_(len(field) > 0, 'button "%s" should exist' % button_name)
+    if scc.current_form_context is not None:
+        # If we have a form context, search for the button within that form.
+        form = scc.current_form_context
+        form_action = form.attr('action')
+        if not form_action: 
+            form_action = scc.current_path
+        form_method = form.attr('method')
+        if not form_method: 
+            form_method = 'post'
 
-    button_name = field.attr('name')
-    scc.current_form[button_name] = button_value
+        field = form.find('input[value="%s"]' % button_name)
+        button_value = field.val()
+        if len(field) == 0:
+            field = form.find('button:contains("%s")' % button_name)
+            button_value = field.text()
+        if len(field) == 0:
+            field = form.find('*[name="%s"]' % button_name)
+            button_value = field.text()
+        ok_(len(field) > 0, 'button "%s" should exist' % button_name)
 
-    form = field.parents('form:first')
-    form_action = form.attr('action')
-    if not form_action: 
-        form_action = scc.current_path
-    form_method = form.attr('method')
-    if not form_method: 
-        form_method = 'post'
+        button_name = field.attr('name')
+        scc.current_form[button_name] = button_value
+
+    else:
+        # If we have no form context, find the button and work up to the form.
+        field = page('input[value="%s"]' % button_name)
+        button_value = field.val()
+        if len(field) == 0:
+            field = page('button:contains("%s")' % button_name)
+            button_value = field.text()
+        if len(field) == 0:
+            field = page('*[name="%s"]' % button_name)
+            button_value = field.text()
+        ok_(len(field) > 0, 'button "%s" should exist' % button_name)
+
+        button_name = field.attr('name')
+        scc.current_form[button_name] = button_value
+
+        form = field.parents('form:first')
+        form_action = form.attr('action')
+        if not form_action: 
+            form_action = scc.current_path
+        form_method = form.attr('method')
+        if not form_method: 
+            form_method = 'post'
 
     for field in form.find('input,textarea,select'):
         p_field = PyQuery(field)
@@ -213,9 +267,9 @@ def click_link_in_section(link_content, section_title):
     section = find_section_in_page(section_title)
     link = section.find('a.%s' % link_content)
     if len(link) == 0:
-        link = section.find('a:contains("%s")' % link_content)
+        link = section.find('*:contains("%s")' % link_content)
     if len(link) == 0:
-        glc.log.debug("FORM CONTENT %s" % scc.last_response.content)
+        glc.log.debug("SECTION CONTENT %s" % section.html() )
     ok_(len(link) > 0, 'link "%s" should be found in section "%s"' % (link_content, section_title))
     path = link.attr('href')
     page = visit_page(path)
@@ -385,6 +439,35 @@ def check_no_badge_award(awardee_name, badge_title):
                 (awardee_name, badge_title))
     except BadgeAward.DoesNotExist:
         pass
+
+@Then(u'"(.*)" should have "(.*)" awards for the badge "(.*)"')
+def count_awards(awardee_name, expected_count, badge_title):
+    user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=user)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    award_count = BadgeAward.objects.filter(awardee=awardee, badge=badge).count()
+    eq_(int(expected_count), award_count)
+
+@Then(u'"(.*)" should have "(.*)" unclaimed awards for the badge "(.*)"')
+def count_unclaimed_awards(awardee_name, expected_count, badge_title):
+    user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=user)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    award_count = BadgeAward.objects.filter(awardee=awardee, badge=badge,
+            claimed=False).count()
+    eq_(int(expected_count), award_count)
+
+@Then(u'"(.*)" should have "(.*)" claimed awards for the badge "(.*)"')
+def count_claimed_awards(awardee_name, expected_count, badge_title):
+    user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=user)
+    badge = Badge.objects.get(title__exact=badge_title)
+
+    award_count = BadgeAward.objects.filter(awardee=awardee, badge=badge,
+            claimed=True).count()
+    eq_(int(expected_count), award_count)
 
 @Then(u'"(.*)" should receive a "(.*)" notification')
 def check_notifications(username, notification_name):

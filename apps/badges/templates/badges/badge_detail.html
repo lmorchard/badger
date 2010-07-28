@@ -1,0 +1,150 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load account_tags %}
+{% load avatar_tags %}
+{% load badge_tags %}
+{% load uni_form_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load threadedcommentstags %}
+{% load humanize i18n %}
+{% load timezone_filters %}
+
+{% block head_title %}{% trans "Badge details" %}{% endblock %}
+
+{% block body %}
+    <div class="badge_detail">
+
+        <div class="crumbs">
+            <a href="{% url badge_index %}">Badges</a> 
+            &gt;
+            <b>{{ badge.title }}</b>
+        </div>
+
+        {% include "badges/elements/badge_display_full.html" %}
+
+        <ul class="sections">
+
+            {% if user.is_authenticated and unclaimed_awards %}
+                <li class="claim_badge">
+
+                    <h3>Awards for you ({{ unclaimed_awards|length }})</h3>
+                    <div>
+                        <p>You are eligible to claim this badge:</p>
+                        <ul class="pending_awards">
+                            {% for award in unclaimed_awards %}
+                                {% url profile_detail username=award.nomination.nominator.username as nominator_url %}
+                                {% url profile_detail username=award.nomination.approved_by.username as approved_by_url %}
+                                {% user_display award.nomination.nominator as nominator_display %}
+                                {% user_display award.nomination.approved_by as approved_by_display %}
+                                <li>
+                                    <form action="{{ award.get_absolute_url }}" method="POST" class="claim_form uniForm">
+                                        <div class="nomination">
+                                            <a href="{{ nominator_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominator 32 %}" alt="Photo of {{ nominator_display }}" class="photo" /></a>
+                                            {{ award.nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.nomination.created_at|localtime:account.timezone|time:"P" }},
+                                            <a href="{{ nominator_url }}" class="avatar"><span>{{ nominator_display }}</span></a>
+                                            nominated you because
+                                            "<a href="{{ award.get_absolute_url }}">{{ award.nomination.reason_why }}</a>",
+                                            and 
+                                            <a href="{{ approved_by_url }}" class="avatar"><span>{{ approved_by_display }}</span></a> approved the nomination.
+                                        </div>
+                                        {% csrf_token %}
+                                        <input type="hidden" name="jump" value="badge" />
+                                        <button type="submit" name="action_claim_award">Claim</button>
+                                        <button type="submit" name="action_reject_award">Reject</button>
+                                        <button type="submit" name="action_ignore_award">Ignore</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </li>
+            {% endif %}
+
+            {% if awards %}
+                <li class="claimed_by">
+                    <h3>Claimed by ({{ awards|length }})</h3>
+                    <ul class="profiles">
+                        {% for award in awards %}
+                            {% if award.awardee.user %}
+                                <li>
+                                    <a href="{{ award.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.awardee.user 80 %}" alt="Photo of {{ other_user }}" class="photo" /></a>
+                                    <a href="{{ award.get_absolute_url }}" class="fn">{{ award.awardee }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <li class="nomination_form">
+                    <h3>Nominate someone for this badge</h3>
+                    <form action="" method="POST" id="nomination-form" class="uniForm">
+                        {% csrf_token %}
+                        <fieldset class="inlineLabels">
+                            {{ nomination_form|as_uni_form }}
+                            <div class="form_block">
+                                <input type="submit" name="action_nominate" value="Nominate for badge" />
+                            </div>
+                        </fieldset>
+                    </form>
+                </li>
+            {% endif %}
+
+            {% if nominations %}
+                <li class="nominations">
+                    <h3>Pending nominations ({{ nominations|length }})</h3>
+                    <div>
+                        <ul>
+                            {% for nomination in nominations %}
+                                {% url profile_detail username=nomination.nominator.username as nominator_url %}
+                                {% user_display nomination.nominator as nominator_display %}
+                                {% awardee_display nomination.nominee as nominee_display %}
+                                <li>
+                                    <form action="{{ nomination.get_absolute_url }}" method="POST" class="uniForm">
+                                        <div class="nomination">
+                                            <a href="{{ nominator_url }}"><img src="{% avatar_url nomination.nominator 32 %}" alt="Photo of {{ nominator_display }}" class="photo" /></a>
+                                            {{ nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ nomination.created_at|localtime:account.timezone|time:"P" }},
+                                            <a href="{{ nominator_url }}"><span>{{ nominator_display }}</span></a>
+                                            nominated
+                                            <a href="{{ nomination.nominee.get_absolute_url }}">{{ nominee_display }}</a>
+                                            because
+                                            "<a href="{{ nomination.get_absolute_url }}">{{ nomination.reason_why }}</a>",
+                                        </div>
+                                        {% csrf_token %}
+                                        <input type="hidden" name="jump" value="badge" />
+                                        {% if user.is_superuser or user = nomination.badge.creator %}
+                                            <button type="submit" name="action_approve">Approve</button>
+                                        {% endif %}
+                                        {% if user.is_superuser or user = nomination.badge.creator or user = nomination.nominator %}
+                                            <button type="submit" name="action_reject">Reject</button>
+                                        {% endif %}
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+            {% endif %}
+
+        </ul>
+
+    </div>
+    
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var errors = $('.errorlist,.errorField,#errorMsg');
+        $('.sections').accordion({ 
+            'header': '> li > h3',
+            'active': (errors.length == 0) ?
+                '.sections li:first h3' : '.sections .nomination_form h3'
+        });
+    });
+</script>
+{% endblock %}

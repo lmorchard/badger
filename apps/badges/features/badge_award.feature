@@ -17,9 +17,8 @@ Feature: Approving and rejecting badge awards
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
             And I go to the "badge detail" page for "Nifty badge"
-        When I click on "user3" in the "nominations" section
-        Then I should see a page whose title contains "Badge nomination"
-        When I press "Approve"
+        When I find the form containing "user3 is Nifty" in the "nominations" section
+            And I press "Approve"
         Then I should see a page whose title contains "Badge detail"
             And I should not see the "nominations" section
             And "user3" should be awarded the badge "Nifty badge"
@@ -33,7 +32,7 @@ Feature: Approving and rejecting badge awards
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
         When I go to the "badge detail" page for "Nifty badge"
-            And I click on "user3" in the "nominations" section
+            And I click on "user3 is Nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         Given I am logged in as "user3"
         When I press "Approve"
@@ -44,7 +43,7 @@ Feature: Approving and rejecting badge awards
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
             And I go to the "badge detail" page for "Nifty badge"
-        When I click on "user3" in the "nominations" section
+        When I click on "user3 is Nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         When I fill in "Reason why" with "Your niftiness is lacking"
             And I press "Reject"
@@ -53,14 +52,13 @@ Feature: Approving and rejecting badge awards
             And I should not see the "nominations" section
             And "user1" should receive a "Badge Nomination Rejected" notification
             And "user2" should receive a "Badge Nomination Rejected" notification
-            And "user3" should receive a "Badge Nomination Rejected" notification
 
     Scenario: Badge nomination rejection should require a reason
         Given "user1" creates a badge entitled "Nifty badge"
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
             And I go to the "badge detail" page for "Nifty badge"
-        When I click on "user3" in the "nominations" section
+        When I click on "user3 is Nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         When I press "Reject"
         Then I should see form validation errors
@@ -70,7 +68,7 @@ Feature: Approving and rejecting badge awards
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
         When I go to the "badge detail" page for "Nifty badge"
-            And I click on "user3" in the "nominations" section
+            And I click on "user3 is Nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         Given I am logged in as "user2"
         When I press "Reject"
@@ -81,16 +79,11 @@ Feature: Approving and rejecting badge awards
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
             And I am logged in as "user1"
         When I go to the "badge detail" page for "Nifty badge"
-            And I click on "user3" in the "nominations" section
+            And I click on "user3 is Nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         Given I am logged in as "user3"
         When I press "Reject"
         Then I should see a status code of "200"
-
-    @TODO
-    @next
-    Scenario: Badge awards should be browsable at a unique URL
-        Given in progress
 
     @TODO
     @next

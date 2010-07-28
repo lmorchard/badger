@@ -119,10 +119,15 @@ class Badge(models.Model):
             'resized', str(size), self.main_image.name)
 
     def nominate(self, nominator, nominee, reason_why):
+
         try:
+            # If there's already a nomination for this badge + nominator +
+            # nominee pending approval, treat this as an update.
             nomination = BadgeNomination.objects.filter(badge=self, 
-                    nominator=nominator, nominee=nominee).get()
+                    nominator=nominator, nominee=nominee, 
+                    approved=False).get()
         except BadgeNomination.DoesNotExist:
+            # Otherwise, this is a new nomination.
             nomination = BadgeNomination()
 
         nomination.badge = self
@@ -131,34 +136,20 @@ class Badge(models.Model):
         nomination.reason_why = reason_why
         nomination.save()
 
-        notes_to_send = [
-            ( nominator, 'badge_nomination_sent'),
-            ( self.creator, 'badge_nomination_proposed'),
-        ]
-
-        if nomination.nominee.user:
-            notes_to_send.append((nomination.nominee.user, 
-                'badge_nomination_received'))
-
-        for note_to_send in notes_to_send:
-            notification.send( 
-                [ note_to_send[0] ], note_to_send[1], 
-                { "nomination": nomination, "nominee": nominee }
-            )
-
-        if nomination.nominee.email:
-            context = {"nomination": nomination}
-            subject = render_to_string(
-                "badges/nomination_email_subject.txt", context)
-            # remove superfluous line breaks
-            subject = "".join(subject.splitlines())
-            message = render_to_string(
-                "badges/nomination_email_message.txt", context)
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-                      [nomination.nominee.email], priority="high")
-
         if self.autoapprove:
             nomination.approve(self.creator)
+        
+        else:
+            notes_to_send = [
+                ( nominator, 'badge_nomination_sent'),
+                ( self.creator, 'badge_nomination_proposed'),
+            ]
+
+            for note_to_send in notes_to_send:
+                notification.send( 
+                    [ note_to_send[0] ], note_to_send[1], 
+                    { "nomination": nomination, "nominee": nominee }
+                )
 
         return nomination
 
@@ -233,14 +224,14 @@ class BadgeNomination(models.Model):
     updated_at = models.DateTimeField(_("updated at"))
 
     class Meta:
-        unique_together = ('badge','nominee','nominator')
+        pass
 
     def __unicode__(self):
         return '%s nominated for %s' % (self.nominee, self.badge.title)
 
     @models.permalink
     def get_absolute_url(self):
-        return ('badge_nomination', [self.badge.slug, self.nominee]) 
+        return ('badge_nomination', [self.badge.slug, self.id]) 
 
     def allows_viewing_by(self, user):
         if user.is_staff or user.is_superuser:
@@ -303,17 +294,13 @@ class BadgeNomination(models.Model):
     def reject(self, rejected_by, reason_why=''):
         if notification:
             recipients = [rejected_by, self.nominator, self.badge.creator]
-            if self.nominee.user:
-                recipients.append(self.nominee.user)
             notification.send(recipients, 'badge_nomination_rejected', 
                     {'nomination': self, 'nominee': self.nominee,
-                        'rejected_by': rejected_by,
-                        'reason_why': reason_why})
+                    'rejected_by': rejected_by, 'reason_why': reason_why})
 
         try:
             # Try deleting any existing award associated with this nomination
-            existing_award = BadgeAward.objects.get(
-                    badge=self.badge, awardee=self.nominee, nomination=self)
+            existing_award = BadgeAward.objects.get(nomination=self)
             existing_award.delete()
         except BadgeAward.DoesNotExist:
             pass
@@ -342,12 +329,31 @@ class BadgeAward(models.Model):
     def __unicode__(self):
         return '%s awarded %s' % (self.awardee, self.badge.title)
 
+    #def get_absolute_url(self):
+    #    return self.badge.get_absolute_url()
+
+    @models.permalink
     def get_absolute_url(self):
-        return self.badge.get_absolute_url()
+        return ('badge_award', [self.badge.slug, self.awardee, self.id]) 
 
     def save(self, **kwargs):
         self.updated_at = datetime.now()
         super(BadgeAward, self).save(**kwargs)
+
+    def allows_viewing_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.awardee.user:
+            return True
+        if user == self.nomination.nominator:
+            return True
+        if user == self.badge.creator:
+            return True
+        if not self.claimed:
+            return False
+        if self.hidden:
+            return False
+        return True
 
     def allows_claim_by(self, user):
         if user.is_staff or user.is_superuser:
@@ -393,14 +399,14 @@ class BadgeAward(models.Model):
 
 
 # handle notification of new comments
-from threadedcomments.models import ThreadedComment
-
-
-def new_comment(sender, instance, **kwargs):
-    post = instance.content_object
-    if isinstance(post, Badge):
-        if notification:
-            notification.send([post.author], "badge_comment",
-                {"user": instance.user, "post": post, "comment": instance})
-
-models.signals.post_save.connect(new_comment, sender=ThreadedComment)
+# from threadedcomments.models import ThreadedComment
+# 
+# 
+# def new_comment(sender, instance, **kwargs):
+#     post = instance.content_object
+#     if isinstance(post, Badge):
+#         if notification:
+#             notification.send([post.author], "badge_comment",
+#                 {"user": instance.user, "post": post, "comment": instance})
+# 
+# models.signals.post_save.connect(new_comment, sender=ThreadedComment)

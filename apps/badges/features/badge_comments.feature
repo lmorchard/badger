@@ -4,7 +4,7 @@ Feature: Badges, nominations, and awards should allow commentary
     In order to communicate about the process
 
     @TODO
-    Scenario: Badges should accept comments from everyone
+    Scenario: Badges should accept comments from users
 
     @TODO
     Scenario: A badge creator should be able to disable comments

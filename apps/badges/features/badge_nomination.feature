@@ -8,6 +8,8 @@ Feature: Nominating people for badges
             And a user named "user2"
             And a user named "user3"
             And a user named "user4"
+            And a user named "user5"
+            And a user named "user6"
             And there are no existing badges
             And the "create badge" page is at "/badges/create"
             And the "browse badges" page is at "/badges/"
@@ -24,7 +26,6 @@ Feature: Nominating people for badges
             And "user3" should be nominated by "user2" for badge "Awesome badge" because "user3 is awesome"
             And "user1" should receive a "Badge Nomination Proposed" notification
             And "user2" should receive a "Badge Nomination Sent" notification
-            And "user3" should receive a "Badge Nomination Received" notification
         Given I am logged in as "user1"
             And I go to the "badge detail" page for "Awesome badge"
         Then I should see "user3" somewhere in the "nominations" section
@@ -41,9 +42,12 @@ Feature: Nominating people for badges
             And "somebody@example.com" should be nominated by "user2" for badge "More awesome badge" because "somebody@example.com is awesome"
             And "user1" should receive a "Badge Nomination Proposed" notification
             And "user2" should receive a "Badge Nomination Sent" notification
-            And "somebody@example.com" should be sent a "Badge Nomination Received" email
 
-    Scenario: Someone is nominated for a badge set to auto-approve
+    @TODO
+    Scenario: A nominations from a badge creator is auto-approved
+        Given in progress
+
+    Scenario: Someone is nominated for a badge set to auto-approve for everyone
         Given "user1" creates a badge entitled "Ultimate badge"
             And the badge "Ultimate badge" has "autoapprove" set to "True"
             And I am logged in as "user2"
@@ -64,20 +68,60 @@ Feature: Nominating people for badges
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is nominated for nifty"
             And I am logged in as "user1"
             And I go to the "badge detail" page for "Nifty badge"
-        When I click on "user3" in the "nominations" section
+        When I click on "user3 is nominated for nifty" in the "nominations" section
         Then I should see a page whose title contains "Badge nomination"
         When I press "Approve"
-        Then I should see a page whose title contains "Badge detail"
-            And I should not see the "nominations" section
+        Then I should see a page whose title contains "Badge nomination"
+        When I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "nominations" section
             And "user3" should be awarded the badge "Nifty badge"
             And "user3" should receive a "Badge Awarded" notification
         When I click on "Inbox" in the "login" section
             And I click on "user3 is nominated for nifty" in the "Notices" section
         Then I should see a page whose title contains "Badge nomination"
-            And I should not see "Reason why" anywhere in the "Badge nomination" section
-            And I should not see "Reject" anywhere in the "Badge nomination" section
+            And I should not see "Reason why" anywhere on the page
+            And I should not see "Reject" anywhere on the page
 
-    @current
+    Scenario: Multiple separate nominations can be submitted for a non-unique badge
+        # There should only be one nomination per nominator + nominee + badge
+        # at a given time. But, multiple individual nominators can submit
+        # their own nominations, each of which can be approved and claimed 
+        # as multiple awards. (Claiming them is covered in another feature.)
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is nominated for nifty"
+            And I am logged in as "user2"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "user3 is still awesome"
+            And I press "Nominate for badge"
+        Then I should see form validation errors
+        Given I am logged in as "user4"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "I think user3 is awesome for another thing"
+            And I press "Nominate for badge"
+        Then I should see no form validation errors
+        Given "user1" approves "user2"'s nomination of "user3" for a badge entitled "Nifty badge" because "user3 is indeed Nifty"
+            And I am logged in as "user2"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "user3 has shown awesomeness yet again"
+            And I press "Nominate for badge"
+        Then I should see no form validation errors
+        Given I am logged in as "user4"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "I think user3 continues to be awesome for another thing"
+            And I press "Nominate for badge"
+        Then I should see form validation errors
+        Given "user1" approves "user4"'s nomination of "user3" for a badge entitled "Nifty badge" because "I know, I know"
+            And I am logged in as "user4"
+            And I go to the "badge detail" page for "Nifty badge"
+        When I fill in "Nominee" with "user3"
+            And I fill in "Reason why" with "I think user3 continues to be awesome for another thing"
+            And I press "Nominate for badge"
+        Then I should see no form validation errors
+
+    @TODO
     Scenario: A subsequent nomination for a unique badge is a second
         # Multiple nominations should be allowed for a unique badge, but as "seconded"
         Given in progress
@@ -97,10 +141,6 @@ Feature: Nominating people for badges
             And I fill in "Reason why" with "user3 is awesome"
             And I press "Nominate for badge"
         Then I should see form validation errors
-
-    @current
-    Scenario: Multiple separate nominations can be submitted for a non-unique badge
-        Given in progress
 
     Scenario: User must be badge creator to see nominations listed
         Given "user1" creates a badge entitled "Nifty badge"
@@ -128,7 +168,7 @@ Feature: Nominating people for badges
         When I go to the "badge detail" page for "Nifty badge"
         Then I should see "user3" somewhere in the "nominations" section
         Given I am logged in as "user3"
-        When I click on "user3" in the "nominations" section
+        When I click on "user3 is Nifty" in the "nominations" section
         Then I should see a status code of "200"
             And I should see a page whose title contains "Badge nomination"
         Given I am logged in as "user2"
