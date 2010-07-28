@@ -10,7 +10,7 @@ from badger.apps.badges import BADGE_DEFAULT_URL
 register = template.Library()
 
 def badge_url(badge, size=80):
-    if badge.main_image is not None and badge.main_image.name is not None:
+    if badge.main_image and badge.main_image.name:
         if not badge.thumbnail_exists(size):
             badge.create_thumbnail(size)
         return badge.main_image_url(size)
