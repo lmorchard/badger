@@ -50,8 +50,8 @@
                     <ul class="badges">
                         {% for award in awards %}
                             <li>
-                                <a href="{{award.badge.get_absolute_url}}" class="icon">{% badge_image award.badge 80 %}</a>
-                                <a href="{{award.badge.get_absolute_url}}" class="name">{{award.badge.title}}</a>
+                                <a href="{{award.get_absolute_url}}" class="icon">{% badge_image award.badge 80 %}</a>
+                                <a href="{{award.get_absolute_url}}" class="name">{{award.badge.title}}</a>
                             </li>
                         {% endfor %}
                     </ul>
