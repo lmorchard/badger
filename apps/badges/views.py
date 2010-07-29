@@ -284,8 +284,9 @@ def award_details(request, badge_slug, awardee_name, award_id):
                 return HttpResponseRedirect(reverse('badge_details', 
                     args=(badge.slug,)))
             else:
-                return HttpResponseRedirect(reverse('award_detail', 
-                     args=(award.badge.slug, award.awardee, award.id,)))
+                return HttpResponseRedirect(reverse('badge_award', 
+                     args=(award.badge.slug, award.awardee.user.username, 
+                     award.id,)))
 
     return render_to_response('badges/award_detail.html', {
         'badge': badge, 

@@ -29,6 +29,22 @@ Feature: Managing badge awards on a user profile
             And "user2" should receive a "Badge Award Claimed" notification
             And "user3" should receive a "Badge Award Claimed" notification
 
+    Scenario: Badge awardee accepts an award from the award page
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And "user1" approves the nomination of "user3" for a badge entitled "Nifty badge" because "user3 is indeed Nifty"
+            And I am logged in as "user3"
+            And I go to the "badge detail" page for "Nifty badge"
+        Then I should not see the "claimed_by" section
+        When I click on "user3 is Nifty" in the "claim_badge" section
+        Then I should see a page whose title contains "Award details"
+        When I press "action_claim_award"
+        Then I should see a page whose title contains "Award details"
+            And I should see "badge award claimed" somewhere on the page
+            And "user1" should receive a "Badge Award Claimed" notification
+            And "user2" should receive a "Badge Award Claimed" notification
+            And "user3" should receive a "Badge Award Claimed" notification
+
     Scenario: Badge awardee rejects an award
         Given "user1" creates a badge entitled "Nifty badge"
             And "user2" nominates "user3" for a badge entitled "Nifty badge" because "user3 is Nifty"
