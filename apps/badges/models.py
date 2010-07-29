@@ -196,7 +196,7 @@ class BadgeAwardee(models.Model):
     objects = BadgeAwardeeManager()
 
     claim_code = models.CharField(max_length=RANDOM_CODE_LENGTH,
-            default=make_random_code, editable=False, unique=True)
+            default=make_random_code, editable=False)
     user = models.ForeignKey(User, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
 

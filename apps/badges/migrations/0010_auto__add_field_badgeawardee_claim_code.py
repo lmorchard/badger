@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Adding field 'BadgeAwardee.claim_code'
-        db.add_column('badges_badgeawardee', 'claim_code', self.gf('django.db.models.fields.CharField')(default='bg4i22j', unique=True, max_length=7), keep_default=False)
+        db.add_column('badges_badgeawardee', 'claim_code', self.gf('django.db.models.fields.CharField')(default='', max_length=7), keep_default=False)
 
         notification = models.get_app('notification')
 
