@@ -50,7 +50,6 @@
             <a href="{{ award.nomination.get_absolute_url }}">nomination</a>.
         </p>
 
-
         {% if award.claimed %}
             <p>
                 <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 80 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>

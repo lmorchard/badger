@@ -58,7 +58,7 @@ Feature: Nominating people for badges
         Then I should see no form validation errors
             And "user3" should be nominated by "user2" for badge "Ultimate badge" because "user3 is awesome"
             And "user3" should be awarded the badge "Ultimate badge"
-            And "user3" should receive a "Badge Awarded" notification
+            And "user3" should receive a "Badge Award Received" notification
         Given I am logged in as "user3"
             And I go to the "badge detail" page for "Ultimate badge"
         Then I should see the "claim_badge" section
@@ -75,7 +75,7 @@ Feature: Nominating people for badges
         When I go to the "badge detail" page for "Nifty badge"
         Then I should not see the "nominations" section
             And "user3" should be awarded the badge "Nifty badge"
-            And "user3" should receive a "Badge Awarded" notification
+            And "user3" should receive a "Badge Award Received" notification
         When I click on "Inbox" in the "login" section
             And I click on "user3 is nominated for nifty" in the "Notices" section
         Then I should see a page whose title contains "Badge nomination"
@@ -182,12 +182,6 @@ Feature: Nominating people for badges
         Given in progress
 
     @TODO
-    Scenario: Badges can be set as a surprise, so nominee gets no notifications
-        # Only the creator and nominator are involved
-        # That way, the nominee is surprised by the ultimate award
-        Given in progress
-
-    @TODO
     Scenario: Badges can be assigned a secret claim code for auto-nomination
         Given in progress
         # Code should be short and easy for mobile typing
@@ -195,3 +189,4 @@ Feature: Nominating people for badges
         # To be written on a whiteboard at an event
         # To be encoded as a QR code on a patch/sticker
         # Only the badge creator can see the code
+

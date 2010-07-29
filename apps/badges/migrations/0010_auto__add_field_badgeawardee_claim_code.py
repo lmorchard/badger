@@ -9,115 +9,21 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Badge'
-        db.create_table('badges_badge', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50, db_index=True)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('tags', self.gf('tagging.fields.TagField')()),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('creator_ip', self.gf('django.db.models.fields.IPAddressField')(max_length=15, null=True, blank=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal('badges', ['Badge'])
-
-        # Adding model 'BadgeAwardee'
-        db.create_table('badges_badgeawardee', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True)),
-        ))
-        db.send_create_signal('badges', ['BadgeAwardee'])
-
-        # Adding model 'BadgeNomination'
-        db.create_table('badges_badgenomination', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('badge', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['badges.Badge'])),
-            ('nominee', self.gf('django.db.models.fields.related.ForeignKey')(related_name='nominee', to=orm['badges.BadgeAwardee'])),
-            ('nominator', self.gf('django.db.models.fields.related.ForeignKey')(related_name='nominator', to=orm['auth.User'])),
-            ('approved', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
-            ('reason_why', self.gf('django.db.models.fields.TextField')()),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal('badges', ['BadgeNomination'])
-
-        # Adding model 'BadgeAward'
-        db.create_table('badges_badgeaward', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('badge', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['badges.Badge'])),
-            ('nomination', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['badges.BadgeNomination'])),
-            ('awardee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['badges.BadgeAwardee'])),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal('badges', ['BadgeAward'])
+        # Adding field 'BadgeAwardee.claim_code'
+        db.add_column('badges_badgeawardee', 'claim_code', self.gf('django.db.models.fields.CharField')(default='bg4i22j', unique=True, max_length=7), keep_default=False)
 
         notification = models.get_app('notification')
 
         notification.create_notice_type(
-            "badge_nomination_sent", 
-            _("Badge Nomination Sent"), 
-            _("you have sent a nomination for a badge")
-        )
-
-        notification.create_notice_type(
-            "badge_nomination_received", 
-            _("Badge Nomination Received"), 
-            _("you have been nominated for a badge")
-        )
-
-        notification.create_notice_type(
-            "badge_nomination_proposed", 
-            _("Badge Nomination Proposed"), 
-            _("someone has been nominated to receive a badge for which you are a decision maker")
-        )
-
-        notification.create_notice_type(
-            "badge_nomination_rejected", 
-            _("Badge Nomination Rejected"), 
-            _("a decision maker for a badge has rejected a nomination for award")
-        )
-
-        notification.create_notice_type(
-            "badge_awarded", 
-            _("Badge Awarded"), 
-            _("a badge has been awarded")
-        )
-
-        notification.create_notice_type(
-            "badge_award_claimed", 
-            _("Badge Award Claimed"), 
-            _("a badge award has been claimed")
-        )
-
-        notification.create_notice_type(
-            "badge_award_rejected", 
-            _("Badge Award Rejected"), 
-            _("a badge award has been rejected")
-        )
-
-        notification.create_notice_type(
-            "badge_award_ignored", 
-            _("Badge Award Ignored"), 
-            _("a badge award has been ignored")
+            "badge_award_received", 
+            _("Badge Award Received"), 
+            _("you have been awarded a badge")
         )
 
     def backwards(self, orm):
         
-        # Deleting model 'Badge'
-        db.delete_table('badges_badge')
-
-        # Deleting model 'BadgeAwardee'
-        db.delete_table('badges_badgeawardee')
-
-        # Deleting model 'BadgeNomination'
-        db.delete_table('badges_badgenomination')
-
-        # Deleting model 'BadgeAward'
-        db.delete_table('badges_badgeaward')
+        # Deleting field 'BadgeAwardee.claim_code'
+        db.delete_column('badges_badgeawardee', 'claim_code')
 
 
     models = {
@@ -151,12 +57,14 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'badges.badge': {
-            'Meta': {'object_name': 'Badge'},
+            'Meta': {'unique_together': "(('title', 'slug'),)", 'object_name': 'Badge'},
+            'autoapprove': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
             'creator_ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'main_image': ('django.db.models.fields.files.ImageField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50', 'db_index': 'True'}),
             'tags': ('tagging.fields.TagField', [], {}),
             'title': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
@@ -166,26 +74,32 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'BadgeAward'},
             'awardee': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['badges.BadgeAwardee']"}),
             'badge': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['badges.Badge']"}),
+            'claimed': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ignored': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'nomination': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['badges.BadgeNomination']"}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {})
         },
         'badges.badgeawardee': {
-            'Meta': {'object_name': 'BadgeAwardee'},
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True'}),
+            'Meta': {'unique_together': "(('user', 'email'),)", 'object_name': 'BadgeAwardee'},
+            'claim_code': ('django.db.models.fields.CharField', [], {'default': "'atsehhf'", 'unique': 'True', 'max_length': '7'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         'badges.badgenomination': {
             'Meta': {'object_name': 'BadgeNomination'},
             'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'approved_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
+            'approved_why': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'badge': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['badges.Badge']"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'nominator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'nominator'", 'to': "orm['auth.User']"}),
             'nominee': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'nominee'", 'to': "orm['badges.BadgeAwardee']"}),
-            'reason_why': ('django.db.models.fields.TextField', [], {}),
+            'reason_why': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {})
         },
         'contenttypes.contenttype': {

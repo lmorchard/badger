@@ -1,1 +1,0 @@
-{{nomination.nominee.email}} has been nominated to be awarded {{nomination.badge}}

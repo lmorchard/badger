@@ -38,6 +38,12 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     )
 
     notification.create_notice_type(
+        "badge_award_received", 
+        _("Badge Award Received"), 
+        _("you have been awarded a badge")
+    )
+
+    notification.create_notice_type(
         "badge_award_claimed", 
         _("Badge Award Claimed"), 
         _("a badge award has been claimed")

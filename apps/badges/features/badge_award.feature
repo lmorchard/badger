@@ -22,7 +22,7 @@ Feature: Approving and rejecting badge awards
         Then I should see a page whose title contains "Badge detail"
             And I should not see the "nominations" section
             And "user3" should be awarded the badge "Nifty badge"
-            And "user3" should receive a "Badge Awarded" notification
+            And "user3" should receive a "Badge Award Received" notification
         Given I am logged in as "user3"
             And I go to the "badge detail" page for "Nifty badge"
         Then I should see the "claim_badge" section
@@ -85,8 +85,10 @@ Feature: Approving and rejecting badge awards
         When I press "Reject"
         Then I should see a status code of "200"
 
-    @TODO
-    @next
+    @current
     Scenario: Award email to non-member should include claim code
+        # This feature seems to be working but I jumped ahead and implemented
+        # it experimentally without a test. BAD WEBDEV NO BISCUIT.
+        # It's bedtime, though, so maybe tomorrow this will be fixed.
         Given in progress
 

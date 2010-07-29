@@ -1,6 +1,8 @@
 """Models for the badge application"""
 import os
 import os.path
+import uuid
+import random
 from datetime import datetime
 
 from django.conf import settings
@@ -11,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 
+from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
 from tagging.fields import TagField
@@ -30,6 +33,10 @@ try:
     from PIL import Image
 except ImportError:
     import Image
+
+
+# TODO: Does this need to be a setting?
+RANDOM_CODE_LENGTH = 7
 
 
 def badge_file_path(instance=None, filename=None, slug=None):
@@ -178,10 +185,18 @@ class BadgeAwardeeManager(models.Manager):
         return (awardee, created)
 
 
+def make_random_code():
+    s = '0123456789abcdefghijklmnopqrstuvwxyz'
+    return ''.join([random.choice(s) for x in range(RANDOM_CODE_LENGTH)])
+
+
 class BadgeAwardee(models.Model):
     """Representation of a someone awarded a badge, allows identifying people
     not yet signed up to the site by email address"""
     objects = BadgeAwardeeManager()
+
+    claim_code = models.CharField(max_length=RANDOM_CODE_LENGTH,
+            default=make_random_code, editable=False, unique=True)
     user = models.ForeignKey(User, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
 
@@ -193,6 +208,27 @@ class BadgeAwardee(models.Model):
             return reverse("profile_detail", args=[self.user.username])
         elif self.email:
             return 'mailto:%s' % self.email
+
+    def verify(self, user):
+        """Claim this awardee identity for a given user, presumably in reaction
+        to having been presented with the claim code."""
+        if self.user and self.user != user:
+            # Must be unverified or already verified as the given user.
+            return False
+        
+        if not self.user:
+            # Change the user for awardee if not already set.
+            self.user = user
+            self.email = None
+            self.save()
+
+            # Send out notices for all unclaimed awards available to this awardee
+            awards = BadgeAward.objects.filter(awardee=self).exclude(claimed=True)
+            for award in awards:
+                notification.send([self.user], 'badge_award_received', 
+                        {"award": award})
+
+        return True
 
     def display(self):
         if self.user:
@@ -272,14 +308,21 @@ class BadgeNomination(models.Model):
         new_award.save()
 
         if notification:
-            recipients = [approved_by, self.nominator, self.badge.creator]
-            if self.nominee.user:
-                recipients.append(self.nominee.user)
+            recipients = dict((x.username, x) for x in reversed((
+                approved_by, self.nominator, self.badge.creator
+            ))).values()
             notification.send(recipients, 'badge_awarded',
                     {"award": new_award})
 
+            if self.nominee.user:
+                notification.send([self.nominee.user], 'badge_award_received',
+                        {"award": new_award})
+
         if self.nominee.email:
-            context = {"award": new_award}
+            context = {
+                "award": new_award,
+                "current_site": Site.objects.get_current()
+            }
             subject = render_to_string(
                 "badges/award_email_subject.txt", context)
             # remove superfluous line breaks
@@ -293,7 +336,9 @@ class BadgeNomination(models.Model):
 
     def reject(self, rejected_by, reason_why=''):
         if notification:
-            recipients = [rejected_by, self.nominator, self.badge.creator]
+            recipients = dict((x.username, x) for x in reversed((
+                rejected_by, self.nominator, self.badge.creator
+            ))).values()
             notification.send(recipients, 'badge_nomination_rejected', 
                     {'nomination': self, 'nominee': self.nominee,
                     'rejected_by': rejected_by, 'reason_why': reason_why})
@@ -328,9 +373,6 @@ class BadgeAward(models.Model):
 
     def __unicode__(self):
         return '%s awarded %s' % (self.awardee, self.badge.title)
-
-    #def get_absolute_url(self):
-    #    return self.badge.get_absolute_url()
 
     @models.permalink
     def get_absolute_url(self):
@@ -367,15 +409,19 @@ class BadgeAward(models.Model):
         self.save()
 
         if notification:
-            recipients = [self.awardee.user, self.nomination.nominator, 
-                    self.badge.creator]
+            recipients = dict((x.username, x) for x in reversed((
+                self.awardee.user, self.nomination.nominator, 
+                self.badge.creator
+            ))).values()
             notification.send(recipients, 'badge_award_claimed', 
                     {"award": self})
 
     def reject(self, whom_by):
         if notification:
-            recipients = [self.awardee.user, self.nomination.nominator, 
-                    self.badge.creator]
+            recipients = dict((x.username, x) for x in reversed((
+                self.awardee.user, self.nomination.nominator, 
+                self.badge.creator
+            ))).values()
             notification.send(recipients, 'badge_award_rejected', 
                     {"award": self})
 
@@ -387,7 +433,9 @@ class BadgeAward(models.Model):
         self.save()
 
         if notification:
-            recipients = [self.awardee.user]
+            recipients = dict((x.username, x) for x in reversed((
+                self.awardee.user,
+            ))).values()
             notification.send(recipients, 'badge_award_ignored', 
                     {"award": self})
 

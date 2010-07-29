@@ -33,12 +33,8 @@ def index(request):
 import pinax.apps.profiles.views
 def profile(request, username, template_name="profiles/profile.html", 
         extra_context=None):
-    try:
-        user = User.objects.get(username=username)
-        awardee = BadgeAwardee.objects.get(user=user)
-        awards = BadgeAward.objects.filter(awardee=awardee, claimed=True).all()
-    except ObjectDoesNotExist:
-        awards = []
+    user = get_object_or_404(User, username=username)
+    awards = BadgeAward.objects.filter(awardee__user=user, claimed=True)
     return pinax.apps.profiles.views.profile(request, username, template_name, {
         "awards": awards
     })
@@ -140,12 +136,12 @@ def badge_details(request, badge_slug):
         nominations = None
     elif badge.allows_nomination_listing_by(request.user):
         # List all nominations for this badge
-        nominations = BadgeNomination.objects.filter(badge=badge, 
-                nominee__email=None, approved=False)
+        nominations = BadgeNomination.objects.filter(badge=badge
+                ).exclude(approved=True)
     else:
         # List only own nominations for this badge
         nominations = BadgeNomination.objects.filter(badge=badge, 
-                nominator=request.user, approved=False)
+                nominator=request.user).exclude(approved=True)
 
     awards = BadgeAward.objects.filter(badge=badge, claimed=True)
 
@@ -227,22 +223,18 @@ def nomination_details(request, badge_slug, nomination_id):
         'permissions': perms
     }, context_instance=RequestContext(request))
 
-def award_list(request, badge_slug, awardee_name):
-    return HttpResponse("LIST OF AWARDS")
-
 def award_details(request, badge_slug, awardee_name, award_id):
     """Display details on an award"""
     badge = get_object_or_404(Badge, slug=badge_slug)
 
     try:
         validators.validate_email(awardee_name)
-        awardee = get_object_or_404(BadgeAwardee, email=awardee_name)
+        award = get_object_or_404(BadgeAward, badge=badge, id=award_id,
+                awardee__email=awardee_name)
     except ValidationError:
         awardee_user = User.objects.get(username__exact=awardee_name)
-        awardee = get_object_or_404(BadgeAwardee, user=awardee_user)
-
-    award = get_object_or_404(BadgeAward, badge=badge, awardee=awardee,
-            id=award_id)
+        award = get_object_or_404(BadgeAward, badge=badge, id=award_id,
+                awardee__user=awardee_user)
 
     perms = {
         "viewing": award.allows_viewing_by(request.user),
@@ -291,6 +283,28 @@ def award_details(request, badge_slug, awardee_name, award_id):
     return render_to_response('badges/award_detail.html', {
         'badge': badge, 
         'award': award, 
-        'awardee': awardee,
+        'awardee': award.awardee,
         'permissions': perms
     }, context_instance=RequestContext(request))
+
+def award_list(request, badge_slug, awardee_name):
+    return HttpResponse("LIST OF AWARDS")
+
+@login_required
+def awardee_verify(request, awardee_claim_code):
+    """Accept verification of an awardee identity given a valid code""" 
+    awardee = get_object_or_404(BadgeAwardee, claim_code=awardee_claim_code)
+    if not awardee.verify(request.user):
+        return HttpResponseForbidden(_('not yours'))
+    
+    awards = BadgeAward.objects.filter(awardee=awardee).exclude(claimed=True)
+    if awards.count() == 1:
+        messages.add_message(request, messages.SUCCESS,
+            _("Award eligibility confirmed"))
+        return HttpResponseRedirect(awards[0].get_absolute_url())
+    elif awards.count() > 0:
+        messages.add_message(request, messages.SUCCESS,
+            _("Multiple awards confirmed, check your notifications."))
+
+    return HttpResponseRedirect(reverse('notification_notices'))
+
