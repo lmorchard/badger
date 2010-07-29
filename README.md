@@ -2,6 +2,8 @@
 
 It might be nice to gift badges and track achievements for deserving people.
 
+[I wrote a long article about the thinking and use cases behind this thing.](http://decafbad.com/2010/07/badger-article/)
+
 ## Installation / Deployment
 
 * Never been done, yet.
@@ -24,15 +26,19 @@ I'll assume you're a bit of a Django hacker here, but this might help kick thing
     * (You're probably there now.)
 * Make sure you have Python 2.4+, [pip][], and [virtualenv][].
     * I'm using Python 2.6.5 from MacPorts, for what it's worth.
-* Follow the [Getting started guide for Pinax](http://pinaxproject.com/docs/dev/gettingstarted.html), mainly:
+* Follow the [Getting started guide for Pinax](http://pinaxproject.com/docs/dev/gettingstarted.html), which is basically the following:
     * Use [virtualenv][] to create and use a new environment.
     * `pip install -r requirements/dev.txt`
     * `python manage.py syncdb`
+    * `python manage.py migrate --all`
     * `python manage.py runserver`
 * If anything goes wrong, you're probably better informed than I am to fix it.
 * Using Freshen for tests, I've been using this command:
-    * `python manage.py test --with-freshen -wapps/badges/features/ -lnose.badger -v2 --tags=~@TODO`
-    * This runs the Freshen feature tests, with log output enabled, and skips the scenarios tagged as @TODO
+    * `python -Wignore manage.py test --with-freshen -lnose.badger -v2 --tags=~@TODO`
+        * This runs the Freshen feature tests, with log output enabled, and skips the scenarios tagged as @TODO
+        * The `-Wignore` is to squelch a deprecation warning about md5 vs hashlib - should probably fix that some day.
+    * `python manage.py test --with-freshen`
+        * This will run everything, including tests that fail because they're there to remind me of features to develop
 
 [virtualenv]: http://pypi.python.org/pypi/virtualenv
 [pip]: http://pip.openplans.org/
