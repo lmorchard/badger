@@ -56,5 +56,4 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     )
 
 signals.post_syncdb.connect(create_notice_types, sender=notification)
-post_migrate.connect(create_notice_types, sender=notification)
 

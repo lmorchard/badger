@@ -54,6 +54,55 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('badges', ['BadgeAward'])
 
+        notification = models.get_app('notification')
+
+        notification.create_notice_type(
+            "badge_nomination_sent", 
+            _("Badge Nomination Sent"), 
+            _("you have sent a nomination for a badge")
+        )
+
+        notification.create_notice_type(
+            "badge_nomination_received", 
+            _("Badge Nomination Received"), 
+            _("you have been nominated for a badge")
+        )
+
+        notification.create_notice_type(
+            "badge_nomination_proposed", 
+            _("Badge Nomination Proposed"), 
+            _("someone has been nominated to receive a badge for which you are a decision maker")
+        )
+
+        notification.create_notice_type(
+            "badge_nomination_rejected", 
+            _("Badge Nomination Rejected"), 
+            _("a decision maker for a badge has rejected a nomination for award")
+        )
+
+        notification.create_notice_type(
+            "badge_awarded", 
+            _("Badge Awarded"), 
+            _("a badge has been awarded")
+        )
+
+        notification.create_notice_type(
+            "badge_award_claimed", 
+            _("Badge Award Claimed"), 
+            _("a badge award has been claimed")
+        )
+
+        notification.create_notice_type(
+            "badge_award_rejected", 
+            _("Badge Award Rejected"), 
+            _("a badge award has been rejected")
+        )
+
+        notification.create_notice_type(
+            "badge_award_ignored", 
+            _("Badge Award Ignored"), 
+            _("a badge award has been ignored")
+        )
 
     def backwards(self, orm):
         
