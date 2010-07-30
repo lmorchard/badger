@@ -63,18 +63,21 @@
                 </li>
             {% endif %}
 
-            {% if awards %}
+            {% if award_users %}
                 <li class="claimed_by">
-                    <h3>Claimed by ({{ awards|length }})</h3>
+                    <h3>Awarded to</h3>
                     <ul class="profiles">
-                        {% for award in awards %}
-                            {% if award.awardee.user %}
-                                <li>
-                                    <a href="{{ award.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.awardee.user 80 %}" alt="Photo of {{ other_user }}" class="photo" /></a>
-                                    <a href="{{ award.get_absolute_url }}" class="fn">{{ award.awardee }}</a>
-                                </li>
-                            {% endif %}
+                        
+                        {% for award_user in award_users %}
+                            <li>
+                                <a class="avatar" href="{% url badge_award_list badge.slug award_user.username %}"><img src="{% avatar_url award_user.username 80 %}" alt="Photo of {{ user }}" class="photo" /></a>
+                                <a class="fn" href="{% url badge_award_list badge.slug award_user.username %}">{{ award_user.username }}</a>
+                                {% if award_user.award_count > 1 %}
+                                    <div class="count"><span>{{ award_user.award_count }}</span></div>
+                                {% endif %}
+                            </li>
                         {% endfor %}
+
                     </ul>
                 </li>
             {% endif %}

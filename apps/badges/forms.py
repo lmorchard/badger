@@ -40,10 +40,6 @@ class BadgeForm(MyModelForm):
         fields = ('title', 'main_image', 'description', 'autoapprove', 'tags')
 
 
-def username_or_email_validator(value):
-    pass
-
-
 class UsernameOrEmailField(forms.CharField):
     def validate(self, value):
         super(UsernameOrEmailField, self).validate(value)

@@ -3,9 +3,11 @@
 #
 --requirement=project.txt
 
+coverage
+nose
+git+git://github.com/cmheisel/nose-xcover.git#egg=nosexcover
 -e git+http://github.com/jbalogh/django-nose.git#egg=django-nose
 -e git+http://github.com/jbalogh/check.git#egg=check
-# -e git+http://github.com/jbalogh/test-utils.git#egg=test-utils
 
 lxml
 pyquery

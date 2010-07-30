@@ -113,9 +113,21 @@ Feature: Managing badge awards on a user profile
         Then "user3" should have "3" claimed awards for the badge "Nifty badge"
             And "user3" should have "0" unclaimed awards for the badge "Nifty badge"
 
+    @current
+    Scenario: Display of multiple awards on a profile page is collapsed into a single image with a counter
+        # But clicking on one of them should yield a report of awards and nominations
+        # ANOTHER SCENARIO LEFT UNDONE WHILE FEATURE SEEMS TO WORK UGH
+        Given in progress
+
+    @current
+    Scenario: Display of multiple awards on a badge detail page is collapsed into a single image with a counter
+        # But clicking on one of them should yield a report of awards and nominations
+        # ANOTHER SCENARIO LEFT UNDONE WHILE FEATURE SEEMS TO WORK UGH
+        Given in progress
+
     @TODO
     Scenario: Someone confirms an email address for which badges have been awarded
-        # Retroactive claim of BadgeAwardee's
+        # Retroactive claim of BadgeAwardee objects without associated users
         Given in progress
 
     @TODO

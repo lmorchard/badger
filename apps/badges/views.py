@@ -143,7 +143,20 @@ def badge_details(request, badge_slug):
         nominations = BadgeNomination.objects.filter(badge=badge, 
                 nominator=request.user).exclude(approved=True)
 
-    awards = BadgeAward.objects.filter(badge=badge, claimed=True)
+    award_users = User.objects.raw("""
+        SELECT *, count(badges_badgeaward.id) as award_count
+        FROM auth_user, badges_badgeawardee, badges_badgeaward, badges_badge
+        WHERE 
+            auth_user.id = badges_badgeawardee.user_id AND
+            badges_badgeawardee.id = badges_badgeaward.awardee_id AND
+            badges_badge.id = badges_badgeaward.badge_id AND
+            badges_badgeaward.claimed = 1 AND
+            badges_badge.id = %s
+        GROUP BY
+            auth_user.id
+        ORDER BY
+            badges_badgeaward.updated_at DESC
+    """, [badge.id])
 
     if not request.user.is_authenticated():
         unclaimed_awards = []
@@ -155,7 +168,7 @@ def badge_details(request, badge_slug):
         'badge': badge,
         'nomination_form': nomination_form,
         'nominations': nominations,
-        'awards': awards,
+        'award_users': award_users,
         'permissions': perms,
         'unclaimed_awards': unclaimed_awards
     }, context_instance=RequestContext(request))

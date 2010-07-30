@@ -217,6 +217,7 @@ class BadgeAwardee(models.Model):
     def verify(self, user):
         """Claim this awardee identity for a given user, presumably in reaction
         to having been presented with the claim code."""
+
         if self.user and self.user != user:
             # Must be unverified or already verified as the given user.
             return False

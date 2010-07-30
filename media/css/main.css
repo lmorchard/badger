@@ -60,11 +60,13 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 #body .ui-widget { font-family: inherit; font-size: 1em; }
 
 .badge_detail .profiles { margin: 0; padding: 0; text-align: center; }
-.badge_detail .profiles li { float: left; margin: 0.25em; }
+.badge_detail .profiles li { float: left; margin: 0.25em; position: relative; }
 .badge_detail .profiles li { }
 .badge_detail .profiles li .avatar { display: block; width: 100px; height: 90px; }
 .badge_detail .profiles li .avatar img { }
 .badge_detail .profiles li .fn { display: block }
+.badge_detail .profiles li .count { position: absolute; top: -10px; right: 0px; width: 25px; height: 25px; line-height: 25px; background: #080; color: #eee; -moz-border-radius: 25px; }
+.badge_detail .profiles li .count span { display: block }
 
 .badge_detail .pending_awards li { margin-bottom: 1.5em; }
 

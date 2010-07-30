@@ -55,11 +55,12 @@ Feature: Badge creation and management
     Scenario: A badge cannot be delete after it has been awarded
         Given in progress
 
+    @TODO
     Scenario: Badges should accept image uploads
         Given I am logged in as "user1"
         When I go to the "create badge" page
             And I fill in "Title" with "Awesome Tester"
             And I fill in "Description" with "This is an awesome badge for awesome testers"
             And I fill in "Main image" with "garbage"
-        # Ugh. Stumped here on how best to actually test an image upload.
-        # This only checks for the presence of the field.
+            # Ugh. Stumped here on how best to actually test an image upload.
+            # This only checks for the presence of the field.
