@@ -6,6 +6,8 @@
 from freshen import *
 
 import logging
+import re
+import urlparse
 from lxml import etree
 from pyquery import PyQuery
 from django.test.client import Client
@@ -34,6 +36,8 @@ def before_all(sc):
     scc.current_page = None
     scc.current_form = None
     scc.current_form_context = None
+    scc.context_email = None
+    scc.context_url = None
     scc.name_path_map = {}
 
 @After
@@ -73,6 +77,10 @@ def given_i_am_logged_in_as(username):
     )
     ok_(succ, "login should succeed")
 
+@Given(u'I am logged out')
+def given_logged_out():
+    scc.browser.logout()
+
 @Given(u'I go to the "(.*)" page$')
 def i_am_on_named_page(page_name):
     path = (page_name in scc.name_path_map and 
@@ -107,17 +115,24 @@ def go_to_badge_detail_page(title):
 
 @Given(u'"(.*)" nominates "(.*)" for a badge entitled "(.*)" because "(.*)"')
 def create_nomination(nominator_name, nominee_name, badge_title, badge_reason_why):
-    nominator = User.objects.get(username__exact=nominator_name)
-    nominee = User.objects.get(username__exact=nominee_name)
     badge = Badge.objects.get(title__exact=badge_title)
-    badge_awardee, created = \
-        BadgeAwardee.objects.get_or_create_by_user_or_email(nominee)
-    nomination = badge.nominate(nominator, badge_awardee, badge_reason_why)
+    nominator = User.objects.get(username__exact=nominator_name)
+    try:
+        validators.validate_email(nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(email=nominee_name)
+    except ValidationError:
+        nominee_user = User.objects.get(username__exact=nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(user=nominee_user)
+    nomination = badge.nominate(nominator, nominee, badge_reason_why)
 
 @Given(u'"(.*)" approves the nomination of "(.*)" for a badge entitled "(.*)" because "(.*)"')
 def approve_nomination(approver_name, nominee_name, badge_title, reason_why):
-    nominee_user = User.objects.get(username__exact=nominee_name)
-    nominee = BadgeAwardee.objects.get(user=nominee_user)
+    try:
+        validators.validate_email(nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(email=nominee_name)
+    except ValidationError:
+        nominee_user = User.objects.get(username__exact=nominee_name)
+        nominee, created = BadgeAwardee.objects.get_or_create(user=nominee_user)
     approver = User.objects.get(username__exact=approver_name)
     badge = Badge.objects.get(title__exact=badge_title)
     nomination = BadgeNomination.objects.get(
@@ -210,7 +225,7 @@ def press_form_button(button_name):
         if not form_method: 
             form_method = 'post'
 
-        field = form.find('input[value="%s"]' % button_name)
+        field = form.find('input[value^="%s"]' % button_name)
         button_value = field.val()
         if len(field) == 0:
             field = form.find('button:contains("%s")' % button_name)
@@ -225,7 +240,7 @@ def press_form_button(button_name):
 
     else:
         # If we have no form context, find the button and work up to the form.
-        field = page('input[value="%s"]' % button_name)
+        field = page('input[value^="%s"]' % button_name)
         button_value = field.val()
         if len(field) == 0:
             field = page('button:contains("%s")' % button_name)
@@ -268,8 +283,6 @@ def click_link_in_section(link_content, section_title):
     link = section.find('a.%s' % link_content)
     if len(link) == 0:
         link = section.find('*:contains("%s")' % link_content)
-    if len(link) == 0:
-        glc.log.debug("SECTION CONTENT %s" % section.html() )
     ok_(len(link) > 0, 'link "%s" should be found in section "%s"' % (link_content, section_title))
     path = link.attr('href')
     page = visit_page(path)
@@ -288,8 +301,6 @@ def should_see_no_form_validation_errors():
 def should_see_form_validation_errors():
     error_fields = scc.current_page('.errorField')
     cond = len(error_fields) > 0 or len(scc.current_page('#errorMsg')) > 0
-    if not cond:
-        glc.log.debug("FORM CONTENT %s" % scc.last_response.content)
     ok_(cond, 'there should be one or more error fields')
 
 @Then(u'I should see a status code of "(.*)"')
@@ -302,7 +313,6 @@ def should_see_page_content(expected_content):
     try:
         pos = page_content.index(expected_content)
     except ValueError:
-        glc.log.debug("Page content: %s" % scc.last_response.content)
         ok_(False, '"%s" should be found in page content' % expected_content)
 
 @Then(u'I should not see "(.*)" anywhere on the page')
@@ -322,7 +332,6 @@ def section_content_check(expected_content, section_title):
     try:
         pos = section_content.index(expected_content)
     except ValueError:
-        glc.log.debug("Section content: %s" % section_content)
         ok_(False, '"%s" should be found in content for section "%s"' % 
             (expected_content, section_title))
 
@@ -368,7 +377,8 @@ def page_title_should_contain(expected_title):
     hit = page('title:contains("%s")' % expected_title)
     cond = (len(hit) > 0)
     if not cond:
-        glc.log.debug("PAGE CONTENT: %s", scc.last_response.content)
+        glc.log.debug("PAGE PATH %s" % ( scc.current_path ))
+        glc.log.debug("PAGE TITLE CONTENT %s" % ( scc.last_response.content ))
     ok_(cond, '"%s" should be found in page title' % expected_title)
 
 @Then(u'there should be no badge "(.*)"')
@@ -482,10 +492,28 @@ def check_notifications(username, notification_name):
 
 @Then(u'"(.*)" should be sent a "(.*)" email')
 def check_queued_email(to_addr, expected_subject):
-    log_entries = Message.objects.filter(to_address__exact=to_addr,
+    queued_msgs = Message.objects.filter(to_address__exact=to_addr,
             subject__contains=expected_subject).all()
-    ok_(len(log_entries)>0, 'an email "%s" to "%s" should be logged' % 
+    ok_(len(queued_msgs)>0, 'an email "%s" to "%s" should be logged' % 
             (expected_subject, to_addr))
+    scc.context_email = queued_msgs[0]
+
+@Then(u'the email should contain a URL')
+def check_context_email_for_url():
+    ok_(scc.context_email is not None, 'there should be a context email')
+    str = scc.context_email.message_body
+    # This only finds http URLs, but that's probably okay for now.
+    urls = re.findall("(?P<url>https?://[^\s]+)", str)
+    ok_(len(urls)>0, 'there should be at least one URL in the email')
+    scc.context_url = urls[0]
+
+from django.contrib.sites.models import Site
+@When(u'I visit the URL')
+def visit_context_url():
+    curr_site = Site.objects.all()[0]
+    path = scc.context_url.replace('http://%s' % curr_site.domain, '')
+    visit_page(path)
+
 
 ###########################################################################
 # Utility functions
@@ -503,18 +531,24 @@ def get_user(username, password=None, email=None):
     return user
 
 def set_current_page(path, resp):
+    
+    if resp.redirect_chain:
+        last = resp.redirect_chain.pop()
+        path = last[0].replace('http://testserver','')
+
     scc.last_response = resp
     scc.current_path = path
+    
     try:
         scc.current_page = PyQuery(resp.content)
     except:
         scc.current_page = None
+    
     scc.current_form = {}
     return scc.current_page
 
 def visit_page(path, data={}, follow=True, status_code=200, **extra):
-    resp = scc.browser.get(path)
-    #eq_(status_code, resp.status_code)
+    resp = scc.browser.get(path, follow=follow)
     return set_current_page(path, resp)
 
 def find_section_in_page(section_title):

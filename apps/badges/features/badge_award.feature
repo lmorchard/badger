@@ -85,10 +85,28 @@ Feature: Approving and rejecting badge awards
         When I press "Reject"
         Then I should see a status code of "200"
 
-    @current
-    Scenario: Award email to non-member should include claim code
-        # This feature seems to be working but I jumped ahead and implemented
-        # it experimentally without a test. BAD WEBDEV NO BISCUIT.
-        # It's bedtime, though, so maybe tomorrow this will be fixed.
-        Given in progress
+    Scenario: An award sent to an unknown email address should result in a message sent containing a verification claim URL
+        Given "user1" creates a badge entitled "Nifty badge"
+            And "user2" nominates "user3@example.com" for a badge entitled "Nifty badge" because "user3 is Nifty"
+            And "user1" approves the nomination of "user3@example.com" for a badge entitled "Nifty badge" because "user3 is indeed Nifty"
+        Then "user3@example.com" should be sent a "Badge Award Verification" email
+            And the email should contain a URL
+        Given I am logged out
+        When I visit the URL
+        Then I should see a page whose title contains "Login"
+        When I fill in "username" with "user3"
+            And I fill in "password" with "user3_password"
+            And I press "Log in"
+        Then I should see a page whose title contains "Award details"
+        When I press "action_claim_award"
+        Then I should see no form validation errors
+            And "user3" should be awarded the badge "Nifty badge"
+            And "user3" should have "1" claimed awards for the badge "Nifty badge"
+            And "user1" should receive a "badge_award_claimed" notification
+            And "user2" should receive a "badge_award_claimed" notification
+            And "user3" should receive a "badge_award_claimed" notification
+        # The claim URL should not be reusable by another user.
+        Given I am logged in as "user4"
+        When I visit the URL
+        Then I should see a status code of "404"
 

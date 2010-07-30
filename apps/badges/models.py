@@ -364,8 +364,13 @@ class BadgeNomination(models.Model):
         super(BadgeNomination, self).save(**kwargs)
 
 
+class BadgeAwardManager(models.Manager):
+    pass
+
 class BadgeAward(models.Model):
     """Representation of a badge awarded to a user"""
+    objects = BadgeAwardManager()
+
     badge = models.ForeignKey(Badge)
     nomination = models.ForeignKey(BadgeNomination)
     awardee = models.ForeignKey(BadgeAwardee, verbose_name=_("awardee"))
