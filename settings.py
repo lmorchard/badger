@@ -108,6 +108,7 @@ MIDDLEWARE_CLASSES = [
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.transaction.TransactionMiddleware",
+    "badger.apps.django403.middleware.Django403Middleware",
 ]
 
 ROOT_URLCONF = "badger.urls"
