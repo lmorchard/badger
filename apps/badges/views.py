@@ -299,10 +299,12 @@ def awardee_verify(request, awardee_claim_code):
     
     awards = BadgeAward.objects.filter(awardee=awardee).exclude(claimed=True)
     if awards.count() == 1:
+        # If there's a single award, just redirect to it.
         messages.add_message(request, messages.SUCCESS,
             _("Award eligibility confirmed"))
         return HttpResponseRedirect(awards[0].get_absolute_url())
     elif awards.count() > 0:
+        # If multiple awards, redirect to notifications. Might be confusing.
         messages.add_message(request, messages.SUCCESS,
             _("Multiple awards confirmed, check your notifications."))
 

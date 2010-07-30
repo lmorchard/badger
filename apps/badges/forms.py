@@ -82,11 +82,22 @@ class BadgeNominationForm(MyForm):
         
         try:
             if 'nominee' in self.cleaned_data:
-                nominee = BadgeAwardee.objects.get_by_user_or_email(
-                        self.cleaned_data['nominee'])
-                unapproved_existing_nomination = BadgeNomination.objects.get(
-                        badge=self.context['badge'], nominee=nominee,
-                        nominator=self.context['nominator'], approved=False)
+                nominee_val = self.cleaned_data['nominee']
+                if type(nominee_val) is User:
+                    user = User.objects.get(username=nominee_val)
+                    unapproved_existing_nomination = BadgeNomination.objects.get(
+                            badge=self.context['badge'], 
+                            nominee__user=user,
+                            nominator=self.context['nominator'], 
+                            approved=False)
+                else:
+                    validators.validate_email(nominee_val)
+                    unapproved_existing_nomination = BadgeNomination.objects.get(
+                            badge=self.context['badge'], 
+                            nominee__email=nominee_val,
+                            nominator=self.context['nominator'], 
+                            approved=False)
+
                 raise ValidationError(
                     _('This person has already been nominated for this badge.'))
 

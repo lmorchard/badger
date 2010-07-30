@@ -172,17 +172,22 @@ class BadgeAwardeeManager(models.Manager):
 
     def get_by_user_or_email(self, value):
         if type(value) is User:
-            awardee = BadgeAwardee.objects.get(user=value)
+            awardees = BadgeAwardee.objects.filter(user=value)
         else:
-            awardee = BadgeAwardee.objects.get(email=value)
-        return awardee
+            awardees = BadgeAwardee.objects.filter(email=value)
+        if not awardees:
+            raise BadgeAwardee.DoesNotExist()
+        return awardees[0]
 
     def get_or_create_by_user_or_email(self, value):
-        if type(value) is User:
-            awardee, created = BadgeAwardee.objects.get_or_create(user=value)
-        else:
-            awardee, created = BadgeAwardee.objects.get_or_create(email=value)
-        return (awardee, created)
+        try:
+            return (self.get_by_user_or_email(value), False)
+        except BadgeAwardee.DoesNotExist:
+            if type(value) is User:
+                awardee, created = BadgeAwardee.objects.get_or_create(user=value)
+            else:
+                awardee, created = BadgeAwardee.objects.get_or_create(email=value)
+            return (awardee, created)
 
 
 def make_random_code():
@@ -219,14 +224,15 @@ class BadgeAwardee(models.Model):
         if not self.user:
             # Change the user for awardee if not already set.
             self.user = user
-            self.email = None
-            self.save()
 
             # Send out notices for all unclaimed awards available to this awardee
             awards = BadgeAward.objects.filter(awardee=self).exclude(claimed=True)
             for award in awards:
                 notification.send([self.user], 'badge_award_received', 
                         {"award": award})
+
+        self.claim_code = make_random_code()
+        self.save()
 
         return True
 
@@ -314,11 +320,11 @@ class BadgeNomination(models.Model):
             notification.send(recipients, 'badge_awarded',
                     {"award": new_award})
 
-            if self.nominee.user:
-                notification.send([self.nominee.user], 'badge_award_received',
-                        {"award": new_award})
+        if notification and self.nominee.user:
+            notification.send([self.nominee.user], 'badge_award_received',
+                    {"award": new_award})
 
-        if self.nominee.email:
+        elif self.nominee.email:
             context = {
                 "award": new_award,
                 "current_site": Site.objects.get_current()
