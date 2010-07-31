@@ -44,8 +44,27 @@ def badge_file_path(instance=None, filename=None, slug=None):
     return os.path.join(BADGE_STORAGE_DIR, slug, filename)
 
 
+class BadgeManager(models.Manager):
+    def get_badges_for_user(self, user):
+        return Badge.objects.raw("""
+            SELECT *, count(badges_badgeaward.id) as award_count
+            FROM badges_badgeawardee, badges_badgeaward, badges_badge
+            WHERE 
+                badges_badge.id = badges_badgeaward.badge_id AND
+                badges_badgeaward.claimed = 1 AND
+                badges_badgeaward.awardee_id = badges_badgeawardee.id AND
+                badges_badgeawardee.user_id = %s
+            GROUP BY
+                badges_badge.id
+            ORDER BY
+                badges_badgeaward.updated_at DESC
+        """, [user.id])
+
+
 class Badge(models.Model):
     """Badge model"""
+    objects = BadgeManager()
+
     title = models.CharField(_("title"), max_length=255,
         blank=False, unique=True)
     slug = models.SlugField(_("slug"), blank=False, unique=True)
@@ -365,7 +384,22 @@ class BadgeNomination(models.Model):
 
 
 class BadgeAwardManager(models.Manager):
-    pass
+    def get_users_for_badge(self, badge):
+        return User.objects.raw("""
+            SELECT *, count(badges_badgeaward.id) as award_count
+            FROM auth_user, badges_badgeawardee, badges_badgeaward, badges_badge
+            WHERE 
+                auth_user.id = badges_badgeawardee.user_id AND
+                badges_badgeawardee.id = badges_badgeaward.awardee_id AND
+                badges_badge.id = badges_badgeaward.badge_id AND
+                badges_badgeaward.claimed = 1 AND
+                badges_badge.id = %s
+            GROUP BY
+                auth_user.id
+            ORDER BY
+                badges_badgeaward.updated_at DESC
+        """, [badge.id])
+
 
 class BadgeAward(models.Model):
     """Representation of a badge awarded to a user"""

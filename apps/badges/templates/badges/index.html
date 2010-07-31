@@ -16,8 +16,8 @@
         <ul class="badges">
             {% for badge in badges %}
                 <li>
-                    <a href="{{badge.get_absolute_url}}" class="icon">{% badge_image badge 80 %}</a>
                     <a href="{{badge.get_absolute_url}}" class="name">{{badge.title}}</a>
+                    <a href="{{badge.get_absolute_url}}" class="icon">{% badge_image badge 80 %}</a>
                 </li>
             {% endfor %}
         </ul>

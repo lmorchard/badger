@@ -70,7 +70,7 @@
                         
                         {% for award_user in award_users %}
                             <li>
-                                <a class="avatar" href="{% url badge_award_list badge.slug award_user.username %}"><img src="{% avatar_url award_user.username 80 %}" alt="Photo of {{ user }}" class="photo" /></a>
+                                <a class="avatar" href="{{ award_user.get_absolute_url }}"><img src="{% avatar_url award_user.username 80 %}" alt="Photo of {{ award_user }}" class="photo" /></a>
                                 <a class="fn" href="{% url badge_award_list badge.slug award_user.username %}">{{ award_user.username }}</a>
                                 {% if award_user.award_count > 1 %}
                                     <div class="count"><span>{{ award_user.award_count }}</span></div>

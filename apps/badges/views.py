@@ -34,9 +34,11 @@ import pinax.apps.profiles.views
 def profile(request, username, template_name="profiles/profile.html", 
         extra_context=None):
     user = get_object_or_404(User, username=username)
-    awards = BadgeAward.objects.filter(awardee__user=user, claimed=True)
+    awarded_badges = list(Badge.objects.get_badges_for_user(user))
+
     return pinax.apps.profiles.views.profile(request, username, template_name, {
-        "awards": awards
+        "profile_user": user,
+        "awarded_badges": awarded_badges,
     })
 
 @login_required
@@ -143,20 +145,7 @@ def badge_details(request, badge_slug):
         nominations = BadgeNomination.objects.filter(badge=badge, 
                 nominator=request.user).exclude(approved=True)
 
-    award_users = User.objects.raw("""
-        SELECT *, count(badges_badgeaward.id) as award_count
-        FROM auth_user, badges_badgeawardee, badges_badgeaward, badges_badge
-        WHERE 
-            auth_user.id = badges_badgeawardee.user_id AND
-            badges_badgeawardee.id = badges_badgeaward.awardee_id AND
-            badges_badge.id = badges_badgeaward.badge_id AND
-            badges_badgeaward.claimed = 1 AND
-            badges_badge.id = %s
-        GROUP BY
-            auth_user.id
-        ORDER BY
-            badges_badgeaward.updated_at DESC
-    """, [badge.id])
+    award_users = list(BadgeAward.objects.get_users_for_badge(badge))
 
     if not request.user.is_authenticated():
         unclaimed_awards = []

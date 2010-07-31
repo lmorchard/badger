@@ -47,11 +47,14 @@
             {% if awards %}
                 <div class="badge_awards clearfix">
                     <h2>Badges claimed</h2>
-                    <ul class="badges">
-                        {% for award in awards %}
+                    <ul class="awarded_badges">
+                        {% for award_badge in awarded_badges %}
                             <li>
-                                <a href="{{award.get_absolute_url}}" class="icon">{% badge_image award.badge 80 %}</a>
-                                <a href="{{award.get_absolute_url}}" class="name">{{award.badge.title}}</a>
+                                <a href="{{ award_badge.get_absolute_url }}" class="name">{{award_badge.title}}</a>
+                                <a href="{{ award_badge.get_absolute_url }}" class="icon">{% badge_image award_badge 80 %}</a>
+                                {% if award_badge.award_count > 1 %}
+                                    <div class="count"><a href="{% url badge_award_list award_badge.slug profile_user.username %}">{{ award_badge.award_count }}</a></div>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>

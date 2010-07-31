@@ -136,7 +136,7 @@ def approve_nomination(approver_name, nominee_name, badge_title, reason_why):
     approver = User.objects.get(username__exact=approver_name)
     badge = Badge.objects.get(title__exact=badge_title)
     nomination = BadgeNomination.objects.get(
-            badge=badge, nominee=nominee)
+            badge=badge, nominee=nominee, approved=False)
     nomination.approve(approver, reason_why)
 
 @Given(u'"(.*)" approves "(.*)"\'s nomination of "(.*)" for a badge entitled "(.*)" because "(.*)"')
@@ -149,6 +149,16 @@ def approve_exact_nomination(approver_name, nominator_name, nominee_name, badge_
     nomination = BadgeNomination.objects.get(badge=badge, 
             nominee=nominee, nominator=nominator_user)
     nomination.approve(approver_user, reason_why)
+
+@Given(u'"(.*)" claims the award nominated by "(.*)" for a badge entitled "(.*)"')
+def accept_badge_award(awardee_name, nominator_name, badge_title):
+    awardee_user = User.objects.get(username__exact=awardee_name)
+    awardee, created = BadgeAwardee.objects.get_or_create(user=awardee_user)
+    nominator = User.objects.get(username=nominator_name)
+    badge = Badge.objects.get(title__exact=badge_title)
+    badge_award = BadgeAward.objects.get(badge=badge, awardee=awardee,
+            nomination__nominator=nominator, claimed=False)
+    badge_award.claim(awardee_user)
 
 @When(u'I go to the "(.*)" page$')
 def i_go_to_named_page(page_name):
