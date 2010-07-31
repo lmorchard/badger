@@ -1,5 +1,39 @@
 # TODO
 
+## v0.1
+
+* List of latest awarded badges on home page
+
+* Feeds - JSON, Atom (activity streams?)
+
+* Hide / show awards on profile page
+
+* Creator-only for nominations
+
+* Non-listed badges for surprises
+
+* Invitation-only at launch?
+
+* Pagination on badges page?
+
+## v0.2
+
+* Karma? Applause? Mood?
+
+* API using valet keys and checkbox capabilities
+
+* Delegation of nomination approval
+
+* Comments
+
+* Tags
+
+* Search-then-create
+
+## Future
+
+* Denormalize badge / badgeaward / badgeawardee / user joins down to badge / badgeaward
+
 * For award-by-email, if the email matches the verified email of an existing user, switch to the user rather than using the verification code system?
 
 * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
@@ -16,6 +50,7 @@
 
 * HTML5 badge image editor / composer
 ** See also: http://wallpapers.foxkeh.com/en/
+** See also: http://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
 
 * Autocomplete on user names for badge nomination
 
@@ -25,4 +60,4 @@
 
 * Allow badger app to be more reusable by checking for installation of notification, etc?
 
-
+* Wishlist of badges
