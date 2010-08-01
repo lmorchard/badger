@@ -45,7 +45,7 @@ We'll see how well it manages to do this, hopefully with your help!
             {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}, 
             <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 32 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
             <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
-            claimed the badge
+            claimed <a href="{{ award.get_absolute_url}}">an award</a> for the badge
             <a href="{{ award.badge.get_absolute_url }}">{% badge_image award.badge 32 %}</a>
             <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
         </li>
