@@ -3,6 +3,10 @@
 {% load i18n %}
 {% load ifsetting_tag %}
 {% load markup %}
+{% load avatar_tags %}
+{% load badge_tags %}
+{% load humanize i18n %}
+{% load timezone_filters %}
 
 {% block head_title %}{% trans "Welcome" %}{% endblock %}
 
@@ -33,5 +37,19 @@ We'll see how well it manages to do this, hopefully with your help!
         <p>{% blocktrans %}You can <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
     {% endifsetting %}
 {% endif %}
+
+{% recent_badge_awards as recent_awards %}
+<ul class="recent_awards">
+    {% for award in recent_awards %}
+        <li>
+            {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}, 
+            <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 32 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
+            <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
+            claimed the badge
+            <a href="{{ award.badge.get_absolute_url }}">{% badge_image award.badge 32 %}</a>
+            <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
+        </li>
+    {% endfor %}
+<ul>
 
 {% endblock %}

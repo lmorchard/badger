@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils.hashcompat import md5_constructor
 
+from django.contrib.auth.models import User
+from badger.apps.badges.models import Badge, BadgeNomination
+from badger.apps.badges.models import BadgeAward, BadgeAwardee
+
 from badger.apps.badges import BADGE_DEFAULT_URL
 
 register = template.Library()
@@ -71,3 +75,22 @@ def do_awardee_display(parser, token):
     
     return AwardeeDisplayNode(awardee, as_var)
 
+
+@register.tag(name="recent_badge_awards")
+def do_recent_badge_awards(parser, token):
+    bits = token.split_contents()
+    if (len(bits) == 3):
+        as_var = bits[2]
+    else:
+        raise template.TemplateSyntaxError("'%s' takes three arguments" % bits[0])
+    return RecentBadgeAwardsNode(as_var)
+
+
+class RecentBadgeAwardsNode(template.Node):
+    def __init__(self, as_var):
+        self.as_var = as_var
+    
+    def render(self, context):
+        context[self.as_var] = BadgeAward.objects.filter(claimed=True)\
+                .order_by('-updated_at')[:15]
+        return ""
