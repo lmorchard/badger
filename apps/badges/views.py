@@ -289,8 +289,19 @@ def award_details(request, badge_slug, awardee_name, award_id):
         'permissions': perms
     }, context_instance=RequestContext(request))
 
-def award_list(request, badge_slug, awardee_name):
-    return HttpResponse("LIST OF AWARDS")
+def award_history(request, badge_slug, awardee_name):
+    """Detailed history of awards for a badge and user"""
+    badge = get_object_or_404(Badge, slug=badge_slug)
+    award_user = get_object_or_404(User, username__exact=awardee_name)
+    awards = BadgeAward.objects.filter(badge=badge, 
+            awardee__user=award_user, 
+            claimed=True).exclude(hidden=True).order_by('-updated_at')
+
+    return render_to_response('badges/award_list.html', {
+        'badge': badge, 
+        'awards': awards, 
+        'award_user': award_user,
+    }, context_instance=RequestContext(request))
 
 @login_required
 def awardee_verify(request, awardee_claim_code):
