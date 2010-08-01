@@ -52,8 +52,8 @@
                             <li>
                                 <a href="{{ award_badge.get_absolute_url }}" class="name">{{award_badge.title}}</a>
                                 <a href="{{ award_badge.get_absolute_url }}" class="icon">{% badge_image award_badge 80 %}</a>
-                                {% if award_badge.award_count > 1 %}
-                                    <div class="count"><a href="{% url badge_award_list award_badge.slug profile_user.username %}">{{ award_badge.award_count }}</a></div>
+                                {% if award_badge.award_count > 0 %}
+                                    <div class="count"><a href="{% url badge_award_list award_badge.slug profile_user.username %}" title="Badge award history">{{ award_badge.award_count }}</a></div>
                                 {% endif %}
                             </li>
                         {% endfor %}

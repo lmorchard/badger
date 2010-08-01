@@ -7,3 +7,6 @@
 # See http://pip-installer.org/requirement-format.html for more information.
 
 South
+
+-e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer
+
