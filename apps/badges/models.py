@@ -162,8 +162,10 @@ class Badge(models.Model):
         nomination.reason_why = reason_why
         nomination.save()
 
-        if self.autoapprove:
-            nomination.approve(self.creator)
+        if self.autoapprove or nominator == self.creator:
+            # Auto-approve for everyone if set to do so, or otherwise just for
+            # badge creator.
+            nomination.approve(self.creator, 'auto-approved', True)
         
         else:
             notes_to_send = [
@@ -324,7 +326,7 @@ class BadgeNomination(models.Model):
             return True
         return False
 
-    def approve(self, approved_by, reason_why=''):
+    def approve(self, approved_by, reason_why='', autoapprove=False):
         self.approved = True
         self.approved_by = approved_by
         self.save()
