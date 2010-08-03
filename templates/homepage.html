@@ -41,13 +41,24 @@ We'll see how well it manages to do this, hopefully with your help!
 {% recent_badge_awards as recent_awards %}
 <ul class="recent_awards">
     {% for award in recent_awards %}
-        <li>
-            {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}, 
-            <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 32 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
-            <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
-            claimed <a href="{{ award.get_absolute_url}}">an award</a> for the badge
-            <a href="{{ award.badge.get_absolute_url }}">{% badge_image award.badge 32 %}</a>
-            <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
+        <li class="clearfix">
+
+            <div class="when"><div>
+                {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}
+            </div></div>
+
+            <div class="badge">
+                <a href="{{ award.badge.get_absolute_url }}">{% badge_image award.badge 64 %}</a>
+                <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
+            </div>
+
+            <div class="action">was claimed by</div>
+
+            <div class="avatar">
+                <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 64 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
+                <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
+            </div>
+
         </li>
     {% endfor %}
 <ul>
