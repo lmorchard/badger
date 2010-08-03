@@ -92,11 +92,6 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .badge_awards .badges li .icon img { padding: 0.25em; }
 .badge_awards .badges li .name { display: block; font-weight: bold; padding: 0.25em 0.5em; background: #ccc; height: 3.5em }
 
-.award_list {}
-.award_list ul.awards { list-style: none; margin: 0 0 0 375px; padding: 0; }
-.award_list ul.awards li { margin: 0 0 0.5em 0; padding: 0.5em 0.75em; border: 2px #ccc solid; -moz-border-radius: 8px; }
-
-
 .home .recent_awards { list-style-type: none; margin: 0; padding: 0; }
 .home .recent_awards li { border: 2px #ccc solid; padding: 0.5em; margin: 0.5em; -moz-border-radius: 8px; width: 375px; float: left; position: relative; }
 .home .recent_awards li .when { float: left; width: 64px; text-align: center; font-weight: bold; position: absolute; top: 50%; margin-top: -2.25em; }
@@ -104,4 +99,13 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .home .recent_awards li .action { float: left; width: auto; text-align: center; font-size: 115%; font-weight: bold; line-height: 64px; }
 .home .recent_awards li .avatar { float: left; width: 96px; text-align: center; padding: 0em 0 0 0; }
 
+.award_list {}
+.award_list ul.awards { list-style: none; margin: 0 0 0 375px; padding: 0; }
+
+.award_display_full { margin: 0 0 0.5em 0; padding: 0.5em 0.75em; border: 2px #ccc solid; -moz-border-radius: 8px; }
+
+.award_display_full p.reason_why, .award_display_full p.approved_why { font-size: 95%; margin: 1em 0.25em 0.75em 3em; padding: 0.25em 0.5em; font-style: italic; border-left: 2px #aaa solid; background: #eee; }
+.award_display_full .when { font-size: 85%; }
+
+.award_detail .award_display_full { margin: 0 0 0 375px }
 

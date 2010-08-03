@@ -10,7 +10,7 @@
 {% load humanize i18n %}
 {% load timezone_filters %}
 
-{% block head_title %}{% trans "Award details" %}{% endblock %}
+{% block head_title %}{% trans "Award detail" %}{% endblock %}
 
 {% block body %}
     <div class="award_detail">
@@ -20,65 +20,16 @@
             &gt;
             <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
             &gt;
-            <b>Award
-                for {{ award.nomination.nominee }}
-                from {{ award.nomination.nominator }}
-            </b>
+            <a href="{{ award.awardee.get_absolute_url }}">{{ award.awardee }}</a>
+            &gt;
+            <b>Award detail</b>
         </div>
 
         {% with award.badge as badge %}
             {% include "badges/elements/badge_display_full.html" %}
         {% endwith %}
 
-        <p>
-            <a href="{{ award.nomination.nominator.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominator 32 %}" alt="Photo of {{ award.nomination.nominator }}" class="photo" /></a>
-            {{ award.nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.nomination.created_at|localtime:account.timezone|time:"P" }},
-
-            <a href="{{ award.nomination.nominator.get_absolute_url }}">{{ award.nomination.nominator }}</a>
-            nominated
-            <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
-            for this badge because 
-            "<a href="{{ award.nomination.get_absolute_url }}">{{ award.nomination.reason_why }}</a>".
-        </p>
-
-        <p>
-            <a href="{{ award.nomination.approved_by.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.approved_by 32 %}" alt="Photo of {{ award.nomination.approved_by }}" class="photo" /></a>
-            {{ award.nomination.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.nomination.updated_at|localtime:account.timezone|time:"P" }},
-
-            <a href="{{ award.nomination.approved_by.get_absolute_url }}">{{ award.nomination.approved_by }}</a>
-            approved the
-            <a href="{{ award.nomination.get_absolute_url }}">nomination</a>.
-        </p>
-
-        {% if award.claimed %}
-            <p>
-                <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 80 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
-                {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}, 
-                this award was claimed by
-                <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>.
-            </p>
-        {% else %}
-
-            {% if not permissions.claim %}
-                <p>This award has not yet been claimed.</p>
-            {% else %}
-                <div class="claim_badge">
-                    <h3>Claim this badge</h3>
-                    <form action="" method="POST" id="nomination-claim-form" class="uniForm">
-                        {% csrf_token %}
-                        <fieldset>
-                            <p>You are eligible to claim this badge! What would you like to do about it?</p>
-                            <div>
-                                <button type="submit" name="action_claim_award">Claim</button>
-                                <button type="submit" name="action_reject_award">Reject</button>
-                                <button type="submit" name="action_ignore_award">Ignore</button>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-            {% endif %}
-
-        {% endif %}
+        {% include "badges/elements/award_display_full.html" %}
 
     </div>
 {% endblock %}

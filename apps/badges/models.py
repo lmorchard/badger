@@ -326,9 +326,10 @@ class BadgeNomination(models.Model):
             return True
         return False
 
-    def approve(self, approved_by, reason_why='', autoapprove=False):
+    def approve(self, approved_by, approved_why='', autoapprove=False):
         self.approved = True
         self.approved_by = approved_by
+        self.approved_why = approved_why
         self.save()
 
         new_award = BadgeAward(badge=self.badge, awardee=self.nominee,

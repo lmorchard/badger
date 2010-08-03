@@ -22,7 +22,7 @@
             &gt;
             <a href="{{ award_user.get_absolute_url }}">{{ award_user.username }}</a>
             &gt;
-            <b>Awards of {{ badge.title }} for {{ award_user.username }}</b>
+            <b>Award history of {{ badge.title }} for {{ award_user.username }}</b>
         </div>
 
         {% with badge as badge %}
@@ -32,34 +32,7 @@
         <ul class="awards">
             {% for award in awards %}
                 <li>
-
-                    <div class="nomination">
-                        <a href="{{ award.nomination.nominator.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominator 24 %}" alt="Photo of {{ award.nomination.nominator }}" class="photo" /></a>
-                        {{ award.nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.nomination.created_at|localtime:account.timezone|time:"P" }},
-
-                        <a href="{{ award.nomination.nominator.get_absolute_url }}">{{ award.nomination.nominator }}</a>
-                        nominated
-                        <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
-                        for this badge because 
-                        "<a href="{{ award.nomination.get_absolute_url }}">{{ award.nomination.reason_why }}</a>".
-                    </div>
-
-                    <div class="approval">
-                        <a href="{{ award.nomination.approved_by.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.approved_by 24 %}" alt="Photo of {{ award.nomination.approved_by }}" class="photo" /></a>
-                        {{ award.nomination.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.nomination.updated_at|localtime:account.timezone|time:"P" }},
-
-                        <a href="{{ award.nomination.approved_by.get_absolute_url }}">{{ award.nomination.approved_by }}</a>
-                        approved the
-                        <a href="{{ award.nomination.get_absolute_url }}">nomination</a>.
-                    </div>
-
-                    <div class="claim">
-                        <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 32 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
-                        {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}, 
-                        <a href="{{ award.get_absolute_url }}">this award</a> was claimed by
-                        <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>.
-                    </div>
-
+                    {% include "badges/elements/award_display_full.html" %}
                 </li>
             {% endfor %}
         </ul>
