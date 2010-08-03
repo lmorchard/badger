@@ -52,7 +52,7 @@ We'll see how well it manages to do this, hopefully with your help!
                 <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
             </div>
 
-            <div class="action">was claimed by</div>
+            <div class="action">was <a href="{{ award.get_absolute_url }}">claimed</a> by</div>
 
             <div class="avatar">
                 <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 64 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
