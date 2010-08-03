@@ -2,8 +2,6 @@
 
 ## v0.1
 
-* List of latest awarded badges on home page
-
 * Feeds - JSON, Atom (activity streams?)
 
 * Hide / show awards on profile page
@@ -16,11 +14,17 @@
 
 * Pagination on badges page?
 
+* Denormalize badge / badgeaward / badgeawardee / user joins down to badge / badgeaward
+
 ## v0.2
 
 * Karma? Applause? Mood?
 
 * API using valet keys and checkbox capabilities
+    * Valet key = HTTP basic auth user/pass
+    * Easily disposable
+    * Per-valet key logging and reports?
+    * Should allow for simple external services that track conditions and trigger nominations
 
 * Delegation of nomination approval
 
@@ -28,11 +32,17 @@
 
 * Tags
 
+## v0.3
+
 * Search-then-create
 
-## Future
+* L10N / I18N support
 
-* Denormalize badge / badgeaward / badgeawardee / user joins down to badge / badgeaward
+* OAuth access to API
+    * For site-to-site access, allows for trusted verification of identity and badge awards?
+    * Badge award verification could lead to badges that grant access / authority?
+
+## Future
 
 * For award-by-email, if the email matches the verified email of an existing user, switch to the user rather than using the verification code system?
 
