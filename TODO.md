@@ -38,7 +38,9 @@
 
 * Search-then-create
 
-* L10N / I18N support
+* L10N / I18N support for the site itself
+
+* L10N / I18N support for badge content
 
 * OAuth access to API
     * For site-to-site access, allows for trusted verification of identity and badge awards?
