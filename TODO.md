@@ -34,6 +34,8 @@
 
 ## v0.3
 
+* It would be nice to have an attractive theme for the Mozilla installation, and maybe as a default
+
 * Search-then-create
 
 * L10N / I18N support
