@@ -53,8 +53,8 @@
 * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
 
 * Strip out more unused Pinax apps / features
-** No "friends" / "invites" from friends_app?
-** No "about" app?
+    * No "friends" / "invites" from friends_app?
+    * No "about" app?
 
 * Extend award-by-email to also send verification URLs by IM / Twitter / etc
 
@@ -63,14 +63,14 @@
 * Switch from disclosing database IDs in URLs to UUIDs? 6-character {a-zA-Z0-9} strings?
 
 * HTML5 badge image editor / composer
-** See also: http://wallpapers.foxkeh.com/en/
-** See also: http://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
+    * See also: http://wallpapers.foxkeh.com/en/
+    * See also: http://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
 
 * Autocomplete on user names for badge nomination
 
 * Combined search-or-create interface for exploring badges?
-** See also quora.
-** Useful for finding and settling on existing badges before creating an inadvertant variant
+    * See also quora.com and getsatisfaction.com
+    * Useful for finding and settling on existing badges before creating an inadvertant variant
 
 * Allow badger app to be more reusable by checking for installation of notification, etc?
 
