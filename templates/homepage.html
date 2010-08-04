@@ -39,28 +39,30 @@ We'll see how well it manages to do this, hopefully with your help!
 {% endif %}
 
 {% recent_badge_awards as recent_awards %}
-<ul class="recent_awards">
-    {% for award in recent_awards %}
-        <li class="clearfix">
+<div>
+    <h2>Recent awards</h2>
+    <ul class="recent_awards">
+        {% for award in recent_awards %}
+            <li class="clearfix">
 
-            <div class="when"><div>
-                {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}
-            </div></div>
+                <div class="when"><div>
+                    {{ award.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ award.updated_at|localtime:account.timezone|time:"P" }}
+                </div></div>
 
-            <div class="badge">
-                <a href="{{ award.badge.get_absolute_url }}">{% badge_image award.badge 64 %}</a>
-                <a href="{{ award.badge.get_absolute_url }}">{{ award.badge.title }}</a>
-            </div>
+                <div class="avatar">
+                    <a href="{{ award.nomination.nominee.get_absolute_url }}" class="photo"><img src="{% avatar_url award.nomination.nominee.user 64 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
+                    <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
+                </div>
 
-            <div class="action">was <a href="{{ award.get_absolute_url }}">claimed</a> by</div>
+                <div class="action"><a href="{{ award.get_absolute_url }}">claimed</a></div>
 
-            <div class="avatar">
-                <a href="{{ award.nomination.nominee.get_absolute_url }}" class="avatar"><img src="{% avatar_url award.nomination.nominee.user 64 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
-                <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
-            </div>
+                <div class="badge">
+                    <a href="{{ award.badge.get_absolute_url }}" class="title">{{ award.badge.title }}</a>
+                    <a href="{{ award.badge.get_absolute_url }}" class="icon">{% badge_image award.badge 64 %}</a>
+                </div>
 
-        </li>
-    {% endfor %}
-<ul>
-
+            </li>
+        {% endfor %}
+    <ul>
+</div>
 {% endblock %}

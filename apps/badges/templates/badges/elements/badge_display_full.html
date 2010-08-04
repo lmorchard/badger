@@ -5,7 +5,7 @@
 <div class="badge full">
     <h2><a href="{{badge.get_absolute_url}}">{{ badge.title }}</a></h2>
     <div class="image">
-        {% badge_image badge 256 %}
+        <a href="{{badge.get_absolute_url}}">{% badge_image badge 256 %}</a>
     </div>
     <p class="description">{{ badge.description }}</p>
     <div class="metadata">

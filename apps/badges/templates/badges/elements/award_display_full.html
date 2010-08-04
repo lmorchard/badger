@@ -35,24 +35,24 @@
         <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
         claimed this <a href="{{ award.get_absolute_url }}">award</a>.
     {% else %}
-        {% if not permission or not permissions.claim %}
-            <p>This award has not yet been claimed.</p>
-        {% else %}
-            <div class="claim_badge">
-                <h3>Claim this badge</h3>
-                <form action="" method="POST" id="nomination-claim-form" class="uniForm">
-                    {% csrf_token %}
-                    <fieldset>
-                        <p>You are eligible to claim this badge! What would you like to do about it?</p>
-                        <div>
-                            <button type="submit" name="action_claim_award">Claim</button>
-                            <button type="submit" name="action_reject_award">Reject</button>
-                            <button type="submit" name="action_ignore_award">Ignore</button>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-        {% endif %}
+        <p>This award has not yet been claimed.</p>
     {% endif %}
     </div>
+
 </div>
+    {% if not award.claimed and permissions.claim %}
+        <div class="claim_badge">
+            <h3>Claim this badge</h3>
+            <form action="" method="POST" id="nomination-claim-form" class="uniForm">
+                {% csrf_token %}
+                <fieldset>
+                    <p>You are eligible to claim this badge! What would you like to do about it?</p>
+                    <div>
+                        <button type="submit" name="action_claim_award">Claim</button>
+                        <button type="submit" name="action_reject_award">Reject</button>
+                        <button type="submit" name="action_ignore_award">Ignore</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    {% endif %}
