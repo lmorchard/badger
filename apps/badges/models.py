@@ -174,7 +174,7 @@ class Badge(models.Model):
         if self.autoapprove or nominator == self.creator:
             # Auto-approve for everyone if set to do so, or otherwise just for
             # badge creator.
-            nomination.approve(self.creator, 'auto-approved', True)
+            nomination.approve(self.creator, '', True)
         
         else:
             notes_to_send = [

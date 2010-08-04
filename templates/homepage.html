@@ -50,15 +50,13 @@ We'll see how well it manages to do this, hopefully with your help!
                 </div></div>
 
                 <div class="avatar">
-                    <a href="{{ award.nomination.nominee.get_absolute_url }}" class="photo"><img src="{% avatar_url award.nomination.nominee.user 64 %}" alt="Photo of {{ award.nomination.nominee.user }}" class="photo" /></a>
-                    <a href="{{ award.awardee.user.get_absolute_url }}">{{ award.awardee.user }}</a>
+                    <a href="{{ award.claimed_by.get_absolute_url }}" class="photo" title="{{ award.claimed_by }}"><img src="{% avatar_url award.claimed_by 64 %}" alt="Photo of {{ award.claimed_by }}" class="photo" /></a>
                 </div>
 
                 <div class="action"><a href="{{ award.get_absolute_url }}">claimed</a></div>
 
                 <div class="badge">
-                    <a href="{{ award.badge.get_absolute_url }}" class="title">{{ award.badge.title }}</a>
-                    <a href="{{ award.badge.get_absolute_url }}" class="icon">{% badge_image award.badge 64 %}</a>
+                    <a href="{{ award.badge.get_absolute_url }}" class="icon" title="{{ award.badge.title }}">{% badge_image award.badge 64 %}</a>
                 </div>
 
             </li>
