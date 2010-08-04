@@ -51,6 +51,7 @@ class BadgeManager(models.Manager):
             FROM badges_badgeaward, badges_badge
             WHERE 
                 badges_badge.id = badges_badgeaward.badge_id AND
+                badges_badgeaward.claimed = 1 AND
                 badges_badgeaward.claimed_by_id = %s
             GROUP BY
                 badges_badge.id
@@ -401,6 +402,7 @@ class BadgeAwardManager(models.Manager):
             FROM auth_user, badges_badgeaward
             WHERE 
                 auth_user.id = badges_badgeaward.claimed_by_id AND
+                badges_badgeaward.claimed = 1 AND
                 badges_badgeaward.badge_id = %s
             GROUP BY
                 auth_user.id
