@@ -6,19 +6,17 @@
 
 * Hide / show awards on profile page
 
-* Creator-only for nominations
-
 * Non-listed badges for surprises
 
 * Invitation-only at launch?
-
-* Pagination on badges page?
 
 * Denormalize badge / badgeaward / badgeawardee / user joins down to badge / badgeaward
 
 ## v0.2
 
 * Karma? Applause? Mood?
+
+* Pagination on badges page?
 
 * API using valet keys and checkbox capabilities
     * Valet key = HTTP basic auth user/pass

@@ -43,9 +43,16 @@ Feature: Nominating people for badges
             And "user1" should receive a "Badge Nomination Proposed" notification
             And "user2" should receive a "Badge Nomination Sent" notification
 
-    @backlog
     Scenario: A nominations from a badge creator is auto-approved
-        Given in progress
+        Given "user1" creates a badge entitled "Awesome badge"
+        And I am logged in as "user1"
+        And I go to the "badge detail" page for "Awesome badge"
+        When I fill in "Nominee" with "user3"
+        And I fill in "Reason why" with "user3 is awesome"
+        And I press "Nominate for badge"
+        Then I should see no form validation errors
+        And "user1" should receive a "Badge Awarded" notification
+        And "user3" should be awarded the badge "Awesome badge"
 
     Scenario: Someone is nominated for a badge set to auto-approve for everyone
         Given "user1" creates a badge entitled "Ultimate badge"
