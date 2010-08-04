@@ -14,11 +14,12 @@ class Migration(SchemaMigration):
         # Adding field 'BadgeAward.claimed_by'
         db.add_column('badges_badgeaward', 'claimed_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True), keep_default=False)
 
-        awards = BadgeAward.objects.all()
-        for award in awards:
-            if award.awardee.user:
-                award.claimed_by = award.awardee.user
-                award.save()
+        if not db.dry_run:
+            awards = BadgeAward.objects.all()
+            for award in awards:
+                if award.awardee.user:
+                    award.claimed_by = award.awardee.user
+                    award.save()
 
 
     def backwards(self, orm):
