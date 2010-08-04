@@ -2,17 +2,25 @@
 
 ## v0.1
 
-* Feeds - JSON, Atom (activity streams?)
-
 * Hide / show awards on profile page
 
 * Non-listed badges for surprises
+
+* Get rid of "what's next" app
+
+* Remove friends app and invites
+    * Friends are best done on other sites, and badge nomination can invite
+
+* Feeds - JSON, Atom (activity streams?)
 
 * Invitation-only at launch?
 
 ## v0.2
 
 * Karma? Applause? Mood?
+
+* Auto-complete on profile name for badge nomination form
+    * auto-complete on emails somehow too?
 
 * Pagination on badges page?
 
@@ -44,6 +52,9 @@
 
 ## Future
 
+* Links break when a badge is renamed, which also renames the slug.
+    * Add a UUID / base-60 ID, use in notifications, redirect to slug?
+
 * For award-by-email, if the email matches the verified email of an existing user, switch to the user rather than using the verification code system?
 
 * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
@@ -59,6 +70,7 @@
 * Switch from disclosing database IDs in URLs to UUIDs? 6-character {a-zA-Z0-9} strings?
 
 * HTML5 badge image editor / composer
+    * See also: http://pixie.strd6.com/
     * See also: http://wallpapers.foxkeh.com/en/
     * See also: http://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
 
