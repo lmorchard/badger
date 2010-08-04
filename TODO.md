@@ -10,8 +10,6 @@
 
 * Invitation-only at launch?
 
-* Denormalize badge / badgeaward / badgeawardee / user joins down to badge / badgeaward
-
 ## v0.2
 
 * Karma? Applause? Mood?

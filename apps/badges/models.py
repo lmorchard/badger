@@ -48,12 +48,10 @@ class BadgeManager(models.Manager):
     def get_badges_for_user(self, user):
         return Badge.objects.raw("""
             SELECT *, count(badges_badgeaward.id) as award_count
-            FROM badges_badgeawardee, badges_badgeaward, badges_badge
+            FROM badges_badgeaward, badges_badge
             WHERE 
                 badges_badge.id = badges_badgeaward.badge_id AND
-                badges_badgeaward.claimed = 1 AND
-                badges_badgeaward.awardee_id = badges_badgeawardee.id AND
-                badges_badgeawardee.user_id = %s
+                badges_badgeaward.claimed_by_id = %s
             GROUP BY
                 badges_badge.id
             ORDER BY
@@ -400,13 +398,10 @@ class BadgeAwardManager(models.Manager):
     def get_users_for_badge(self, badge):
         return User.objects.raw("""
             SELECT *, count(badges_badgeaward.id) as award_count
-            FROM auth_user, badges_badgeawardee, badges_badgeaward, badges_badge
+            FROM auth_user, badges_badgeaward
             WHERE 
-                auth_user.id = badges_badgeawardee.user_id AND
-                badges_badgeawardee.id = badges_badgeaward.awardee_id AND
-                badges_badge.id = badges_badgeaward.badge_id AND
-                badges_badgeaward.claimed = 1 AND
-                badges_badge.id = %s
+                auth_user.id = badges_badgeaward.claimed_by_id AND
+                badges_badgeaward.badge_id = %s
             GROUP BY
                 auth_user.id
             ORDER BY
@@ -423,6 +418,7 @@ class BadgeAward(models.Model):
     awardee = models.ForeignKey(BadgeAwardee, verbose_name=_("awardee"))
     claimed = models.BooleanField(_('Award claimed?'), 
         default=False, help_text=_('If checked, the badge award is claimed.'))
+    claimed_by = models.ForeignKey(User, blank=True, null=True)
     ignored = models.BooleanField(_('Award ignored?'), 
         default=False, help_text=_('If checked, the badge award is ignored.'))
     hidden = models.BooleanField(_('Badge hidden?'), 
@@ -465,6 +461,7 @@ class BadgeAward(models.Model):
 
     def claim(self, whom_by):
         self.claimed = True
+        self.claimed_by = whom_by
         self.save()
 
         if notification:
