@@ -110,13 +110,17 @@ def badge_details(request, badge_slug):
     nomination_form = BadgeNominationForm()
 
     perms = {
-        'editing': badge.allows_editing_by(request.user)
+        'editing': badge.allows_editing_by(request.user),
+        'nomination': badge.allows_nomination_by(request.user),
     }
 
     if request.method == "POST":
 
         if (request.user.is_authenticated and 
             request.POST.get('action_nominate', None) is not None):
+
+            if not perms['nomination']:
+                return HttpResponseForbidden(_('access denied'))
 
             nomination_form = BadgeNominationForm(request.POST)
             nomination_form.context = {"badge": badge, "nominator": request.user}

@@ -78,6 +78,9 @@ class Badge(models.Model):
     autoapprove = models.BooleanField(_('Approve all nominations?'), 
         default=False, 
         help_text=_('If checked, all nominations will automatically be approved'))
+    only_creator_can_nominate = models.BooleanField(
+        _('Only creator can nominate?'), default=False, 
+        help_text=_('If checked, only nominations by the badge creator will be allowed'))
     creator = models.ForeignKey(User, blank=False)
     creator_ip = models.IPAddressField(_("IP Address of the Creator"),
         blank=True, null=True)
@@ -100,6 +103,13 @@ class Badge(models.Model):
         if user == self.creator:
             return True
         return False
+
+    def allows_nomination_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if self.only_creator_can_nominate and user != self.creator:
+            return False
+        return True
 
     def allows_nomination_listing_by(self, user):
         if user.is_staff or user.is_superuser:

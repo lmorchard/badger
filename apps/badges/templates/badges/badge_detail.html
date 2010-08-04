@@ -82,7 +82,7 @@
                 </li>
             {% endif %}
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and permissions.nomination %}
                 <li class="nomination_form">
                     <h3>Nominate someone for this badge</h3>
                     <form action="" method="POST" id="nomination-form" class="uniForm">

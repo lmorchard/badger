@@ -43,7 +43,7 @@ Feature: Nominating people for badges
             And "user1" should receive a "Badge Nomination Proposed" notification
             And "user2" should receive a "Badge Nomination Sent" notification
 
-    @TODO
+    @backlog
     Scenario: A nominations from a badge creator is auto-approved
         Given in progress
 
@@ -190,3 +190,31 @@ Feature: Nominating people for badges
         # To be encoded as a QR code on a patch/sticker
         # Only the badge creator can see the code
 
+    Scenario: A badge can be set to allow nominations only from its creator
+        Given I am logged in as "user1"
+        When I go to the "create badge" page
+        And I fill in "Title" with "Awesome Tester"
+        And I fill in "Description" with "This is an awesome badge for awesome testers"
+        And I fill in "Only creator can nominate" with "true"
+        And I press "Create"
+        Then I should see no form validation errors
+        And I should see a page whose title contains "Badge details"
+        And I should see "Awesome Tester" somewhere on the page
+        Given I am logged in as "user2"
+        And I go to the "badge detail" page for "Awesome Tester"
+        Then I should not see "Nominate for badge" anywhere on the page
+        # A little hacky, but: log in as user1 to get the form, then try
+        # submitting as user2
+        Given I am logged in as "user1"
+        And I go to the "badge detail" page for "Awesome Tester"
+        And I am logged in as "user2"
+        When I fill in "Nominee" with "user3"
+        And I fill in "Reason why" with "user3 is awesome"
+        And I press "Nominate for badge"
+        Then I should see a status code of "403"
+        Given I am logged in as "user1"
+        And I go to the "badge detail" page for "Awesome Tester"
+        When I fill in "Nominee" with "user3"
+        And I fill in "Reason why" with "user3 is awesome"
+        And I press "Nominate for badge"
+        Then I should see no form validation errors
