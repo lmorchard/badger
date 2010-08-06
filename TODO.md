@@ -99,5 +99,3 @@
 
 * Wishlist of badges
 
-* Find a more abstract way to implement permissions in models, instead of allows_* methods and permissions dict in controller
-    * At least move the perms dict construction into model

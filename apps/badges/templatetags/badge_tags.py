@@ -97,4 +97,4 @@ class RecentBadgeAwardsNode(template.Node):
         # caching in the template? Produces a mighty complicated query.
         #context[self.as_var] = BadgeAward.objects.select_related()\
         #        .filter(claimed=True).order_by('-updated_at')[:15]
-        #return ""
+        return ""
