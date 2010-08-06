@@ -57,7 +57,7 @@
                 {% endif %}
                 <ul class="awarded_badges">
                     {% for award_badge in awarded_badges %}
-                    <li class="badge_award {% if award_badge.hidden %}hidden{% endif %}">
+                    <li class="badge_award {% if award_badge.hidden %}award_hidden{% endif %}">
                             <a href="{{ award_badge.get_absolute_url }}" class="name" title="{{award_badge.title}}">{{award_badge.title}}</a>
                             <a href="{{ award_badge.get_absolute_url }}" class="icon">{% badge_image award_badge 80 %}</a>
                             {% if award_badge.award_count > 0 %}
