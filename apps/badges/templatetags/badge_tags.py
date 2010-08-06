@@ -92,7 +92,7 @@ class RecentBadgeAwardsNode(template.Node):
     
     def render(self, context):
         context[self.as_var] = BadgeAward.objects\
-                .filter(claimed=True).order_by('-updated_at')[:15]
+                .filter(claimed=True).exclude(hidden=True).order_by('-updated_at')[:15]
         # TODO: Is the select_related() necessary if we're using fragment
         # caching in the template? Produces a mighty complicated query.
         #context[self.as_var] = BadgeAward.objects.select_related()\
