@@ -44,22 +44,38 @@
                 <p><a href="{% url profile_edit %}" rel="facebox">Edit profile</a></p>
             {% endif %}
         
-            {% if awarded_badges %}
-                <div class="badge_awards clearfix">
-                    <h2>Badges claimed</h2>
-                    <ul class="awarded_badges">
-                        {% for award_badge in awarded_badges %}
-                            <li>
-                                <a href="{{ award_badge.get_absolute_url }}" class="name">{{award_badge.title}}</a>
-                                <a href="{{ award_badge.get_absolute_url }}" class="icon">{% badge_image award_badge 80 %}</a>
-                                {% if award_badge.award_count > 0 %}
-                                    <div class="count"><a href="{% url badge_award_list award_badge.slug profile_user.username %}" title="Badge award history">{{ award_badge.award_count }}</a></div>
+            <div class="badge_awards clearfix">
+                <h2>Badges claimed</h2>
+                {% if can_show_hidden %}
+                    <div>
+                        {% if show_hidden %}
+                            <a class="hide_hidden_awards" href="{{ request.path }}">Hide hidden awards</a>
+                        {% else %}
+                            <a class="show_hidden_awards" href="{{ request.path }}?show_hidden=1">Reveal hidden awards</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <ul class="awarded_badges">
+                    {% for award_badge in awarded_badges %}
+                    <li class="badge_award {% if award_badge.hidden %}hidden{% endif %}">
+                            <a href="{{ award_badge.get_absolute_url }}" class="name" title="{{award_badge.title}}">{{award_badge.title}}</a>
+                            <a href="{{ award_badge.get_absolute_url }}" class="icon">{% badge_image award_badge 80 %}</a>
+                            {% if award_badge.award_count > 0 %}
+                                <div class="count"><a href="{% url badge_award_list award_badge.slug profile_user.username %}" title="Badge award history">{{ award_badge.award_count }}</a></div>
+                            {% endif %}
+                            {% if profile_user == user %}
+                                {% if award_badge.hidden %}
+                                    <div class="show"><a href="{% url badge_award_show_hide award_badge.slug profile_user.username %}?action=show">show</a></div>
+                                {% else %}
+                                    <div class="hide"><a href="{% url badge_award_show_hide award_badge.slug profile_user.username %}?action=hide">hide</a></div>
                                 {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li>None, yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
             
             {% if user.is_authenticated %}
                 

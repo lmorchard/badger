@@ -32,12 +32,14 @@ def before_all(sc):
     glc.log = logging.getLogger('nose.badger')
     scc.browser = Client()
     scc.last_response = None
+    
     scc.current_path = None
     scc.current_page = None
     scc.current_form = None
     scc.current_form_context = None
     scc.context_email = None
     scc.context_url = None
+
     scc.name_path_map = {}
 
 @After
@@ -301,6 +303,24 @@ def click_link_in_section(link_content, section_title):
 def visit_profile_page(user_name):
     visit_page(reverse('profile_detail', args=[user_name]))
 
+@When(u'I find a "(.*)" element containing "(.*)"')
+def find_context_element(element_kind, expected_content):
+    page = scc.current_page
+    contained = page(".%s *:contains('%s')" % (element_kind, expected_content))
+    ok_(len(contained) > 0, "Context element should be found .%s:contains('%s')" % (element_kind, expected_content))
+    scc.context_element = contained.parent(".%s" % element_kind)
+
+@When(u'I click on "(.*)" in that element')
+def click_link_in_element(link_content):
+    context = scc.context_element
+    ok_(context and len(context)>0, "There should be a context element")
+    link = context.find('a.%s' % link_content)
+    if len(link) == 0:
+        link = context.find('*:contains("%s")' % link_content)
+    ok_(len(link) > 0, 'link "%s" should be found' % (link_content))
+    path = link.attr('href')
+    page = visit_page(path)
+
 @Then(u'I should see no form validation errors')
 def should_see_no_form_validation_errors():
     error_fields = scc.current_page('.errorField')
@@ -385,11 +405,9 @@ def should_see_page_title(expected_title):
 def page_title_should_contain(expected_title):
     page = scc.current_page
     hit = page('title:contains("%s")' % expected_title)
-    cond = (len(hit) > 0)
-    if not cond:
-        glc.log.debug("PAGE PATH %s" % ( scc.current_path ))
-        glc.log.debug("PAGE TITLE CONTENT %s" % ( scc.last_response.content ))
-    ok_(cond, '"%s" should be found in page title' % expected_title)
+    if len(hit) == 0:
+        glc.log.debug('PAGE CONTENT %s' % scc.last_response.content)
+    ok_(len(hit) > 0, '"%s" should be found in page title' % expected_title)
 
 @Then(u'there should be no badge "(.*)"')
 def badge_missing_check(badge_title):
@@ -541,7 +559,7 @@ def get_user(username, password=None, email=None):
     return user
 
 def set_current_page(path, resp):
-    
+    #glc.log.debug("CURRENT PAGE IS %s" % path) 
     if resp.redirect_chain:
         last = resp.redirect_chain.pop()
         path = last[0].replace('http://testserver','')

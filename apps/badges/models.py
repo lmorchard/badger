@@ -39,25 +39,53 @@ except ImportError:
 RANDOM_CODE_LENGTH = 7
 
 
+def get_permissions(self, user):
+    """Mixin method to collect permissions for a model instance""" 
+    pre, suf = 'allows_', '_by'
+    pre_len, suf_len = len(pre), len(suf)
+    methods = (
+        m for m in dir(self)
+        if m.startswith(pre) and m.endswith(suf)
+    )
+    perms = dict(
+        ( m[pre_len:0-suf_len], getattr(self, m)(user) )
+        for m in methods
+    )
+    return perms
+
+
 def badge_file_path(instance=None, filename=None, slug=None):
     slug = slug or instance.slug
     return os.path.join(BADGE_STORAGE_DIR, slug, filename)
 
 
 class BadgeManager(models.Manager):
-    def get_badges_for_user(self, user):
-        return Badge.objects.raw("""
-            SELECT *, count(badges_badgeaward.id) as award_count
-            FROM badges_badgeaward, badges_badge
+    def get_badges_for_user(self, user, show_hidden=False):
+        
+        if show_hidden:
+            show_hidden_sql = ''
+        else :
+            show_hidden_sql = 'badges_badgeaward.hidden <> 1 AND'
+        
+        sql = """
+            SELECT
+                *, 
+                count(badges_badgeaward.id) as award_count,
+                badges_badgeaward.hidden as hidden
+            FROM
+                badges_badgeaward, badges_badge
             WHERE 
                 badges_badge.id = badges_badgeaward.badge_id AND
                 badges_badgeaward.claimed = 1 AND
+                %s
                 badges_badgeaward.claimed_by_id = %s
             GROUP BY
                 badges_badge.id
             ORDER BY
                 badges_badgeaward.updated_at DESC
-        """, [user.id])
+        """ % (show_hidden_sql, '%s')
+
+        return Badge.objects.raw(sql, [user.id])
 
 
 class Badge(models.Model):
@@ -88,6 +116,8 @@ class Badge(models.Model):
 
     class Meta:
         unique_together = ('title','slug')
+
+    get_permissions = get_permissions
 
     def __unicode__(self):
         return self.title
@@ -238,6 +268,8 @@ class BadgeAwardee(models.Model):
     class Meta:
         unique_together = ('user','email')
 
+    get_permissions = get_permissions
+
     def get_absolute_url(self):
         if self.user:
             return reverse("profile_detail", args=[self.user.username])
@@ -298,6 +330,8 @@ class BadgeNomination(models.Model):
 
     class Meta:
         pass
+
+    get_permissions = get_permissions
 
     def __unicode__(self):
         return '%s nominated for %s' % (self.nominee, self.badge.title)
@@ -396,13 +430,14 @@ class BadgeNomination(models.Model):
 
 
 class BadgeAwardManager(models.Manager):
-    def get_users_for_badge(self, badge):
+    def get_users_for_badge(self, badge, show_hidden=False):
         return User.objects.raw("""
             SELECT *, count(badges_badgeaward.id) as award_count
             FROM auth_user, badges_badgeaward
             WHERE 
                 auth_user.id = badges_badgeaward.claimed_by_id AND
                 badges_badgeaward.claimed = 1 AND
+                badges_badgeaward.hidden <> 1 AND
                 badges_badgeaward.badge_id = %s
             GROUP BY
                 auth_user.id
@@ -428,6 +463,8 @@ class BadgeAward(models.Model):
     created_at = models.DateTimeField(_("created at"), default=datetime.now)
     updated_at = models.DateTimeField(_("updated at"))
 
+    get_permissions = get_permissions
+
     def __unicode__(self):
         return '%s awarded %s' % (self.awardee, self.badge.title)
 
@@ -441,6 +478,8 @@ class BadgeAward(models.Model):
 
     def allows_viewing_by(self, user):
         if user.is_staff or user.is_superuser:
+            return True
+        if user == self.claimed_by:
             return True
         if user == self.awardee.user:
             return True
@@ -458,6 +497,13 @@ class BadgeAward(models.Model):
         if user.is_staff or user.is_superuser:
             return True
         if user == self.awardee.user:
+            return True
+        return False
+
+    def allows_showhide_by(self, user):
+        if user.is_staff or user.is_superuser:
+            return True
+        if user == self.claimed_by:
             return True
         return False
 
@@ -498,10 +544,12 @@ class BadgeAward(models.Model):
                     {"award": self})
 
     def hide(self):
-        pass
+        self.hidden = True
+        self.save()
 
     def show(self):
-        pass
+        self.hidden = False
+        self.save()
 
 
 # handle notification of new comments

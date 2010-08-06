@@ -33,10 +33,22 @@ def index(request):
 import pinax.apps.profiles.views
 def profile(request, username, template_name="profiles/profile.html", 
         extra_context=None):
+
     user = get_object_or_404(User, username=username)
-    awarded_badges = list(Badge.objects.get_badges_for_user(user))
+    can_show_hidden = (
+        request.user == user or
+        request.user.is_staff or 
+        request.user.is_superuser 
+    )
+    show_hidden = (
+        can_show_hidden and
+        request.GET.get('show_hidden', False) is not False
+    )
+    awarded_badges = list(Badge.objects.get_badges_for_user(user, show_hidden))
 
     return pinax.apps.profiles.views.profile(request, username, template_name, {
+        "can_show_hidden": can_show_hidden,
+        "show_hidden": show_hidden,
         "profile_user": user,
         "awarded_badges": awarded_badges,
     })
@@ -72,9 +84,7 @@ def create(request):
 def edit(request, badge_slug):
     badge = get_object_or_404(Badge, slug=badge_slug)
 
-    perms = {
-        'editing': badge.allows_editing_by(request.user)
-    }
+    perms = badge.get_permissions(request.user)
 
     if not perms['editing']:
         return HttpResponseForbidden(_('access denied'))
@@ -109,10 +119,7 @@ def badge_details(request, badge_slug):
 
     nomination_form = BadgeNominationForm()
 
-    perms = {
-        'editing': badge.allows_editing_by(request.user),
-        'nomination': badge.allows_nomination_by(request.user),
-    }
+    perms = badge.get_permissions(request.user)
 
     if request.method == "POST":
 
@@ -172,11 +179,7 @@ def nomination_details(request, badge_slug, nomination_id):
 
     nomination = get_object_or_404(BadgeNomination, badge=badge, id=nomination_id)
 
-    perms = {
-        "viewing": nomination.allows_viewing_by(request.user),
-        "approval": nomination.allows_approval_by(request.user),
-        "rejection": nomination.allows_rejection_by(request.user)
-    }
+    perms = nomination.get_permissions(request.user)
 
     if not perms['viewing']:
         return HttpResponseForbidden(_('access denied'))
@@ -242,10 +245,7 @@ def award_details(request, badge_slug, awardee_name, award_id):
         award = get_object_or_404(BadgeAward, badge=badge, id=award_id,
                 awardee__user=awardee_user)
 
-    perms = {
-        "viewing": award.allows_viewing_by(request.user),
-        "claim": award.allows_claim_by(request.user)
-    }
+    perms = award.get_permissions(request.user)
 
     if not perms['viewing']:
         return HttpResponseForbidden(_('access denied'))
@@ -327,3 +327,42 @@ def awardee_verify(request, awardee_claim_code):
 
     return HttpResponseRedirect(reverse('notification_notices'))
 
+@login_required
+def award_show_hide_bulk(request, badge_slug, awardee_name):
+
+    badge = get_object_or_404(Badge, slug=badge_slug)
+    award_user = get_object_or_404(User, username__exact=awardee_name)
+    awards = BadgeAward.objects.filter(badge=badge, 
+            awardee__user=award_user, claimed=True).order_by('-updated_at')
+
+    # Get the permissions for all awards, gather the ones allowing showhide
+    perms_set = ( ( a, a.get_permissions(request.user) ) for a in awards )
+    awards_to_showhide = [ p[0] for p in perms_set if p[1]['showhide'] ]
+
+    if len(awards_to_showhide) == 0:
+        # No awards allowed showhide, so forbidden overall
+        return HttpResponseForbidden(_('access denied'))
+
+    action = request.POST.get('action', request.GET.get('action', 'hide'))
+
+    if request.method == "POST":
+        
+        if request.POST.get('confirm', False) is not False:
+            action_method = (action == 'hide') and 'hide' or 'show'
+            for award in awards_to_showhide:
+                getattr(award, action_method)()
+
+        return HttpResponseRedirect(reverse(
+            'profile_detail', args=[request.user.username]
+        ))
+
+    return render_to_response('badges/award_show_hide.html', {
+        'action': action,
+        'badge': badge,
+        'awards': awards_to_showhide, 
+        'award_user': award_user,
+    }, context_instance=RequestContext(request))
+
+@login_required
+def award_show_hide_single(request, badge_slug, awardee_name, award_id):
+    pass

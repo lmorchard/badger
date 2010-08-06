@@ -2,8 +2,6 @@
 
 ## v0.1
 
-* Hide / show awards on profile page
-
 * Non-listed badges for surprises
 
 * Get rid of "what's next" app
@@ -15,7 +13,17 @@
 
 * Invitation-only at launch?
 
+* Master / slave DBs?
+
+* Enable memcache?
+
+* Use template fragment caching in lots of places
+
+* Make sure caching headers for proxy work?
+
 ## v0.2
+
+* Reduce SQL queries
 
 * Karma? Applause? Mood?
 
@@ -51,6 +59,13 @@
     * Badge award verification could lead to badges that grant access / authority?
 
 ## Future
+
+* Hide / show individual awards?
+    * Seems not as useful or crucial as hide/show of all awards for a badge.
+
+* Associate other media types with badges
+    * Videos, especially played as fanfare on award claim
+    * Audio, as fanfare
 
 * Links break when a badge is renamed, which also renames the slug.
     * Add a UUID / base-60 ID, use in notifications, redirect to slug?

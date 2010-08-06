@@ -1,5 +1,5 @@
 {% extends "site_base.html" %}
-
+{% load cache %}
 {% load i18n %}
 {% load ifsetting_tag %}
 {% load markup %}
@@ -43,6 +43,7 @@ We'll see how well it manages to do this, hopefully with your help!
     <h2>Recent awards</h2>
     <ul class="recent_awards">
         {% for award in recent_awards %}
+            {% cache 500 homepage_recent_award award.id %}
             <li class="clearfix">
 
                 <div class="when"><div>
@@ -60,6 +61,7 @@ We'll see how well it manages to do this, hopefully with your help!
                 </div>
 
             </li>
+            {% endcache %}
         {% endfor %}
     <ul>
 </div>

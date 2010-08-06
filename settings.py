@@ -38,6 +38,9 @@ DATABASES = {
     }
 }
 
+
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
@@ -93,6 +96,7 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES = [
+    #"django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -109,6 +113,7 @@ MIDDLEWARE_CLASSES = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.transaction.TransactionMiddleware",
     "badger.apps.django403.middleware.Django403Middleware",
+    #"django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = "badger.urls"

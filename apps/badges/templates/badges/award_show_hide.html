@@ -1,0 +1,61 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load account_tags %}
+{% load avatar_tags %}
+{% load badge_tags %}
+{% load uni_form_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load humanize i18n %}
+{% load timezone_filters %}
+
+{% block head_title %}
+    {% if action == 'hide' %}
+        {% trans "Hide awards of this badge" %}
+    {% else %}
+        {% trans "Show awards of this badge" %}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="award_list">
+
+        <div class="crumbs">
+            <a href="{% url badge_index %}">Badges</a> 
+            &gt;
+            <a href="{{ badge.get_absolute_url }}">{{ badge.title }}</a>
+            &gt;
+            <a href="{{ award_user.get_absolute_url }}">{{ award_user.username }}</a>
+            &gt;
+            {% if action == 'hide' %}
+                <b>{% trans "Hide awards of this badge" %}</b>
+            {% else %}
+                <b>{% trans "Show awards of this badge" %}</b>
+            {% endif %}
+        </div>
+
+        {% with badge as badge %}
+            {% include "badges/elements/badge_display_full.html" %}
+        {% endwith %}
+
+        <div class="hide_decision">
+            <h3>Hide awards</h3>
+            <form action="" method="POST" id="nomination-claim-form" class="uniForm">
+                <input type="hidden" name="action" value="{{ action }}" />
+                {% csrf_token %}
+                <fieldset>
+                    {% if action == 'hide' %}
+                        <p>Hide all {{ awards|length }} awards of this badge from public view?</p>
+                    {% else %}
+                        <p>Reveal all {{ awards|length }} awards of this badge to public view?</p>
+                    {% endif %}
+                    <div>
+                        <button type="submit" class="confirm" name="confirm" value="confirm">Yes, confirm.</button>
+                        <button type="submit" class="cancel" name="cancel" value="cancel">No, cancel.</button>
+                    </div>
+                </fieldset>
+            </form>
+
+    </div>
+{% endblock %}
