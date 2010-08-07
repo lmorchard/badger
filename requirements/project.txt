@@ -8,6 +8,7 @@
 
 South
 python-memcached
+PIL
 
 -e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer
 

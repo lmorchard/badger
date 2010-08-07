@@ -1,0 +1,4 @@
+#
+# Package requirements for a production deployment
+#
+--requirement=project.txt

@@ -30,12 +30,10 @@ urlpatterns = patterns("",
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^account/signup/$", signup_view, name="acct_signup"),
     
-    (r"^about/", include("about.urls")),
     (r"^account/", include("pinax.apps.account.urls")),
     (r"^openid/(.*)", PinaxConsumer()),
     (r"^bbauth/", include("pinax.apps.bbauth.urls")),
     (r"^authsub/", include("pinax.apps.authsub.urls")),
-    (r"^invitations/", include("friends_app.urls")),
     (r"^notices/", include("notification.urls")),
     (r"^messages/", include("messages.urls")),
     (r"^announcements/", include("announcements.urls")),
@@ -47,15 +45,11 @@ urlpatterns = patterns("",
     (r"^flag/", include("flag.urls")),
 
     #(r"^profiles/", include("pinax.apps.profiles.urls")),
-    url(r"^profiles/username_autocomplete/$", "pinax.apps.autocomplete_app.views.username_autocomplete_friends", name="profile_username_autocomplete"),
     url(r"^profiles/$", "pinax.apps.profiles.views.profiles", name="profile_list"),
     #url(r"^profiles/profile/(?P<username>[\w\._-]+)/$", "pinax.apps.profiles.views.profile", name="profile_detail"),
     url(r"^profiles/profile/(?P<username>[\w\._-]+)/$", "badger.apps.badges.views.profile", name="profile_detail"),
     url(r"^profiles/edit/$", "pinax.apps.profiles.views.profile_edit", name="profile_edit"),
     
-    #(r"^feeds/tweets/(.*)/$", "django.contrib.syndication.views.feed", tweets_feed_dict),
-    #(r"^feeds/posts/(.*)/$", "django.contrib.syndication.views.feed", blogs_feed_dict),
-    #(r"^feeds/bookmarks/(.*)/?$", "django.contrib.syndication.views.feed", bookmarks_feed_dict),
 )
 
 tagged_models = (

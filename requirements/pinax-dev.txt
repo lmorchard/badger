@@ -1,7 +1,10 @@
-#
-# Package requirements for development
-#
---requirement=project.txt
+-r  /Users/lorchard/devel/other/pinax/requirements/pinax.txt
+
+PIL
+South
+python-memcached
+
+-e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer
 
 coverage
 nose
@@ -13,3 +16,5 @@ lxml
 pyquery
 freshen
 mock
+
+-e /Users/lorchard/devel/other/pinax

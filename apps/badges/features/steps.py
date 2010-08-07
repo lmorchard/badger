@@ -178,6 +178,12 @@ def when_i_go_to_badge_detail_page(title):
     path = '/badges/badge/%s' % badge.slug
     visit_page(path)
 
+@When(u'I go to the "award history" page for "(.*)" awarded to "(.*)"')
+def go_to_award_history_page(badge_title, awardee_name):
+    badge = Badge.objects.get(title__exact=badge_title)
+    path = '/badges/badge/%s/awards/%s/' % ( badge.slug, awardee_name )
+    visit_page(path)
+
 @When(u'I fill in "(.*)" with "(.*)"')
 def fill_form_field(field_name, field_value):
     """Look for the named field and fill it"""
@@ -343,6 +349,8 @@ def should_see_page_content(expected_content):
     try:
         pos = page_content.index(expected_content)
     except ValueError:
+        glc.log.debug("PATH %s" % scc.current_path)
+        glc.log.debug("CONTENT %s" % page_content)
         ok_(False, '"%s" should be found in page content' % expected_content)
 
 @Then(u'I should not see "(.*)" anywhere on the page')
@@ -362,6 +370,8 @@ def section_content_check(expected_content, section_title):
     try:
         pos = section_content.index(expected_content)
     except ValueError:
+        glc.log.debug("SECTION CONTENT %s" % section_content)
+        glc.log.debug("PAGE %s" % scc.last_response.content)
         ok_(False, '"%s" should be found in content for section "%s"' % 
             (expected_content, section_title))
 
@@ -520,16 +530,19 @@ def check_notifications(username, notification_name):
 
 @Then(u'"(.*)" should be sent a "(.*)" email')
 def check_queued_email(to_addr, expected_subject):
-    queued_msgs = Message.objects.filter(to_address__exact=to_addr,
-            subject__contains=expected_subject).all()
-    ok_(len(queued_msgs)>0, 'an email "%s" to "%s" should be logged' % 
+    context_email = None
+    msgs = Message.objects.all()
+    for msg in msgs:
+        if to_addr in msg.to_addresses:
+            context_email = msg
+    ok_(context_email, 'an email "%s" to "%s" should be logged' % 
             (expected_subject, to_addr))
-    scc.context_email = queued_msgs[0]
+    scc.context_email = context_email
 
 @Then(u'the email should contain a URL')
 def check_context_email_for_url():
     ok_(scc.context_email is not None, 'there should be a context email')
-    str = scc.context_email.message_body
+    str = scc.context_email.email.body
     # This only finds http URLs, but that's probably okay for now.
     urls = re.findall("(?P<url>https?://[^\s]+)", str)
     ok_(len(urls)>0, 'there should be at least one URL in the email')

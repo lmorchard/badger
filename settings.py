@@ -139,13 +139,11 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "announcements.context_processors.site_wide_announcements",
     "pinax.apps.account.context_processors.account",
     "messages.context_processors.inbox",
-    "friends_app.context_processors.invitations",
     "badger.context_processors.combined_inbox_count",
 ]
 
 COMBINED_INBOX_COUNT_SOURCES = [
     "messages.context_processors.inbox",
-    "friends_app.context_processors.invitations",
     "notification.context_processors.notification",
 ]
 
@@ -168,22 +166,16 @@ INSTALLED_APPS = [
     "emailconfirmation",
     "django_extensions",
     "robots",
-    "friends",
     "mailer",
     "messages",
     "announcements",
     "oembed",
     "pagination",
-    "groups",
     "gravatar",
     "threadedcomments",
-    "wiki",
     "timezones",
-    "voting",
     "tagging",
-    "microblogging",
     "ajax_validation",
-    "photologue",
     "avatar",
     "flag",
     "uni_form",
@@ -197,9 +189,6 @@ INSTALLED_APPS = [
     "pinax.apps.analytics",
     "pinax.apps.profiles",
     "pinax.apps.account",
-    "pinax.apps.signup_codes",
-    "pinax.apps.tribes",
-    "pinax.apps.photos",
     "pinax.apps.topics",
     "pinax.apps.threadedcomments_extras",
     "pinax.apps.voting_extras",
@@ -207,7 +196,7 @@ INSTALLED_APPS = [
     "south",
 
     # project
-    "badger.apps.about",
+    #"badger.apps.about",
     "badger.apps.badges",
 ]
 
@@ -249,7 +238,7 @@ EMAIL_DEBUG = DEBUG
 CONTACT_EMAIL = "lorchard@mozilla.com"
 SITE_NAME = "Badger"
 LOGIN_URL = "/account/login/"
-LOGIN_REDIRECT_URLNAME = "what_next"
+LOGIN_REDIRECT_URLNAME = "home"
 
 ugettext = lambda s: s
 LANGUAGES = [

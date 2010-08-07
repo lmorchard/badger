@@ -30,13 +30,15 @@ def index(request):
         'badges': badges
     }, context_instance=RequestContext(request))
 
-import pinax.apps.profiles.views
+#import pinax.apps.profiles.views
 def profile(request, username, template_name="profiles/profile.html", 
         extra_context=None):
+    """Much simplified version of Pinax profile view, minus friendship and
+    invitation features."""
+    other_user = get_object_or_404(User, username=username)
 
-    user = get_object_or_404(User, username=username)
     can_show_hidden = (
-        request.user == user or
+        request.user == other_user or
         request.user.is_staff or 
         request.user.is_superuser 
     )
@@ -44,14 +46,30 @@ def profile(request, username, template_name="profiles/profile.html",
         can_show_hidden and
         request.GET.get('show_hidden', False) is not False
     )
-    awarded_badges = list(Badge.objects.get_badges_for_user(user, show_hidden))
+    awarded_badges = list(Badge.objects.get_badges_for_user(other_user, show_hidden))
 
-    return pinax.apps.profiles.views.profile(request, username, template_name, {
+    if not request.user.is_authenticated():
+        is_me = False
+    else:
+        if request.user == other_user:
+            is_me = True
+        else:
+            is_me = False
+
+    return render_to_response(template_name, dict({
         "can_show_hidden": can_show_hidden,
         "show_hidden": show_hidden,
-        "profile_user": user,
+        "profile_user": other_user,
         "awarded_badges": awarded_badges,
-    })
+        "is_me": is_me,
+        "other_user": other_user,
+    }), context_instance=RequestContext(request))
+    #return pinax.apps.profiles.views.profile(request, username, template_name, {
+    #    "can_show_hidden": can_show_hidden,
+    #    "show_hidden": show_hidden,
+    #    "profile_user": user,
+    #    "awarded_badges": awarded_badges,
+    #})
 
 @login_required
 def create(request):

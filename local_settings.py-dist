@@ -1,10 +1,10 @@
 # Local settings
-from badger.settings import *
+from settings import *
+from os.path import abspath, dirname, join
 
+DEBUG = True
 DEV = True
 
-if DEV:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    # EMAIL_FILE_PATH = os.path.join(PROJECT_ROOT, 'email_files')
+CACHE_BACKEND = 'file://%s/cache' % ( abspath(dirname(__file__)) )
+MAILER_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

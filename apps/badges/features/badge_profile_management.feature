@@ -28,6 +28,8 @@ Feature: Managing badge awards on a user profile
         And "user1" should receive a "Badge Award Claimed" notification
         And "user2" should receive a "Badge Award Claimed" notification
         And "user3" should receive a "Badge Award Claimed" notification
+        When I go to the "award history" page for "Nifty badge" awarded to "user3"
+        Then I should see "Nifty badge" somewhere on the page
 
     Scenario: Badge awardee accepts an award from the award page
         Given "user1" creates a badge entitled "Nifty badge"

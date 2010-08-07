@@ -5,9 +5,7 @@
 {% load avatar_tags %}
 {% load badge_tags %}
 {% load uni_form_tags %}
-{% load group_tags %}
 {% load tagging_tags %}
-{% load threadedcommentstags %}
 
 {% block head_title %}{% user_display other_user as other_user_display %}{% blocktrans %}Profile for {{ other_user_display }}{% endblocktrans %}{% endblock %}
 
@@ -77,67 +75,6 @@
                 </ul>
             </div>
             
-            {% if user.is_authenticated %}
-                
-                {% if is_me %}
-                {% else %}
-                    
-                    {# @@@ this should be an inclusion tag #}
-                    {% if is_friend %}
-                        <p>{% blocktrans %}You are friends with {{ other_user_display }}.{% endblocktrans %} <a href="{% url messages_compose %}{{ other_user }}/">{% trans "Send a message" %}</a>.</p>
-                        <div>
-                            <form method="POST" action="">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="remove" /><input type="submit" value="{% trans "remove from friends" %}"/>
-                            </form>
-                        </div>
-                    {% else %}
-                        {% if previous_invitations_from %}
-                            <p>{% blocktrans %}{{ other_user_display }} has requested friendship.{% endblocktrans %}</p>
-                            {% for invitation in previous_invitations_from %}
-                                <div class="friendship_request">
-                                    <p>From <a href="{% url profile_detail invitation.from_user.username %}">{% user_display invitation.from_user %}</a> ({{ invitation.sent }}):</p>
-                                    <p class="invitation_message">{{ invitation.message }}</p>
-                                    <form method="post" action="">
-                                        <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
-                                        <input type="hidden" name="action" value="accept"/>
-                                        <input type="submit" value="{% trans 'accept' %}" />
-                                    </form>
-                                    <form method="post" action="">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
-                                        <input type="hidden" name="action" value="decline"/>
-                                        <input type="submit" value="{% trans 'decline' %}" />
-                                    </form>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            {% if previous_invitations_to %}
-                                <p>{% trans "Friendship request sent." %}</p>
-                            {% else %}
-                                <h2>{% trans "Add As Friend" %}</h2>
-                                <form class="uniForm" method="POST" action="">
-                                    {% csrf_token %}
-                                    <fieldset class="inlineLabels">
-                                        {{ invite_form|as_uni_form }}
-                                        <div class="form_block">
-                                            <input type="hidden" name="action" value="invite" />
-                                            <input type="submit" value="{% trans "invite" %}"/>
-                                            {% blocktrans %}{{ other_user_display }} to be a friend.{%  endblocktrans %}
-                                        </div>
-                                    </fieldset>
-                                </form>
-                            {% endif %} {# previous_invitations_to #}
-                        {% endif %} {# previous_invitations_from #}
-                    {% endif %} {# is_friend #}
-                    
-                {% endif %} {# is me #}
-                
-            {% else %} {# not user.is_authenticated #}
-                {% url acct_signup as signup_url %}
-                {% url acct_login as login_url %}
-                <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to add this person as a friend and see their tweets and blog posts.{% endblocktrans %}</p>
-            {% endif %}
         </div><!--/vcard-->
     </div>
 {% endblock %}
