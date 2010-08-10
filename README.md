@@ -32,13 +32,12 @@ I'll assume you're a bit of a Django hacker here, but this might help kick thing
     * `python manage.py syncdb`
     * `python manage.py migrate --all`
     * `python manage.py runserver`
-* If anything goes wrong, you're probably better informed than I am to fix it.
-* Using Freshen for tests, I've been using this command:
-    * `python -Wignore manage.py test --with-freshen -lnose.badger -v2 --tags=~@TODO`
-        * This runs the Freshen feature tests, with log output enabled, and skips the scenarios tagged as @TODO
-        * The `-Wignore` is to squelch a deprecation warning about md5 vs hashlib - should probably fix that some day.
-    * `python manage.py test --with-freshen`
+* Using Freshen for tests, I've been using these commands:
+    * `python manage.py test apps/badges --with-freshen`
         * This will run everything, including tests that fail because they're there to remind me of features to develop
+    * `python -Wignore manage.py test apps/badges --with-freshen -v2 -lnose.badger --tags=~@TODO -a\!TODO`
+        * This runs the Freshen feature tests, with log output enabled, and skips the scenarios tagged as @TODO as well as tests with a TODO attribute.
+        * The `-Wignore` is to squelch a deprecation warning about md5 vs hashlib - should probably fix that some day.
 
 [virtualenv]: http://pypi.python.org/pypi/virtualenv
 [pip]: http://pip.openplans.org/
@@ -49,5 +48,7 @@ I'll assume you're a bit of a Django hacker here, but this might help kick thing
 * [Scouting Merit Badges](http://meritbadge.org/wiki/index.php/Main_Page) (ie. the originals)
 * [Nerd Merit Badges](http://www.nerdmeritbadges.com/)
 * [Badgers photo!](http://www.flickr.com/photos/66176388@N00/3955963781/)
+* <http://en.wikipedia.org/wiki/Wikipedia:Barnstars>
+* <http://creative.mozilla.org/badges/>
 
 [bravonation]: http://waxy.org/2007/12/exclusive_yahoo/
