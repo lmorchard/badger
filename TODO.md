@@ -2,13 +2,6 @@
 
 ## v0.1
 
-* Non-listed badges for surprises
-
-* Get rid of "what's next" app
-
-* Remove friends app and invites
-    * Friends are best done on other sites, and badge nomination can invite
-
 * Feeds - JSON, Atom (activity streams?)
 
 * Invitation-only at launch?
@@ -23,7 +16,11 @@
 
 ## v0.2
 
+* Facelift?
+
 * Reduce SQL queries
+
+* Non-listed badges for surprises
 
 * Karma? Applause? Mood?
 
@@ -85,6 +82,7 @@
 * Switch from disclosing database IDs in URLs to UUIDs? 6-character {a-zA-Z0-9} strings?
 
 * HTML5 badge image editor / composer
+    * See also: http://news.deviantart.com/article/125373/
     * See also: http://pixie.strd6.com/
     * See also: http://wallpapers.foxkeh.com/en/
     * See also: http://hacks.mozilla.org/2010/02/an-html5-offline-image-editor-and-uploader-application/
@@ -99,3 +97,5 @@
 
 * Wishlist of badges
 
+* Use Cache Machine
+    * <http://github.com/jbalogh/django-cache-machine>
