@@ -4,7 +4,14 @@ from os.path import abspath, dirname, join
 
 DEBUG = True
 DEV = True
+SERVE_MEDIA = DEBUG
+EMAIL_DEBUG = DEBUG
 
 CACHE_BACKEND = 'file://%s/cache' % ( abspath(dirname(__file__)) )
 MAILER_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+INSTALLED_APPS += [
+    "django_nose",
+]
+SOUTH_TESTS_MIGRATE = False
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

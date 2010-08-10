@@ -6,10 +6,10 @@ from django.utils.translation import ugettext as _
 from django.utils.hashcompat import md5_constructor
 
 from django.contrib.auth.models import User
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAward, BadgeAwardee
 
-from badger.apps.badges import BADGE_DEFAULT_URL
+from badges import BADGE_DEFAULT_URL
 
 register = template.Library()
 

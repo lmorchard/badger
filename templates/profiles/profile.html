@@ -7,6 +7,10 @@
 {% load uni_form_tags %}
 {% load tagging_tags %}
 
+{% block extra_head %}
+    <link rel="alternate" type="application/atom+xml" title="{% trans "Recently Claimed Badges" %}" href="{% url badge_feed_profileawards other_user %}" />
+{% endblock %}
+
 {% block head_title %}{% user_display other_user as other_user_display %}{% blocktrans %}Profile for {{ other_user_display }}{% endblocktrans %}{% endblock %}
 
 {% block body %}
@@ -43,7 +47,7 @@
             {% endif %}
         
             <div class="badge_awards clearfix">
-                <h2>Badges claimed</h2>
+                <h2>Badges claimed <a href="{% url badge_feed_profileawards other_user %}"><img src="{{ STATIC_URL }}badges/img/feed-icon-14x14.png" width="14" height="14" /></a></h2>
                 {% if can_show_hidden %}
                     <div>
                         {% if show_hidden %}

@@ -70,4 +70,4 @@ django-timezones==0.2.dev1
 idios==0.1.dev6
 
 #Pinax
--e git+http://github.com/lmorchard/pinax.git#egg=pinax
+-e git://github.com/lmorchard/pinax.git#egg=Pinax

@@ -8,6 +8,10 @@
 {% load humanize i18n %}
 {% load timezone_filters %}
 
+{% block extra_head %}
+    <link rel="alternate" type="application/atom+xml" title="{% trans "Recently Claimed Badges" %}" href="{% url badge_feed_recentawards %}" />
+{% endblock %}
+
 {% block head_title %}{% trans "Welcome" %}{% endblock %}
 
 {% block body_class %}home{% endblock %}
@@ -36,7 +40,7 @@ We'll see how well it manages to do this, hopefully with your help!
 
 {% recent_badge_awards as recent_awards %}
 <div>
-    <h2>Recent awards</h2>
+    <h2>Recent awards <a href="{% url badge_feed_recentawards %}"><img src="{{ STATIC_URL }}badges/img/feed-icon-14x14.png" width="14" height="14" /></a></h2>
     <ul class="recent_awards">
         {% for award in recent_awards %}
             {% cache 500 homepage_recent_award award.id %}

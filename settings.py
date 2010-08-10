@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 # Django settings for social pinax project.
 
+import os
+import sys
+from os.path import abspath, dirname, join
+from site import addsitedir
 import os.path
 import posixpath
 import pinax
+
+sys.path.insert(0, abspath(join(dirname(__file__), "libs")))
+sys.path.insert(0, abspath(join(dirname(__file__), "vendor")))
 
 PINAX_ROOT = os.path.abspath(os.path.dirname(pinax.__file__))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -11,7 +18,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 # tells Pinax to use the default theme
 PINAX_THEME = "default"
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # tells Pinax to serve media through the staticfiles app.
@@ -281,13 +288,6 @@ AUTO_GENERATE_AVATAR_SIZES = (80,32,24,)
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
-
-if DEBUG:
-    INSTALLED_APPS += [
-        "django_nose",
-    ]
-    SOUTH_TESTS_MIGRATE = False
-    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.

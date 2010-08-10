@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from badges.feeds import RecentlyClaimedAwardsFeed, AwardsClaimedForProfileFeed
 
 urlpatterns = patterns("badger.apps.badges.views",
     url(r"^$", "index", name="badge_index"),
@@ -11,4 +12,9 @@ urlpatterns = patterns("badger.apps.badges.views",
     url(r"^badge/(.*)/awards/(.*)/(.*)/showhide$", "award_show_hide_single", name="badge_award_show_hide_single"),
     url(r"^badge/(.*)/edit$", "edit", name="badge_edit"),
     url(r"^badge/(.*)$", "badge_details", name="badge_details"),
+
+    url(r'feeds/atom/recentawards/', RecentlyClaimedAwardsFeed(), 
+            name="badge_feed_recentawards"),
+    url(r'feeds/atom/profiles/(.*)/awards/', AwardsClaimedForProfileFeed(),
+            name="badge_feed_profileawards"),
 )
