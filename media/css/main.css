@@ -59,7 +59,9 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 
 #body .ui-widget { font-family: inherit; font-size: 1em; }
 
-.badge_detail .profiles { margin: 0; padding: 0; text-align: center; }
+.badge_detail .claimed_by { position: relative; }
+.badge_detail .claimed_by .feed { position: absolute; right: 10px }
+.badge_detail .profiles { margin: 0; padding: 0; text-align: center; list-style-type: none }
 .badge_detail .profiles li { float: left; margin: 0.25em; position: relative; }
 .badge_detail .profiles li { }
 .badge_detail .profiles li .avatar { display: block; width: 100px; height: 90px; }

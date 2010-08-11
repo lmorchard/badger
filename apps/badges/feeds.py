@@ -174,14 +174,29 @@ class RecentlyClaimedAwardsFeed(AwardActivityStreamFeed):
 
 class AwardsClaimedForProfileFeed(AwardActivityStreamFeed):
 
-    title     = _('Recently claimed badges')
-    link      = '/'
+    title = _('Recently claimed badges')
+    link = '/'
 
     def get_object(self, request, username):
-        return get_object_or_404(User, username=username)
+        user = get_object_or_404(User, username=username)
+        self.title = "%s's recently claimed badges" % user.username
+        return user
 
     def items(self, user):
-        self.title = "%s's recently claimed badges" % user.username
         return BadgeAward.objects.filter(claimed_by=user, claimed=True)\
+                .exclude(hidden=True).order_by('-updated_at')[:15]
+
+class AwardsClaimedForBadgeFeed(AwardActivityStreamFeed):
+
+    title = _('Recent claims for badge')
+    link = '/'
+
+    def get_object(self, request, slug):
+        badge = get_object_or_404(Badge, slug=slug)
+        self.title = 'Recent claims for the badge "%s"' % badge.title
+        return badge
+
+    def items(self, badge):
+        return BadgeAward.objects.filter(badge=badge, claimed=True)\
                 .exclude(hidden=True).order_by('-updated_at')[:15]
 

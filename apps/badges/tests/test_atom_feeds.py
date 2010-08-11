@@ -74,6 +74,17 @@ class TestAtomFeeds(TestCase):
         badges, awards = self.build_awards(badge_awards)
         self.verify_activity_stream(badge_awards,
                 '/badges/feeds/atom/profiles/user3/awards/')
+    
+    def test_badge_awards(self):
+        """Ensure the award feed for a single badge parses as an Activity Stream"""
+        badge_awards = (
+            ( 'badge1', 'user1', 'user2', 'user3' ),
+            ( 'badge1', 'user2', 'user3', 'user1' ),
+            ( 'badge1', 'user3', 'user1', 'user2' ),
+        )
+        badges, awards = self.build_awards(badge_awards)
+        self.verify_activity_stream(badge_awards,
+                '/badges/feeds/atom/badges/badge1/awards/')
 
     #######################################################################
 
@@ -99,9 +110,12 @@ class TestAtomFeeds(TestCase):
             nominee_user = self.users[nominee_name]
             nominee, c   = BadgeAwardee.objects.get_or_create(user=nominee_user)
 
-            badge = Badge(title=badge_name, creator=creator,
-                description='%s description' % badge_name)
-            badge.save()
+            try:
+                badge = Badge.objects.get(title=badge_name)
+            except Badge.DoesNotExist:
+                badge = Badge(title=badge_name, creator=creator,
+                    description='%s description' % badge_name)
+                badge.save()
             badges[badge_name] = badge
 
             nomination = badge.nominate(nominator, nominee, 

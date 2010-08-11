@@ -10,6 +10,10 @@
 {% load humanize i18n %}
 {% load timezone_filters %}
 
+{% block extra_head %}
+    <link rel="alternate" type="application/atom+xml" title="{% trans "Recently Claimed Badges" %}" href="{% url badge_feed_badgeawards badge.slug %}" />
+{% endblock %}
+
 {% block head_title %}{% trans "Badge details" %}{% endblock %}
 
 {% block body %}
@@ -65,19 +69,20 @@
             {% if award_users %}
                 <li class="claimed_by">
                     <h3>Awarded to</h3>
-                    <ul class="profiles">
-                        
-                        {% for award_user in award_users %}
-                            <li>
-                                <a class="avatar" href="{{ award_user.get_absolute_url }}"><img src="{% avatar_url award_user.username 80 %}" alt="Photo of {{ award_user }}" class="photo" /></a>
-                                <a class="fn" href="{{ award_user.get_absolute_url }}">{{ award_user.username }}</a>
-                                {% if award_user.award_count > 0 %}
-                                    <div class="count"><a href="{% url badge_award_list badge.slug award_user.username %}" title="Badge award history">{{ award_user.award_count }}</a></div>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-
-                    </ul>
+                    <div>
+                        <a href="{% url badge_feed_badgeawards badge.slug %}" class="feed"><img src="{{ STATIC_URL }}badges/img/feed-icon-14x14.png" width="14" height="14" /></a>
+                        <ul class="profiles">
+                            {% for award_user in award_users %}
+                                <li>
+                                    <a class="avatar" href="{{ award_user.get_absolute_url }}"><img src="{% avatar_url award_user.username 80 %}" alt="Photo of {{ award_user }}" class="photo" /></a>
+                                    <a class="fn" href="{{ award_user.get_absolute_url }}">{{ award_user.username }}</a>
+                                    {% if award_user.award_count > 0 %}
+                                        <div class="count"><a href="{% url badge_award_list badge.slug award_user.username %}" title="Badge award history">{{ award_user.award_count }}</a></div>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </li>
             {% endif %}
 
