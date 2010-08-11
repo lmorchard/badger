@@ -11,7 +11,7 @@ It might be nice to gift badges and track achievements for deserving people.
 ## FAQ
 
 * Hasn't this been done before?
-    * Yes, [at least once][bravonation] on the net.
+    * Yes, many times.
 * Why are you doing it, then?
     * Because I'd like to:
         1. Revive the idea; 
