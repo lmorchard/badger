@@ -13,11 +13,11 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAward, BadgeAwardee
-from badger.apps.badges.models import badge_file_path
-from badger.apps.badges.forms import BadgeForm, BadgeNominationForm
-from badger.apps.badges.forms import BadgeNominationDecisionForm
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAward, BadgeAwardee
+from badges.models import badge_file_path
+from badges.forms import BadgeForm, BadgeNominationForm
+from badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -88,7 +88,7 @@ def create(request):
                     request.FILES['main_image'])
             new_badge.save()
             return HttpResponseRedirect(reverse(
-                'badger.apps.badges.views.badge_details',
+                'badges.views.badge_details',
                 args=(new_badge.slug,)
             ))
     else:
@@ -121,7 +121,7 @@ def edit(request, badge_slug):
                     request.FILES['main_image'])
             new_badge.save()
             return HttpResponseRedirect(reverse(
-                'badger.apps.badges.views.badge_details',
+                'badges.views.badge_details',
                 args=(new_badge.slug,)
             ))
     else:
@@ -161,7 +161,7 @@ def badge_details(request, badge_slug):
                     ugettext("%s nominated for %s" % (nomination.nominee, badge)))
 
                 return HttpResponseRedirect(reverse(
-                    'badger.apps.badges.views.badge_details', args=(badge.slug,)))
+                    'badges.views.badge_details', args=(badge.slug,)))
 
     if not request.user.is_authenticated():
         nominations = None

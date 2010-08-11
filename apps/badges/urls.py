@@ -3,7 +3,7 @@ from badges.feeds import RecentlyClaimedAwardsFeed, RecentlyClaimedAwardsJSONFee
 from badges.feeds import AwardsClaimedForProfileFeed, AwardsClaimedForProfileJSONFeed
 from badges.feeds import AwardsClaimedForBadgeFeed, AwardsClaimedForBadgeJSONFeed
 
-urlpatterns = patterns("badger.apps.badges.views",
+urlpatterns = patterns("badges.views",
     url(r"^$", "index", name="badge_index"),
     url(r"^create$", "create", name="create_badge"),
     url(r"^badge/(.*)/nominations/(.*)$", "nomination_details", name="badge_nomination"),

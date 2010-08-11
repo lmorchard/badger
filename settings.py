@@ -119,11 +119,11 @@ MIDDLEWARE_CLASSES = [
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.transaction.TransactionMiddleware",
-    "badger.apps.django403.middleware.Django403Middleware",
+    "django403.middleware.Django403Middleware",
     #"django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
-ROOT_URLCONF = "badger.urls"
+ROOT_URLCONF = "urls"
 
 TEMPLATE_DIRS = [
     os.path.join(PROJECT_ROOT, "apps", "badges", "templates"),
@@ -146,7 +146,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "announcements.context_processors.site_wide_announcements",
     "pinax.apps.account.context_processors.account",
     "messages.context_processors.inbox",
-    "badger.context_processors.combined_inbox_count",
+    "context_processors.combined_inbox_count",
 ]
 
 COMBINED_INBOX_COUNT_SOURCES = [
@@ -203,8 +203,7 @@ INSTALLED_APPS = [
     "south",
 
     # project
-    #"badger.apps.about",
-    "badger.apps.badges",
+    "badges",
 ]
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"

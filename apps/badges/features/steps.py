@@ -18,8 +18,8 @@ from nose.tools import assert_equal, with_setup, assert_false, eq_, ok_
 from django.contrib.auth.models import User
 from pinax.apps.profiles.models import Profile
 from pinax.apps.account.models import Account
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAward, BadgeAwardee
 from mailer.models import Message, MessageLog
 from notification.models import NoticeType, Notice
 

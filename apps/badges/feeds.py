@@ -16,8 +16,8 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.conf import settings
 
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAward, BadgeAwardee
 
 from avatar.templatetags.avatar_tags import avatar_url
 from badges.templatetags.badge_tags import badge_url

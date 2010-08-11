@@ -16,7 +16,7 @@ BADGE_DEFAULT_URL = getattr(settings, 'BADGE_DEFAULT_URL',
 
 from django.db.models import signals
 from django.contrib.auth.models import User
-from badger.apps.badges.models import Badge
+from badges.models import Badge
 
 def create_default_thumbnails(instance=None, created=False, **kwargs):
     if created:

@@ -25,7 +25,7 @@ urlpatterns = patterns("",
         "template": "homepage.html",
     }, name="home"),
 
-    (r"^badges/", include("badger.apps.badges.urls")),
+    (r"^badges/", include("badges.urls")),
     
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^account/signup/$", signup_view, name="acct_signup"),
@@ -47,7 +47,7 @@ urlpatterns = patterns("",
     #(r"^profiles/", include("pinax.apps.profiles.urls")),
     url(r"^profiles/$", "pinax.apps.profiles.views.profiles", name="profile_list"),
     #url(r"^profiles/profile/(?P<username>[\w\._-]+)/$", "pinax.apps.profiles.views.profile", name="profile_detail"),
-    url(r"^profiles/profile/(?P<username>[\w\._-]+)/$", "badger.apps.badges.views.profile", name="profile_detail"),
+    url(r"^profiles/profile/(?P<username>[\w\._-]+)/$", "badges.views.profile", name="profile_detail"),
     url(r"^profiles/edit/$", "pinax.apps.profiles.views.profile_edit", name="profile_edit"),
     
 )

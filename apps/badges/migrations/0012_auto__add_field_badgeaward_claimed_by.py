@@ -4,8 +4,8 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAward, BadgeAwardee
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAward, BadgeAwardee
 
 class Migration(SchemaMigration):
 

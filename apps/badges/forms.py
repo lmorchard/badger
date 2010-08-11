@@ -5,8 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from badger.apps.badges.models import Badge, BadgeNomination
-from badger.apps.badges.models import BadgeAwardee, BadgeAward
+from badges.models import Badge, BadgeNomination
+from badges.models import BadgeAwardee, BadgeAward
 from django.core import validators
 from django.core.exceptions import ValidationError
 from uni_form.helpers import FormHelper, Submit, Reset

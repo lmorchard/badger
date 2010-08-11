@@ -22,7 +22,7 @@ from tagging.models import Tag
 from notification import models as notification
 from mailer import send_mail
 
-from badger.apps.badges import BADGE_STORAGE_DIR, BADGE_RESIZE_METHOD
+from badges import BADGE_STORAGE_DIR, BADGE_RESIZE_METHOD
 
 try:
     from cStringIO import StringIO
