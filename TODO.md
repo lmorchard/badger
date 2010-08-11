@@ -2,8 +2,6 @@
 
 ## v0.1
 
-* Feeds - JSON, Atom (activity streams?)
-
 * Invitation-only at launch?
 
 * Master / slave DBs?
