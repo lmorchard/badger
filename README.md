@@ -20,7 +20,7 @@ It might be nice to gift badges and track achievements for deserving people.
 
 ## Hacking
 
-I'll assume you're a bit of a Django hacker here, but this might help kick things off:
+I'll assume you're a bit of a Django hacker here:
 
 * Get the source from [github](http://github.com/lmorchard/badger).
     * (You're probably there now.)
@@ -28,7 +28,7 @@ I'll assume you're a bit of a Django hacker here, but this might help kick thing
     * I'm using Python 2.6.5 from MacPorts, for what it's worth.
 * Follow the [Getting started guide for Pinax](http://pinaxproject.com/docs/dev/gettingstarted.html), which is basically the following:
     * Use [virtualenv][] to create and use a new environment.
-    * `pip install -r requirements/dev.txt`
+    * `pip install -r requirements/dev.txt -r requirements/compiled.txt`
     * `python manage.py syncdb`
     * `python manage.py migrate --all`
     * `python manage.py runserver`

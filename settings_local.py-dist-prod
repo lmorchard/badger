@@ -1,0 +1,30 @@
+# Local settings for production
+from settings import *
+
+DEBUG = False
+DEV = False
+SERVE_MEDIA = DEBUG
+EMAIL_DEBUG = DEBUG
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql", # Add "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle".
+        "NAME": "badger",                       # Or path to database file if using sqlite3.
+        "USER": "badger",                             # Not used with sqlite3.
+        "PASSWORD": "badger",                         # Not used with sqlite3.
+        "HOST": "127.0.0.1",                             # Set to empty string for localhost. Not used with sqlite3.
+        "PORT": "3306",                             # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '25'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+
+MEDIA_URL = "/site_media/media/"
+STATIC_URL = "/site_media/static/"

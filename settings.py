@@ -287,10 +287,3 @@ AUTO_GENERATE_AVATAR_SIZES = (80,32,24,)
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
-
-# settings_local.py can be used to override environment-specific settings
-# like database and email that differ between development and production.
-try:
-    from settings_local import *
-except ImportError:
-    pass

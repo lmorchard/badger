@@ -1,27 +1,46 @@
 #!/usr/bin/env python
+import os
+import site
 import sys
 
-from os.path import abspath, dirname, join
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+
+path = lambda *a: os.path.join(ROOT, *a)
+
+prev_sys_path = list(sys.path)
+
+site.addsitedir(path('apps'))
+site.addsitedir(path('lib'))
+site.addsitedir(path('vendor'))
+
+# Move the new items to the front of sys.path. (via virtualenv)
+new_sys_path = []
+for item in list(sys.path):
+    if item not in prev_sys_path:
+        new_sys_path.append(item)
+        sys.path.remove(item)
+sys.path[:0] = new_sys_path
+
+# No third-party imports until we've added all our sitedirs!
+from django.core.management import execute_manager, setup_environ
 
 try:
-    import pinax
+    import settings_local as settings
 except ImportError:
-    sys.stderr.write("Error: Can't import Pinax. Make sure you are in a virtual environment that has\nPinax installed or create one with pinax-boot.py.\n")
-    sys.exit(1)
+    try:
+        import settings
+    except ImportError:
+        import sys
+        sys.stderr.write(
+            "Error: Tried importing 'settings_local.py' and 'settings.py' "
+            "but neither could be found (or they're throwing an ImportError)."
+            " Please come back and try again later.")
+        raise
 
-from django.conf import settings
-from django.core.management import setup_environ, execute_from_command_line
-
-try:
-    import settings as settings_mod # Assumed to be in the same directory.
-except ImportError:
-    sys.stderr.write("Error: Can't find the file 'settings.py' in the directory containing %r. It appears you've customized things.\nYou'll have to run django-admin.py, passing it your settings module.\n(If the file settings.py does indeed exist, it's causing an ImportError somehow.)\n" % __file__)
-    sys.exit(1)
-
-# setup the environment before we start accessing things in the settings.
-setup_environ(settings_mod)
-
-sys.path.insert(0, join(settings.PROJECT_ROOT, "apps"))
+# The first thing execute_manager does is call `setup_environ`. Logging config
+# needs to access settings, so we'll setup the environ early.
+setup_environ(settings)
 
 if __name__ == "__main__":
-    execute_from_command_line()
+    execute_manager(settings)

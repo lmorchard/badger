@@ -1,7 +1,9 @@
+vendor/
 env/
 venv/
 tmp/
 src/
+cache/
 site_media/
 pip-log.txt
 local_settings.py
@@ -11,4 +13,5 @@ nosetests.xml
 coverage.xml
 *.pyc
 *.swp
+*.swo
 *.db

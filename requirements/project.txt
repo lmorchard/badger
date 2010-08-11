@@ -6,9 +6,7 @@
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.
 
-South
-python-memcached
-PIL
+South==0.7.1
+python-memcached==1.45
 
--e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer
-
+#-e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer

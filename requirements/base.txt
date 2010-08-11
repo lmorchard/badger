@@ -69,5 +69,4 @@ django-openid==0.2.3.dev1
 django-timezones==0.2.dev1
 idios==0.1.dev6
 
-#Pinax
--e git://github.com/lmorchard/pinax.git#egg=Pinax
+-e git+git@github.com:lmorchard/pinax.git#egg=Pinax
