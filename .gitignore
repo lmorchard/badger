@@ -1,8 +1,14 @@
+env/
+venv/
 tmp/
 src/
 site_media/
 pip-log.txt
 local_settings.py
+settings_local.py
+nosetests.xml
+.coverage
+coverage.xml
 *.pyc
 *.swp
 *.db

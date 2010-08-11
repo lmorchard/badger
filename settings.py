@@ -289,9 +289,9 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
 
-# local_settings.py can be used to override environment-specific settings
+# settings_local.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 try:
-    from local_settings import *
+    from settings_local import *
 except ImportError:
     pass
