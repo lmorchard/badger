@@ -1,9 +1,13 @@
 """
 Feeds for badges
 """
+import datetime
+import validate_jsonp
+
 #from django.contrib.syndication.feeds import Feed
 from django.contrib.syndication.views import Feed, FeedDoesNotExist
-from django.utils.feedgenerator import Atom1Feed, get_tag_uri
+from django.utils.feedgenerator import SyndicationFeed, Atom1Feed, get_tag_uri
+import django.utils.simplejson as json
 from django.shortcuts import get_object_or_404
 
 from django.utils.translation import ugettext as _
@@ -19,11 +23,11 @@ from avatar.templatetags.avatar_tags import avatar_url
 from badges.templatetags.badge_tags import badge_url
 
 
-class ActivityStreamFeedGenerator(Atom1Feed):
+class ActivityStreamAtomFeedGenerator(Atom1Feed):
     """Tweaks to Atom feed to include Activity Stream data"""
 
     def root_attributes(self):
-        attrs = super(ActivityStreamFeedGenerator, self).root_attributes()
+        attrs = super(ActivityStreamAtomFeedGenerator, self).root_attributes()
         attrs['xmlns:activity'] = 'http://activitystrea.ms/spec/1.0/'
         attrs['xmlns:media'] = 'http://purl.org/syndication/atommedia'
         return attrs
@@ -90,13 +94,82 @@ class ActivityStreamFeedGenerator(Atom1Feed):
         })
         handler.endElement(u"activity:object")
 
-        super(ActivityStreamFeedGenerator, self).add_item_elements(handler, item)
+        super(ActivityStreamAtomFeedGenerator, self).add_item_elements(handler, item)
+
+
+class ActivityStreamJSONFeedGenerator(SyndicationFeed):
+    mime_type = 'application/json'
+
+    def _encode_complex(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+
+    def write(self, outfile, encoding):
+        # Check for a callback param, validate it before use
+        callback = self.feed['request'].GET.get('callback', None)
+        if callback is not None:
+            if not validate_jsonp.is_valid_jsonp_callback_value(callback):
+                callback = None
+
+        items_out = []
+        for item in self.items:
+            
+            avatar_href = avatar_url(item['obj'].claimed_by, 64)
+            if avatar_href.startswith('/'):
+                avatar_href = 'http://%s%s' % (
+                    Site.objects.get_current().domain, avatar_href
+                )
+
+            a_object = item['activity']['object']
+
+            item_out = {
+                'postedTime': item['pubdate'],
+                'verb': item['activity']['verb'],
+                'actor': {
+                    'objectType': 'http://activitystrea.ms/schema/1.0/person',
+                    'id': get_tag_uri(item['author_link'], item['pubdate']),
+                    'displayName': item['author_name'],
+                    'permalinkUrl': item['author_link'],
+                    'image': {
+                        'url': avatar_href, 
+                        'width':'64', 
+                        'height':'64',
+                    }
+                },
+                'object': {
+                    'objectType': a_object['object-type'],
+                    'id': get_tag_uri(a_object['link'], item['pubdate']),
+                    'displayName': a_object['name'],
+                    'permalinkUrl': a_object['link'],
+                    'image': {
+                        'url': a_object['preview']['href'],
+                        'width': a_object['preview']['width'],
+                        'height': a_object['preview']['height'],
+                    }
+                },
+            }
+            items_out.append(item_out)
+
+        data = {
+            "items": items_out
+        }
+
+        if callback: outfile.write('%s(' % callback)
+        outfile.write(json.dumps(data, default=self._encode_complex))
+        if callback: outfile.write(')')
 
 
 class AwardActivityStreamFeed(Feed):
     """Tweaks to standard feed to include Activity Stream info 
     for lists of badge awards"""
-    feed_type = ActivityStreamFeedGenerator
+    feed_type = ActivityStreamAtomFeedGenerator
+
+    def __call__(self, request, *args, **kwargs):
+        self.request = request
+        return super(AwardActivityStreamFeed, self).__call__(request, *args, **kwargs)
+
+    def feed_extra_kwargs(self, obj):
+        return { 'request': self.request }
 
     def item_author_name(self, item):
         return '%s' % item.claimed_by
@@ -172,6 +245,7 @@ class RecentlyClaimedAwardsFeed(AwardActivityStreamFeed):
         return BadgeAward.objects.filter(claimed=True).exclude(hidden=True)\
                 .order_by('-updated_at')[:15]
 
+
 class AwardsClaimedForProfileFeed(AwardActivityStreamFeed):
 
     title = _('Recently claimed badges')
@@ -186,6 +260,7 @@ class AwardsClaimedForProfileFeed(AwardActivityStreamFeed):
         return BadgeAward.objects.filter(claimed_by=user, claimed=True)\
                 .exclude(hidden=True).order_by('-updated_at')[:15]
 
+
 class AwardsClaimedForBadgeFeed(AwardActivityStreamFeed):
 
     title = _('Recent claims for badge')
@@ -199,4 +274,16 @@ class AwardsClaimedForBadgeFeed(AwardActivityStreamFeed):
     def items(self, badge):
         return BadgeAward.objects.filter(badge=badge, claimed=True)\
                 .exclude(hidden=True).order_by('-updated_at')[:15]
+
+
+class RecentlyClaimedAwardsJSONFeed(RecentlyClaimedAwardsFeed):
+    feed_type = ActivityStreamJSONFeedGenerator
+
+
+class AwardsClaimedForProfileJSONFeed(AwardsClaimedForProfileFeed):
+    feed_type = ActivityStreamJSONFeedGenerator
+
+
+class AwardsClaimedForBadgeJSONFeed(AwardsClaimedForBadgeFeed):
+    feed_type = ActivityStreamJSONFeedGenerator
 

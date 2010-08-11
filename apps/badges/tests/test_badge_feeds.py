@@ -1,4 +1,4 @@
-""" """
+"""Tests for badge feeds"""
 import logging
 import re
 import urlparse
@@ -35,7 +35,7 @@ from badger.apps.badges.models import BadgeAward, BadgeAwardee
 from mailer.models import Message, MessageLog
 from notification.models import NoticeType, Notice
 
-class TestAtomFeeds(TestCase):
+class TestFeeds(TestCase):
 
     def setUp(self):
         self.log = logging.getLogger('nose.badger')
@@ -60,8 +60,10 @@ class TestAtomFeeds(TestCase):
             ( 'badge4', 'user1', 'user1', 'user1' ),
         )
         badges, awards = self.build_awards(badge_awards)
-        self.verify_activity_stream(badge_awards,
+        self.verify_atom_activity_stream(badge_awards,
                 '/badges/feeds/atom/recentawards/')
+        self.verify_json_activity_stream(badge_awards,
+                '/badges/feeds/json/recentawards/')
     
     def test_profile_awards(self):
         """Ensure the award feed for a single profile parses as an Activity Stream"""
@@ -72,8 +74,10 @@ class TestAtomFeeds(TestCase):
             ( 'badge4', 'user2', 'user1', 'user3' ),
         )
         badges, awards = self.build_awards(badge_awards)
-        self.verify_activity_stream(badge_awards,
+        self.verify_atom_activity_stream(badge_awards,
                 '/badges/feeds/atom/profiles/user3/awards/')
+        self.verify_json_activity_stream(badge_awards,
+                '/badges/feeds/json/profiles/user3/awards/')
     
     def test_badge_awards(self):
         """Ensure the award feed for a single badge parses as an Activity Stream"""
@@ -83,8 +87,10 @@ class TestAtomFeeds(TestCase):
             ( 'badge1', 'user3', 'user1', 'user2' ),
         )
         badges, awards = self.build_awards(badge_awards)
-        self.verify_activity_stream(badge_awards,
+        self.verify_atom_activity_stream(badge_awards,
                 '/badges/feeds/atom/badges/badge1/awards/')
+        self.verify_json_activity_stream(badge_awards,
+                '/badges/feeds/json/badges/badge1/awards/')
 
     #######################################################################
 
@@ -130,12 +136,7 @@ class TestAtomFeeds(TestCase):
 
         return badges, awards
 
-    def verify_activity_stream(self, badge_awards, path):
-        resp = self.browser.get(path)
-
-        et = ElementTree.parse(StringIO.StringIO(resp.content))
-        activities = make_activities_from_feed(et)
-
+    def verify_activities(self, badge_awards, activities):
         # Ensure feed activity count matches award count
         eq_(len(badge_awards), len(activities))
         
@@ -159,4 +160,15 @@ class TestAtomFeeds(TestCase):
                     act.object.object_type)
             eq_('http://example.com/badges/badge/%s' % (badge_name),
                     act.object.url)
+
+    def verify_json_activity_stream(self, badge_awards, path):
+        resp = self.browser.get(path)
+        activities = make_activities_from_stream_dict(json.loads(resp.content))
+        self.verify_activities(badge_awards, activities)
+
+    def verify_atom_activity_stream(self, badge_awards, path):
+        resp = self.browser.get(path)
+        et = ElementTree.parse(StringIO.StringIO(resp.content))
+        activities = make_activities_from_feed(et)
+        self.verify_activities(badge_awards, activities)
 

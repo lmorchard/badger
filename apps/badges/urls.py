@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
-from badges.feeds import RecentlyClaimedAwardsFeed, AwardsClaimedForProfileFeed
-from badges.feeds import AwardsClaimedForBadgeFeed
+from badges.feeds import RecentlyClaimedAwardsFeed, RecentlyClaimedAwardsJSONFeed
+from badges.feeds import AwardsClaimedForProfileFeed, AwardsClaimedForProfileJSONFeed
+from badges.feeds import AwardsClaimedForBadgeFeed, AwardsClaimedForBadgeJSONFeed
 
 urlpatterns = patterns("badger.apps.badges.views",
     url(r"^$", "index", name="badge_index"),
@@ -19,5 +20,12 @@ urlpatterns = patterns("badger.apps.badges.views",
     url(r'feeds/atom/profiles/(.*)/awards/', AwardsClaimedForProfileFeed(),
             name="badge_feed_profileawards"),
     url(r'feeds/atom/badges/(.*)/awards/', AwardsClaimedForBadgeFeed(),
+            name="badge_feed_badgeawards"),
+
+    url(r'feeds/json/recentawards/', RecentlyClaimedAwardsJSONFeed(), 
+            name="badge_json_recentawards"),
+    url(r'feeds/json/profiles/(.*)/awards/', AwardsClaimedForProfileJSONFeed(),
+            name="badge_feed_profileawards"),
+    url(r'feeds/json/badges/(.*)/awards/', AwardsClaimedForBadgeJSONFeed(),
             name="badge_feed_badgeawards"),
 )
