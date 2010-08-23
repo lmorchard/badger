@@ -1,0 +1,56 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "OpenID Associations" %}{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}openid-selector/css/openid.css" />
+{% endblock %}
+
+{% block extra_body %}
+    <script type="text/javascript" src="{{ STATIC_URL }}openid-selector/js/openid-jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            openid.img_path = "{{ STATIC_URL }}openid-selector/images/";
+	        //openid.init('openid_url');
+	    });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Manage OpenID Associations" %}</h1>
+    {% url acct_passwd_set as acct_passwd_set_url %}
+    {% if not request.user.password %}
+    <strong>{% blocktrans %}You have not set a password for this user account. You are unable to remove OpenID associations until you <a href="{{ acct_passwd_set_url }}">set a password</a>.{% endblocktrans %}</strong>
+    {% endif %}
+    {% if openids %}
+    <p>{% blocktrans with del_buttons|pluralize as buttons %}Your account is currently associated with the following OpenID {{ buttons }}:{% endblocktrans %}</p>
+    {% for openid in openids %}
+    <form action="{{ action }}" method="POST">
+        {% csrf_token %}
+        <p>
+            {{ openid.openid }}
+            {% if request.user.password %}
+            - <input type="hidden" name="todelete" value="{{ openid.button }}" />
+              <input type="submit" value="{% trans "Remove association" %}" />
+            {% endif %}
+        </p>
+    </form>
+    {% endfor %}
+    {% endif %}
+    
+    <p>{% trans "To associate a new OpenID with this account, sign in with it here:" %}</p>
+    
+    <form action="{{ action_new }}" id="openid_form" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ associate_next }}">
+        <fieldset>
+            <div id="openid_btns"></div>
+            <div id="openid_input_area">
+				<input id="openid_url" name="openid_url" type="text" value="http://" />
+				<input id="openid_submit" type="submit" value="{% trans "Sign-In" %}"/>
+			</div>
+        </fieldset>
+    </form>
+{% endblock %}

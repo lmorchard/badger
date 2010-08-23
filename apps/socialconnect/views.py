@@ -4,13 +4,15 @@ import os
 
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 
+from django.utils.http import urlquote
 from django.utils import simplejson as json
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib import messages
@@ -22,7 +24,7 @@ import oauthtwitter
 from pinax.apps.account.utils import get_default_redirect, user_display
 from pinax.apps.account.views import login as account_login
 
-from socialconnect.utils import Router, ViewObject
+from socialconnect.utils import Router, BaseView
 from socialconnect.forms import OauthSignupForm
 from socialconnect.models import UserOauthAssociation
 
@@ -33,23 +35,58 @@ FACEBOOK_CONSUMER_KEY = getattr(settings, 'FACEBOOK_CONSUMER_KEY', 'YOUR_KEY')
 FACEBOOK_CONSUMER_SECRET = getattr(settings, 'FACEBOOK_CONSUMER_SECRET', 'YOUR_SECRET')
 
 
-redirect_field_name = "next"
+class ManagementView(BaseView):
+    """ """
+    urlname_pattern = 'socialconnect_manage_%s'
 
-class SocialConnectView(ViewObject):
+    def do_associations(self, request):
+        v = self.require_login(request)
+        if v is not True: return v
+
+        if request.method == "POST":
+            a_id = request.POST.get('id', None)
+            try:
+                assoc = UserOauthAssociation.objects.get(
+                        user = request.user, id = a_id)
+                messages.add_message(request, messages.SUCCESS,
+                    ugettext("""
+                        Successfully deleted connection to %(auth_type)s 
+                        screen name %(username)s.
+                    """) % {
+                        "auth_type": assoc.auth_type,
+                        "username": assoc.username
+                    }
+                )
+                assoc.delete()
+            except UserOauthAssociation.DoesNotExist:
+                pass
+            return HttpResponseRedirect(reverse(
+                self.urlname_pattern % 'associations'))
+
+        associations = UserOauthAssociation.objects.filter(user=request.user)
+
+        return self.render(request, 'associations.html', {
+            'associations': associations
+        })
+
+
+class BaseAuthView(BaseView):
 
     def do_signin(self, request):
         """Perform sign in via OAuth"""
+        request.session['socialconnect_mode'] = request.GET.get('mode', 'signin')
         return HttpResponseRedirect(self.get_signin_url(request))
 
     def do_callback(self, request):
         """Handle response from OAuth permit/deny"""
         # TODO: Handle OAuth denial!
+        mode = request.session['socialconnect_mode']
         profile = self.get_profile_from_callback(request)
         if not profile: return HttpResponse(status=400)
 
         request.session[self.session_profile] = profile
 
-        success_url = get_default_redirect(request, redirect_field_name)
+        success_url = get_default_redirect(request, REDIRECT_FIELD_NAME)
 
         try:
             # Try looking for an association to perform a login.
@@ -58,22 +95,33 @@ class SocialConnectView(ViewObject):
                 profile_id=profile['id'], 
                 username=profile['username']
             ).get()
-            self.log_in_user(request, assoc.user)
-            return HttpResponseRedirect(success_url)
+            if 'connect' == mode:
+                messages.add_message(request, messages.ERROR,
+                    ugettext("""This service is already connected to another
+                        account!""")
+                )
+                return HttpResponseRedirect(reverse(
+                    ManagementView().urlname_pattern % 'associations'))
+            else:
+                self.log_in_user(request, assoc.user)
+                return HttpResponseRedirect(success_url)
 
         except UserOauthAssociation.DoesNotExist:
             # No association found, so...
             if not request.user.is_authenticated():
                 # If no login session, bounce to registration
                 return HttpResponseRedirect(reverse(
-                    self.urlname_pattern % 'register'
-                ))
+                    self.urlname_pattern % 'register'))
             else:
                 # If there's a login session, create an association to the
                 # currently logged in user.
                 assoc = self.create_association(request, request.user, profile)
                 del request.session[self.session_profile]
-                return HttpResponseRedirect(success_url)
+                if 'connect' == mode:
+                    return HttpResponseRedirect(reverse(
+                        ManagementView().urlname_pattern % 'associations'))
+                else:
+                    return HttpResponseRedirect(success_url)
 
     def get_registration_form_class(self, request):
         return OauthSignupForm
@@ -85,7 +133,7 @@ class SocialConnectView(ViewObject):
         if not profile: return HttpResponse(status=400)
 
         RegistrationForm = self.get_registration_form_class(request)
-        success_url = get_default_redirect(request, redirect_field_name)
+        success_url = get_default_redirect(request, REDIRECT_FIELD_NAME)
 
         if request.method != "POST":
             # Pre-fill form with suggested info based in Twitter signin
@@ -99,13 +147,13 @@ class SocialConnectView(ViewObject):
                 self.log_in_user(request, user)
                 return HttpResponseRedirect(success_url)
 
-        return render_to_response('socialconnect/register.html', {
+        return self.render(request, 'register.html', {
             'form': form,
             'auth_label': self.auth_label,
             'signin_url': reverse(self.urlname_pattern % 'signin'),
             "action": request.path,
-        }, context_instance=RequestContext(request))
-
+        })
+    
     def create_association(self, request, user, profile):
         """Create an association between this user and the given profile"""
         assoc = UserOauthAssociation(
@@ -150,11 +198,12 @@ class SocialConnectView(ViewObject):
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
 
-class TwitterAuthView(SocialConnectView):
+
+class TwitterAuthView(BaseAuthView):
     auth_type = "twitter"
     auth_label = _("Twitter")
 
-    urlname_pattern = 'auth_twitter_%s'
+    urlname_pattern = 'socialconnect_twitter_%s'
     
     consumer_key = TWITTER_CONSUMER_KEY
     consumer_secret = TWITTER_CONSUMER_SECRET
@@ -211,11 +260,11 @@ class TwitterAuthView(SocialConnectView):
         }
 
 
-class FacebookAuthView(SocialConnectView):
+class FacebookAuthView(BaseAuthView):
     auth_type = "facebook"
     auth_label = _("Facebook")
 
-    urlname_pattern = 'auth_facebook_%s'
+    urlname_pattern = 'socialconnect_facebook_%s'
 
     consumer_key = FACEBOOK_CONSUMER_KEY
     consumer_secret = FACEBOOK_CONSUMER_SECRET
@@ -228,7 +277,7 @@ class FacebookAuthView(SocialConnectView):
             'client_id': self.consumer_key,
             'redirect_uri': 'http://%s%s' % (
                 Site.objects.get_current().domain, 
-                reverse('auth_facebook_callback'),
+                reverse('socialconnect_facebook_callback'),
             )
         }
         return ("https://graph.facebook.com/oauth/authorize?" + 
@@ -242,7 +291,7 @@ class FacebookAuthView(SocialConnectView):
             'client_secret': self.consumer_secret,
             'redirect_uri': 'http://%s%s' % (
                 Site.objects.get_current().domain, 
-                reverse('auth_facebook_callback'),
+                reverse('socialconnect_facebook_callback'),
             ),
             'code': code,
         }

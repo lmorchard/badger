@@ -31,7 +31,7 @@ urlpatterns = patterns("",
 
     (r"^account/", include("pinax.apps.account.urls")),
     (r"^openid/(.*)", PinaxConsumer()),
-    (r"^auth/", include("socialconnect.urls")),
+    (r"^socialconnect/", include("socialconnect.urls")),
     (r"^bbauth/", include("pinax.apps.bbauth.urls")),
     (r"^authsub/", include("pinax.apps.authsub.urls")),
     (r"^notices/", include("notification.urls")),

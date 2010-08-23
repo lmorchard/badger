@@ -1,0 +1,43 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load ifsetting_tag %}
+{% load account_tags %}
+
+{% block head_title %}{% trans "Connected Accounts" %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+
+{% block body %}
+
+    <h1>{% trans "Connected Services" %}</h1>
+
+    {% if associations %}
+    <div>
+        <p>{% trans "Your profile is connected to the following services:" %}</p>
+        <ul class="associations">
+            {% for a in associations %}
+            <li><form class="uniForm" action="" method="post">
+                <span>{{ a.auth_type }} ({{a.username}})</span>
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{a.id}}" />
+                <input type="hidden" name="action" value="delete" />
+                <button name="submit">{% trans "remove" %}</button>
+            </form></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div>
+        <p>{% trans "Connect your profile with one of these services:" %}</p>
+        <a href="{% url socialconnect_twitter_signin %}?mode=connect"><img src="{{ STATIC_URL }}socialconnect/img/sign-in-with-twitter-l.png" /></a>
+        <a href="{% url socialconnect_facebook_signin %}?mode=connect"><img src="{{ STATIC_URL }}socialconnect/img/facebook-login-button.png" /></a>
+    </div>
+
+{% endblock %}

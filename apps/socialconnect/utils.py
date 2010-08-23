@@ -3,9 +3,17 @@
 see also: http://www.slideshare.net/simon/classbased-views-with-django
 """
 
+from django.utils.http import urlquote
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth import login, authenticate, REDIRECT_FIELD_NAME
+from django.conf import settings
 from django.conf.urls.defaults import patterns
 from django.core import urlresolvers
+
+REDIRECT_FIELD_NAME = "next"
+
 
 class Router(object):
 
@@ -28,7 +36,9 @@ class Router(object):
     def __call__(self, request, path_override=None):
         return self.handle(request, path_override)
 
-class ViewObject(object):
+class BaseView(object):
+
+    base_template = ''
 
     def get_urlpatterns(self):
         # Default behaviour is to introspect self for do_* methods
@@ -60,9 +70,22 @@ class ViewObject(object):
         router = Router(*self.get_urlpatterns())
         return router(request, path_override = rest_of_url)
 
+    def require_login(self, request):
+        if request.user.is_authenticated():
+            return True
+        else:
+            return HttpResponseRedirect('%s?%s=%s' % (
+                settings.LOGIN_URL, REDIRECT_FIELD_NAME, 
+                urlquote(request.get_full_path())
+            ))
 
     def render(self, request, template, context=None):
         context = context or {}
         context['base_template'] = self.base_template
+        return render_to_response(
+            'socialconnect/%s' % template, context, 
+            context_instance=RequestContext(request)
+        )
+
         return TemplateResponse(request, template, context)
     
