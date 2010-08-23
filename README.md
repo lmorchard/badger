@@ -50,5 +50,6 @@ I'll assume you're a bit of a Django hacker here:
 * [Badgers photo!](http://www.flickr.com/photos/66176388@N00/3955963781/)
 * <http://en.wikipedia.org/wiki/Wikipedia:Barnstars>
 * <http://creative.mozilla.org/badges/>
+* <http://www.reddit.com/help/awards>
 
 [bravonation]: http://waxy.org/2007/12/exclusive_yahoo/
