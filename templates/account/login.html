@@ -7,6 +7,20 @@
 
 {% block head_title %}{% trans "Login" %}{% endblock %}
 
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}openid-selector/css/openid.css" />
+{% endblock %}
+
+{% block extra_body %}
+    <script type="text/javascript" src="{{ STATIC_URL }}openid-selector/js/openid-jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            openid.img_path = "{{ STATIC_URL }}openid-selector/images/";
+	        // openid.init('openid_url');
+	    });
+    </script>
+{% endblock %}
+
 {% block body %}
     
     {% if openid and not user.is_authenticated %}
@@ -14,52 +28,48 @@
     {% endif %}
     
     <h1>{% trans "Log In" %}</h1>
+
+    <div>
+        <p>{% trans "Connect with one of these services" %}:</p>
+        <a href="{% url auth_twitter_signin %}"><img src="{{ STATIC_URL }}socialconnect/img/sign-in-with-twitter-l.png" /></a>
+        <a href="{% url auth_facebook_signin %}"><img src="{{ STATIC_URL }}socialconnect/img/facebook-login-button.png" /></a>
+    </div>
     
-    {% if user.is_authenticated %}
-        {% user_display user as user_display %}
-        <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user_display }}.{% endblocktrans %}</p>
-    {% else %}
-        {% ifsetting ACCOUNT_OPEN_SIGNUP %}
-        {% url acct_signup as signup_url %}
-        <p>{% blocktrans %}Don't have an account? <a href="{{ signup_url }}?{{ redirect_field_name }}={{ redirect_field_value }}">Sign up</a>!{% endblocktrans %}</p>
-        {% endifsetting %}
-    {% endif %}
+    <p>{% trans "Or, sign in with your OpenID" %}:</p>
+    {# @@@ why isn't this just does as a form object ? #}
+    <form class="login uniForm" id="openid_form" action="/openid/register/" 
+            method="POST">
+        {% csrf_token %}
+            <div id="openid_btns"></div>
+            <div id="openid_input_area">
+				<input id="openid_url" name="openid_url" type="text" value="http://" />
+				<input id="openid_submit" type="submit" value="Sign-In"/>
+			</div>
+    </form>
     
+    <p>
+        {% trans "Or, sign in with a local account" %}
+        {% if user.is_authenticated %}
+            {% user_display user as user_display %}
+            (<span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user_display }}.{% endblocktrans %})
+        {% else %}
+            {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+            {% url acct_signup as signup_url %}
+            {% url acct_passwd_reset as acct_passwd_reset %}
+            ({% blocktrans %}Don't have an account? <a href="{{ signup_url }}?{{ redirect_field_name }}={{ redirect_field_value }}">Sign up!</a>{% endblocktrans %} {% blocktrans %}Or, have you <a href="{{ acct_passwd_reset }}">forgotten your password</a>?{% endblocktrans %})
+            {% endifsetting %}
+        {% endif %}
+    </p>
     <form class="login uniForm" method="POST" action="{% url acct_login %}">
         {% csrf_token %}
         <fieldset class="inlineLabels">
-            <div class="form_block">
-                <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-            </div>
             {{ form|as_uni_form }}
             {% if redirect_field_value %}
                 <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
             <div class="form_block">
-                <input type="submit" value="{% trans "Log in &raquo;" %}" />
+                
             </div>
-        </fieldset>
-    </form>
-    
-    <p>{% trans "Or sign in with your OpenID" %}:</p>
-    {# @@@ why isn't this just does as a form object ? #}
-    <form class="login uniForm" action="/openid/register/" method="POST">
-        {% csrf_token %}
-        <fieldset class="inlineLabels">
-            {% if url_required %}
-                <div class="ctrlHolder error">
-                    <p class="errorField">
-                        <strong>This field is required.</strong>
-                    </p>
-                    <label for="id_username">* OpenID Identifier</label>
-                    <input class="openid" type="text" name="openid_url" />
-                </div>
-            {% else %}
-                <div class="ctrlHolder">
-                    <label for="id_username">* OpenID Identifier</label>
-                    <input class="openid" type="text" name="openid_url" />
-                </div>
-            {% endif %}
             <div class="form_block">
                 <input type="submit" value="{% trans "Log in &raquo;" %}" />
             </div>
@@ -67,10 +77,4 @@
     </form>
     
     <p>{% blocktrans %}If you have any trouble logging in to your account, contact us at <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.{% endblocktrans %}</p>
-{% endblock %}
-
-{% block extra_body %}
-<script>
-    $("#id_username").focus();
-</script>
 {% endblock %}

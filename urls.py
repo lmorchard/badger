@@ -11,7 +11,6 @@ from tagging.models import TaggedItem
 from pinax.apps.account.openid_consumer import PinaxConsumer
 from pinax.apps.topics.models import Topic
 
-
 handler500 = "pinax.views.server_error"
 
 if settings.ACCOUNT_OPEN_SIGNUP:
@@ -29,9 +28,10 @@ urlpatterns = patterns("",
     
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^account/signup/$", signup_view, name="acct_signup"),
-    
+
     (r"^account/", include("pinax.apps.account.urls")),
     (r"^openid/(.*)", PinaxConsumer()),
+    (r"^auth/", include("socialconnect.urls")),
     (r"^bbauth/", include("pinax.apps.bbauth.urls")),
     (r"^authsub/", include("pinax.apps.authsub.urls")),
     (r"^notices/", include("notification.urls")),

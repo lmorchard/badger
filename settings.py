@@ -204,7 +204,22 @@ INSTALLED_APPS = [
 
     # project
     "badges",
+    "socialconnect",
 ]
+
+# Play with adding third-party apps under South management here:
+SOUTH_MIGRATION_MODULES = {
+#     "topics": "migrations_local.topics",
+#     "announcements": "migrations_local.announcements",
+#     "avatar": "migrations_local.avatar",
+#     "notification": "migrations_local.notification",
+#     "tagging": "migrations_local.tagging",
+#     "threadedcomments": "migrations_local.threadedcomments",
+#     "flag": "migrations_local.flag",
+#     "mailer": "migrations_local.mailer",
+#     "messages": "migrations_local.messages",
+#     "oembed": "migrations_local.oembed",
+}
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
@@ -287,3 +302,12 @@ AUTO_GENERATE_AVATAR_SIZES = (80,32,24,)
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
+
+TWITTER_CONSUMER_KEY = "GET A KEY FROM http://twitter.com/oauth"
+TWITTER_CONSUMER_SECRET = "GET A SECRET FROM http://twitter.com/oauth"
+
+GOOGLE_FRIEND_CONNECT_CONSUMER_KEY = "GET A KEY FROM http://www.google.com/friendconnect/"
+GOOGLE_FRIEND_CONNECT_CONSUMER_SECRET = "GET A KEY FROM http://www.google.com/friendconnect/"
+
+FACEBOOK_CONSUMER_KEY = "GET A KEY FROM http://developers.facebook.com/setup"
+FACEBOOK_CONSUMER_KEY = "GET A SECRET FROM http://developers.facebook.com/setup"
