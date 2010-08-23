@@ -6,12 +6,6 @@
 
 * Master / slave DBs?
 
-* Enable memcache?
-
-* Use template fragment caching in lots of places
-
-* Make sure caching headers for proxy work?
-
 ## v0.2
 
 * Facelift?
@@ -35,6 +29,8 @@
 
 * Delegation of nomination approval
 
+* Anyone with this badge can also bestow this badge (eg. viral delegates)
+
 * Comments
 
 * Tags
@@ -52,6 +48,13 @@
 * OAuth access to API
     * For site-to-site access, allows for trusted verification of identity and badge awards?
     * Badge award verification could lead to badges that grant access / authority?
+
+* Use template fragment caching in lots of places
+
+* Make sure caching headers for proxy work?
+
+* Use Cache Machine
+    * <http://github.com/jbalogh/django-cache-machine>
 
 ## Future
 
@@ -94,6 +97,3 @@
 * Allow badger app to be more reusable by checking for installation of notification, etc?
 
 * Wishlist of badges
-
-* Use Cache Machine
-    * <http://github.com/jbalogh/django-cache-machine>
