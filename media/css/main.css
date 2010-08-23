@@ -1,34 +1,48 @@
 /*
  * Global site styles
  */
-body { font-family: "Comic Sans MS"; font-size: 13px; }
+body { 
+    font-size: 13px; 
+    background: #fffadf;
+    color: #111;
+    font-family: "Comic Sans MS";
+}
 body #body button { 
-    font-family: "Comic Sans MS"; font-size: 1.125em; font-weight: bold; 
+    font-family: "Comic Sans MS";
+    font-size: 1.125em; font-weight: bold; 
     padding: 0.5em 1em 0.5em 1em;
     margin: 5px;
     border: 1px solid #999;
     cursor: pointer;
 }
 
-#tabhead { background: #000000; }
+
+body #body input[type="text"], body #body input[type="password"], body #body textarea {
+    color: #333;
+}
+
+#tabhead { background: #6D89C3; }
 #tabhead .logo { height: 79px; color: #fff; }
 #tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -5px -55px; line-height: 79px; padding-left: 240px; text-decoration: none; }
 #tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 50px; color: #fff; }
 
 ul.tabs li { background-color: #d8d8d8; }
+#right_tabs ul.tabs li { background-color: #b0d574; }
 
 #tabhead .login, #tabhead .login a, #tabhead .login a:visited { color: #ddd; }
 body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.photos #tab_photos, body.tribes #tab_tribes, body.tweets #tab_tweets, body.bookmarks #tab_bookmarks, body.locations #tab_locations, body.inbox #tab_inbox { background: #eee; }
 
 #tabhead .login {
-    background: #333;
+    background: #4D69a3;
     padding: 10px 10px 10px 10px;
     right: 0px; top: 0px;
     border-left: 1px solid #666;
     border-bottom: 1px solid #666;
 }
 
-#subnav { background: #eee; border-bottom: 1px solid #999; margin: 0; padding: 0; }
+#subnav { 
+    background: #a0c564; border-bottom: 1px solid #333; margin: 0; padding: 0; 
+}
 
 div.groups, div.friends { background: #ddd }
 
@@ -44,9 +58,9 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
 
 .badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; float: left; }
 .badge.full h2 { margin: 0; padding: 0.25em 0 0.25em 0; text-align: center; background: #ddd; }
-.badge.full .image { width: 100%; text-align: center;}
+.badge.full .image { width: 100%; text-align: center; background: #fff; }
 .badge.full .image img { margin: 1em; }
-.badge.full p.description { border-top: 4px solid #ddd; padding: 0.75em 0.75em 0.75em 0.75em; margin: 0; text-align: center; }
+.badge.full p.description { background: #fff; border-top: 4px solid #ddd; padding: 0.75em 0.75em 0.75em 0.75em; margin: 0; text-align: center; }
 .badge.full .metadata { border-top: 4px solid #ddd; background: #ddd; text-align: right; }
 .badge.full .metadata .creator { padding: 0.5em; margin: 0; font-size: 0.85em; }
 .badge.full .metadata .creator .fn { }
@@ -73,7 +87,7 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .profile div.left_panel { width: auto; }
 
 .profile ul.awarded_badges { margin: 0; padding: 0; text-align: center; list-style: none; }
-.profile ul.awarded_badges li { float: left; margin: 0.75em; position: relative; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px }
+.profile ul.awarded_badges li { float: left; margin: 0.75em; position: relative; border: 4px solid #ccc; background: #fff; text-align: center; -moz-border-radius: 8px; width: 125px }
 .profile ul.awarded_badges li .icon { display: block; padding: 0.75em 0.25em }
 .profile ul.awarded_badges li .icon img { height: 80px; }
 .profile ul.awarded_badges li .name { display: block; padding: 0.25em; background: #ccc; height: 2.75em; font-weight: bold; overflow:hidden; }
@@ -81,7 +95,7 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .profile ul.awarded_badges li .count a { display: block; text-decoration: none; color: #eee; font-weight: bold; }
 
 .home .recent_awards { list-style-type: none; margin: 0; padding: 0;}
-.home .recent_awards li { position: relative; text-align: center; margin: 0.5em; border: 2px solid #ccc; border-radius: 8px; -moz-border-radius: 8px; float: left; }
+.home .recent_awards li { position: relative; text-align: center; margin: 0.5em; border: 2px solid #ccc; border-radius: 8px; -moz-border-radius: 8px; float: left; background: #fff;}
 .home .recent_awards li .when { display: block; background: #ccc; color: #000; font-size: 80%; text-align: center; font-weight: normal; }
 .home .recent_awards li .avatar { float: left; text-align: right; margin: 0.5em; }
 .home .recent_awards li .avatar a { display: inline; }
@@ -93,13 +107,13 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 
 .badge_index .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
 .badge_index .badges li { float: left; margin: 0.75em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px }
-.badge_index .badges li .icon { display: block; height: 90px; padding: 0.75em 0.25em }
+.badge_index .badges li .icon { display: block; height: 90px; padding: 0.75em 0.25em; background: #fff; }
 .badge_index .badges li .icon img { height: 80px; }
 .badge_index .badges li .name { display: block; font-weight: bold; padding: 0.25em; background: #ccc; height: 2.75em; overflow: hidden }
 
 .badge_awards .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
 .badge_awards .badges li { float: left; margin: 0.25em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px}
-.badge_awards .badges li .icon { display: block; width: 100%; height: 90px; border-bottom: 4px solid #ccc; }
+.badge_awards .badges li .icon { display: block; width: 100%; height: 90px; border-bottom: 4px solid #ccc; background: #fff; }
 .badge_awards .badges li .icon img { padding: 0.25em; }
 .badge_awards .badges li .name { display: block; font-weight: bold; padding: 0.25em 0.5em; background: #ccc; height: 3.5em }
 
