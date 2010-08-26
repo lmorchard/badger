@@ -55,6 +55,10 @@ These are alterations to the development notes for use when deploying to a live 
     * `python manage.py syncdb`
     * `python manage.py migrate --all`
 * Configure Apache/mod_wsgi to use `wsgi/badger.wsgi`
+* Set up a few cronjobs, example scripts under `cron/`:
+    * `send_mail.sh` - This sends out queued up email, should be as often as possible.
+    * `retry_deferred.sh` - Retries previously failed email, every 20-60 min is okay.
+    * `emit_notices.sh` - Sends out queued up notices, should be as often as possible.
 
 ## FAQ
 
