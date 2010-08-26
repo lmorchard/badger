@@ -11,5 +11,6 @@ oauth-python-twitter
 
 South==0.7.1
 python-memcached==1.45
+-e git://github.com/jbalogh/django-multidb-router.git#egg=django-multidb-router
 
 #-e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer

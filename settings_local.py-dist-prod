@@ -1,10 +1,16 @@
 # Local settings for production
 from settings import *
 
-DEBUG = False
-DEV = False
-SERVE_MEDIA = DEBUG
-EMAIL_DEBUG = DEBUG
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = "BADGER BADGER BADGER BADGER MUSHROOM MUSHROOM"
+
+TWITTER_CONSUMER_KEY = "OAUTH KEY NEEDED"
+TWITTER_CONSUMER_SECRET = "OAUTH SECRET NEEDED"
+
+FACEBOOK_CONSUMER_KEY = "OAUTH KEY NEEDED"
+FACEBOOK_CONSUMER_SECRET = "OAUTH SECRET NEEDED"
+
+DATABASE_ROUTERS = ('multidb.MasterSlaveRouter',)
 
 DATABASES = {
     "default": {
@@ -14,8 +20,18 @@ DATABASES = {
         "PASSWORD": "badger",
         "HOST": "127.0.0.1",
         "PORT": "3306",
-    }
+    },
+    "shadow-1": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "badger",
+        "USER": "badger",
+        "PASSWORD": "badger",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+    },
+    # "shadow-2"
 }
+SLAVE_DATABASES = ['shadow-1',] # 'shadow-2']
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
@@ -25,6 +41,11 @@ EMAIL_PORT = '25'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
+
+DEBUG = False
+DEV = False
+SERVE_MEDIA = DEBUG
+EMAIL_DEBUG = DEBUG
 
 MEDIA_URL = "/site_media/media/"
 STATIC_URL = "/site_media/static/"

@@ -45,8 +45,12 @@ These are alterations to the development notes for use when deploying to a live 
     * Use the OS package manager to install modules from `requirements/compiled.txt`
 * Prepare a `settings_local.py` file:
     * `cp settings_local.py-dist-prod settings_local.py`
-    * Assuming there's a MySQL DB, configure its details here.
-    * SMTP and memcache servers are expected here, as well.
+    * Highlights that need to be configured:
+        * Random secret string
+        * Master / shadow MySQL databases
+        * memcached server
+        * SMTP server for email
+        * OAuth key/secret for Twitter and Facebook sign in
 * Be sure to use both `syncdb` and `migrate --all` to prepare and update the database:
     * `python manage.py syncdb`
     * `python manage.py migrate --all`
