@@ -2,14 +2,17 @@
  * Global site styles
  */
 body { 
-    font-size: 13px; 
     background: #fffaef;
     color: #111;
-    font-family: "Comic Sans MS";
+    /*font-family: "Comic Sans MS";*/
+    font-family: "Helvetica Neue",Helvetica,Arial,default;
+    font-size: 10pt; 
 }
 body #body button { 
+    /*
     font-family: "Comic Sans MS";
     font-size: 1.125em; font-weight: bold; 
+    */
     padding: 0.5em 1em 0.5em 1em;
     margin: 5px;
     border: 1px solid #999;
@@ -22,7 +25,7 @@ body #body input[type="text"], body #body input[type="password"], body #body tex
 }
 
 #tabhead { background: #6D89C3; }
-#tabhead .logo { height: 79px; color: #fff; }
+#tabhead .logo { height: 79px; color: #fff; font-family: "Comic Sans MS" }
 #tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -5px -55px; line-height: 79px; padding-left: 240px; text-decoration: none; }
 #tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 50px; color: #fff; }
 
