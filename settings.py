@@ -105,6 +105,8 @@ TEMPLATE_LOADERS = [
 MIDDLEWARE_CLASSES = [
     #"django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
+    #'piston.middleware.CommonMiddlewareCompatProxy',
+    #'piston.middleware.ConditionalMiddlewareCompatProxy',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -137,6 +139,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
+    "csrf_context.csrf",
     "django.contrib.messages.context_processors.messages",
     
     "pinax.core.context_processors.pinax_settings",
@@ -310,3 +313,7 @@ GOOGLE_FRIEND_CONNECT_CONSUMER_SECRET = "GET A KEY FROM http://www.google.com/fr
 
 FACEBOOK_CONSUMER_KEY = "GET A KEY FROM http://developers.facebook.com/setup"
 FACEBOOK_CONSUMER_KEY = "GET A SECRET FROM http://developers.facebook.com/setup"
+
+OAUTH_AUTH_VIEW = "piston.authentication.oauth_auth_view"
+OAUTH_CALLBACK_VIEW = "badges.api.handlers.request_token_ready"
+

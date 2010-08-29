@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+
+{% load badge_tags %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Token Authorized" %}{% endblock %}
+
+{% block body %}
+    <div>
+        {% if error %}
+            <h1>Token NOT Authorizedd</h1>
+            <p>Error: <code>{{ error }}</code></p>
+        {% else %}
+            <h1>Token Authorized</h1>
+            <p>Verifier / PIN: <code>{{ token.verifier }}</code></p>
+        {% endif %}
+	</div>
+{% endblock %}

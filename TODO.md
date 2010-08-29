@@ -119,3 +119,10 @@
 * Allow badger app to be more reusable by checking for installation of notification, etc?
 
 * Wishlist of badges
+
+* JSON POST body data not covered by OAuth signature
+    * Is this an issue?
+    * Switch to POST encoded parameters to create badges?
+        * Puts params into OAuth signature
+        * Or, stick an HMAC-SHA or MD5 of the POST body into a query param
+

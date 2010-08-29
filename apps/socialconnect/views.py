@@ -80,7 +80,7 @@ class BaseAuthView(BaseView):
     def do_callback(self, request):
         """Handle response from OAuth permit/deny"""
         # TODO: Handle OAuth denial!
-        mode = request.session['socialconnect_mode']
+        mode = request.session.get('socialconnect_mode', None)
         profile = self.get_profile_from_callback(request)
         if not profile: return HttpResponse(status=400)
 

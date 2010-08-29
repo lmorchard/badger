@@ -12,5 +12,5 @@ oauth-python-twitter
 -e git://github.com/jbalogh/schematic.git#egg=schematic
 python-memcached==1.45
 -e git://github.com/jbalogh/django-multidb-router.git#egg=django-multidb-router
-
+-e hg+http://bitbucket.org/jespern/django-piston#egg=django-piston
 #-e git+http://github.com/fwenzel/django-cas-consumer.git#egg=django-cas-consumer

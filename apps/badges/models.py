@@ -23,7 +23,7 @@ from tagging.models import Tag
 from notification import models as notification
 from mailer import send_mail
 
-from badges import BADGE_STORAGE_DIR, BADGE_RESIZE_METHOD
+from badges import BADGE_DEFAULT_URL, BADGE_STORAGE_DIR, BADGE_RESIZE_METHOD
 
 try:
     from cStringIO import StringIO
@@ -181,9 +181,14 @@ class Badge(models.Model):
         thumb = self.main_image.storage.save(self.main_image_name(size), thumb_file)
     
     def main_image_url(self, size=256):
-        return self.main_image.storage.url(self.main_image_name(size))
+        if not self.main_image:
+            return BADGE_DEFAULT_URL
+        name = self.main_image_name(size)
+        return self.main_image.storage.url(name)
     
     def main_image_name(self, size):
+        if not self.main_image.name:
+            return os.path.basename(BADGE_DEFAULT_URL)
         return os.path.join(BADGE_STORAGE_DIR, self.slug,
             'resized', str(size), self.main_image.name)
 

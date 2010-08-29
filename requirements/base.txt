@@ -41,7 +41,7 @@ django-uni-form==0.7.0
 django-bookmarks==0.1.0
 django-gravatar==0.1.0
 django-mailer==0.2a1.dev1
-#django-friends==0.1.5
+django-friends==0.1.5
 django-locations==0.1.1
 django-oembed==0.1.1
 django-swaps==0.5.3

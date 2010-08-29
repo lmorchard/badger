@@ -1,0 +1,16 @@
+{% extends "site_base.html" %}
+
+{% load badge_tags %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Authorize Token" %}{% endblock %}
+
+{% block body %}
+    <div>
+		<h1>Authorize Token</h1>
+        <form action="{% url piston.authentication.oauth_user_auth %}" method="POST">
+            {{ form.as_table }}
+            <button type="submit">Confirm</button>
+        </form>
+	</div>
+{% endblock %}

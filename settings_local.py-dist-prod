@@ -4,9 +4,11 @@ from settings import *
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "BADGER BADGER BADGER BADGER MUSHROOM MUSHROOM"
 
+# create an app at: http://dev.twitter.com/apps
 TWITTER_CONSUMER_KEY = "OAUTH KEY NEEDED"
 TWITTER_CONSUMER_SECRET = "OAUTH SECRET NEEDED"
 
+# create an app at: http://www.facebook.com/developers/apps.php
 FACEBOOK_CONSUMER_KEY = "OAUTH KEY NEEDED"
 FACEBOOK_CONSUMER_SECRET = "OAUTH SECRET NEEDED"
 
