@@ -4,8 +4,6 @@
 
 * Invitation-only at launch?
 
-* Master / slave DBs?
-
 ## v0.2
 
 * Facelift?
@@ -31,11 +29,18 @@
 
 * Anyone with this badge can also bestow this badge (eg. viral delegates)
 
+* Register interest in claiming a badge
+    * Produces a list in the API for scripts looking to track achievement progress
+
 * Comments
 
 * Tags
 
 ## v0.3
+
+* AJAXification
+    * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
+    * Lightweight interactions
 
 * It would be nice to have an attractive theme for the Mozilla installation, and maybe as a default
 
@@ -69,8 +74,6 @@
     * Add a UUID / base-60 ID, use in notifications, redirect to slug?
 
 * For award-by-email, if the email matches the verified email of an existing user, switch to the user rather than using the verification code system?
-
-* Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
 
 * Strip out more unused Pinax apps / features
     * No "friends" / "invites" from friends_app?
