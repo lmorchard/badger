@@ -8,9 +8,6 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Removing unique constraint on 'BadgeAwardee', fields ['claim_code']
-        db.delete_unique('badges_badgeawardee', ['claim_code'])
-
         # Adding field 'Badge.only_creator_can_nominate'
         db.add_column('badges_badge', 'only_creator_can_nominate', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
 
