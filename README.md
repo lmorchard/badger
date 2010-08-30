@@ -59,6 +59,15 @@ These are alterations to the development notes for use when deploying to a live 
     * `send_mail.sh` - This sends out queued up email, should be as often as possible.
     * `retry_deferred.sh` - Retries previously failed email, every 20-60 min is okay.
     * `emit_notices.sh` - Sends out queued up notices, should be as often as possible.
+* File system details
+    * The `site_media` directory contains two subdirectories, `static` and `media`
+    * `site_media/static` is where static site assets go, and needs to be writable by `manage.py`, though not the web app.
+        * This directory needs to be updated with a command: `python manage.py build_static --noinput`
+        * The `STATIC_ROOT` setting can be changed if this directory moves
+        * The `STATIC_URL` setting can be changed to point to wherever this directory is served up.
+    * `site_media/media` is where uploaded images and such go, and should be writable by the web app.
+        * The `MEDIA_ROOT` setting can be changed if this directory moves
+        * The `MEDIA_URL` setting can be changed to point to wherever this directory is served up.
 * Whenever the site is updated, run these commands:
     * `python manage.py build_static --noinput`
     * `python manage.py migrate --all`
