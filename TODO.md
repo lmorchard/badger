@@ -34,6 +34,8 @@
 * Allow transfer of badge ownership
     * Another user becomes the new creator
 
+* Digest notifications of nominations for approval
+
 * Anyone with this badge can also bestow this badge (eg. viral delegates)
 
 * Register interest in claiming a badge
