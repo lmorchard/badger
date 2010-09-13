@@ -2,41 +2,56 @@
 
 ## v0.1
 
-* Invitation-only at launch?
+* Creative facelift!
 
-## v0.2
+* Tags for badges
 
-* Facelift?
-
-* Reduce SQL queries
-
-* Non-listed badges for surprises
+* Comments on badges
 
 * Karma? Applause? Mood?
+
+* Pagination on badges page
+
+* Meta-badges for auto-nomination
+    * Attach a list of badges to a badge
+    * Any user who has all of them gets auto-nominated for the meta-badge
+
+* Social sharing
+    * Facebook: badge display on profile page (Facebook app); share new badges as a Facebook update (Facebook Connect)
+    * Ning: badge display on profile page (Ning app); share new badges as status updates; show newly granted badges on Ning homepage
+    * Twitter: tweet your new badge
+    * Gravatar / Signature creator: Generated image that includes that person's name and top badges. Can be downloaded for use in email signatures, blogs, websites.
+
+* Invitation-only at launch?
+    * A badge award constitutes an invite
 
 * Auto-complete on profile name for badge nomination form
     * auto-complete on emails somehow too?
 
-* Pagination on badges page?
-
-* API using valet keys and checkbox capabilities
-    * Valet key = HTTP basic auth user/pass
-    * Easily disposable
-    * Per-valet key logging and reports?
-    * Should allow for simple external services that track conditions and trigger nominations
-
 * Delegation of nomination approval
+    * Allow badge creator to flag others as co-creators / nomination approvers
+
+* Allow transfer of badge ownership
+    * Another user becomes the new creator
 
 * Anyone with this badge can also bestow this badge (eg. viral delegates)
 
 * Register interest in claiming a badge
     * Produces a list in the API for scripts looking to track achievement progress
 
-* Comments
+* API using valet keys and selective permissions
+    * Valet key = HTTP basic auth user/pass
+    * Simpler than OAuth
+    * Easily disposable
+    * Never enables account actions (eg. password change, etc)
+    * Per-valet key logging and reports?
+    * Should allow for simple external services that track conditions and trigger nominations
 
-* Tags
+* Reduce SQL queries
 
-## v0.3
+## v0.2
+
+* Non-listed badges for surprises
 
 * AJAXification
     * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
