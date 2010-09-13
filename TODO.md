@@ -12,6 +12,11 @@
 
 * Pagination on badges page
 
+* Localization
+    * L10N support for the site itself
+    * L10N for badge content... later?
+        * Delaying it could result in duplicate badges with the same intent in different locales
+
 * Meta-badges for auto-nomination
     * Attach a list of badges to a badge
     * Any user who has all of them gets auto-nominated for the meta-badge
@@ -24,8 +29,6 @@
 
 * Invitation-only at launch?
     * A badge award constitutes an invite
-
-* Auto-complete on profile name for badge nomination form
     * auto-complete on emails somehow too?
 
 * Delegation of nomination approval
@@ -53,17 +56,17 @@
 
 ## v0.2
 
-* Non-listed badges for surprises
-
 * AJAXification
     * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
     * Lightweight interactions
 
+* Auto-complete on profile name for badge nomination form
+
 * It would be nice to have an attractive theme for the Mozilla installation, and maybe as a default
 
-* Search-then-create
+* Non-listed badges for surprises
 
-* L10N / I18N support for the site itself
+* Search-then-create
 
 * L10N / I18N support for badge content
 
