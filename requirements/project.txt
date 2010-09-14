@@ -9,7 +9,7 @@ oauth-python-twitter
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.
 
-South==0.7.1
+-e git://github.com/jbalogh/schematic.git#egg=schematic
 python-memcached==1.45
 -e git://github.com/jbalogh/django-multidb-router.git#egg=django-multidb-router
 
