@@ -21,7 +21,6 @@ server, skim the following and skip to the next section.
     * Use [virtualenv][] to create and use a new environment.
     * `pip install -r requirements/dev.txt -r requirements/compiled.txt`
     * `python manage.py syncdb`
-    * `python manage.py migrate --all`
     * `python manage.py runserver`
 * Using Freshen for tests, I've been using these commands:
     * `python manage.py test apps/badges --with-freshen`
@@ -51,9 +50,6 @@ These are alterations to the development notes for use when deploying to a live 
         * memcached server
         * SMTP server for email
         * OAuth key/secret for Twitter and Facebook sign in
-* Be sure to use both `syncdb` and `migrate --all` to prepare and update the database:
-    * `python manage.py syncdb`
-    * `python manage.py migrate --all`
 * Configure Apache/mod_wsgi to use `wsgi/badger.wsgi`
 * Set up a few cronjobs, example scripts under `cron/`:
     * `send_mail.sh` - This sends out queued up email, should be as often as possible.
