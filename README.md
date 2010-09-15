@@ -66,7 +66,6 @@ These are alterations to the development notes for use when deploying to a live 
         * The `MEDIA_URL` setting can be changed to point to wherever this directory is served up.
 * Whenever the site is updated, run these commands:
     * `python manage.py build_static --noinput`
-    * `python manage.py migrate --all`
 
 ## FAQ
 
