@@ -1,5 +1,10 @@
 # TODO
 
+* See also
+    * http://www.earnmojo.com/
+    * http://getglue.com/ (stickers)
+    * http://www.badgeville.com/
+
 ## v0.1
 
 * Creative facelift!
