@@ -179,13 +179,14 @@ class TestAPI(TestCase):
         data, resp = self.api_POST('/badges/%s/nominations/' % badge.slug, 
             use_oauth=True, body = nom_data)
 
-        self.log.debug('%s' % resp)
+        #self.log.debug('%s' % resp)
 
         nomination = BadgeNomination.objects.get(
                 nominee__user__username='user2', badge=badge)
         eq_(nom_data['reason_why'], nomination.reason_why)
 
         # TODO: nominate by email address
+        ok_(False)
 
 
     #######################################################################
@@ -276,7 +277,6 @@ class TestAPI(TestCase):
             )), 
         )
         signature_method = OAuthSignatureMethod_HMAC_SHA1()
-        #signature_method = OAuthSignatureMethod_PLAINTEXT()
         signature = signature_method.build_signature(
             oauth_request, self.consumer, self.access_token
         )
