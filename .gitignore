@@ -16,3 +16,4 @@ coverage.xml
 *.swp
 *.swo
 *.db
+.DS_Store

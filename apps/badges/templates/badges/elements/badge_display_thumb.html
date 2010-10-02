@@ -1,0 +1,8 @@
+{% load i18n %}
+{% load badge_tags %}
+<li class="badge_thumb">
+    <a href="{{badge.get_absolute_url}}" 
+        class="name">{{badge.title}}</a>
+    <a href="{{badge.get_absolute_url}}"
+        class="icon">{% badge_image badge 80 %}</a>
+</li>

@@ -1,6 +1,8 @@
 {% load humanize i18n %}
 {% load i18n %}
 {% load badge_tags %}
+{% load tagging_tags %}
+{% load voting_tags %}
 
 <div class="badge full">
     <h2><a href="{{badge.get_absolute_url}}">{{ badge.title }}</a></h2>
@@ -9,8 +11,54 @@
     </div>
     <p class="description">{{ badge.description }}</p>
     <div class="metadata">
-        <p class="creator">Created by: 
-            <a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a></p>
-            {% if permissions.editing %}<a class="edit_badge" href="{% url badge_edit badge.slug %}">Edit</a>{% endif %}
+
+        <div class="votes">
+            <span class="score">
+                {% score_for_object badge as score %}
+                {{ score.score }} point{{ score.score|pluralize }}
+                / {{ score.num_votes }} vote{{ score.num_votes|pluralize }}
+                &#8212;
+            </span>
+            <span class="vote_actions">
+                {% vote_by_user user on badge as vote %}
+                <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="--" 
+                        {% if -1 == vote.vote %}disabled="disabled"{% endif %} />
+                </form>
+                <form action="{% url badge_vote slug=badge.slug direction="clear" %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="0" 
+                        {% if not vote.vote %}disabled="disabled"{% endif %}  />
+                </form>
+                <form action="{% url badge_vote slug=badge.slug direction="up" %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="++" 
+                        {% if 1 == vote.vote %}disabled="disabled"{% endif %}  />
+                </form>
+            </span>
+        </div>
+
+        {% tags_for_object badge as badge_tags %}
+        {% if badge_tags %}
+            <div class="tags">
+                <span>Tagged as:</span>
+                <ul>
+                    {% for tag in badge_tags %}
+                        <li>
+                            <a href="{% url badge_tag tag=tag.name %}">{{ tag.name }}</a> 
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <p class="creator">
+            <span>Created by:</span>
+            <a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a>
+        </p>
+
+        {% if permissions.editing %}<a class="edit_badge" href="{% url badge_edit badge.slug %}">Edit</a>{% endif %}
+
     </div>
 </div>

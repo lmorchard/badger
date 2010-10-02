@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core import validators
 from django.core.exceptions import ValidationError
@@ -20,7 +21,6 @@ from badges.forms import BadgeForm, BadgeNominationForm
 from badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
 from django.core.exceptions import ObjectDoesNotExist
-
 
 def index(request):
     """Browse badges"""

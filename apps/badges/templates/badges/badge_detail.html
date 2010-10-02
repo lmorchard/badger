@@ -9,6 +9,7 @@
 {% load threadedcommentstags %}
 {% load humanize i18n %}
 {% load timezone_filters %}
+{% load comments_tag %}
 
 {% block extra_head %}
     <link rel="alternate" type="application/atom+xml" title="{% trans "Recently Claimed Badges" %}" href="{% url badge_feed_badgeawards badge.slug %}" />
@@ -86,6 +87,11 @@
                 </li>
             {% endif %}
 
+            <li class="comments">
+                <h3>Comments</h3>
+                <div>{% comments badge %}</div>
+            </li>
+
             {% if user.is_authenticated and permissions.nomination %}
                 <li class="nomination_form">
                     <h3>Nominate someone for this badge</h3>
@@ -140,7 +146,8 @@
         </ul>
 
     </div>
-    
+
+
 {% endblock %}
 
 {% block extra_body %}

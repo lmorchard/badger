@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
+import tagging
 from tagging.fields import TagField
 from tagging.models import Tag
 
@@ -95,19 +96,22 @@ class Badge(models.Model):
     title = models.CharField(_("title"), max_length=255,
         blank=False, unique=True)
     slug = models.SlugField(_("slug"), blank=False, unique=True)
-    description = models.TextField(_("description"), blank=False)
+    description = models.TextField(_("description"), blank=True)
+    tags = TagField()
+
     main_image = models.ImageField(_("main image"),
             max_length=1024, upload_to=badge_file_path, 
             blank=True, null=True,
             help_text=_('Main image for badge; should be square and 256x256 ' +
                     'or larger; will be automatically resized and cropped'))
-    tags = TagField()
+
     autoapprove = models.BooleanField(_('Approve all nominations?'), 
         default=False, 
         help_text=_('If checked, all nominations will automatically be approved'))
     only_creator_can_nominate = models.BooleanField(
         _('Only creator can nominate?'), default=False, 
         help_text=_('If checked, only nominations by the badge creator will be allowed'))
+    
     creator = models.ForeignKey(User, blank=False)
     creator_ip = models.IPAddressField(_("IP Address of the Creator"),
         blank=True, null=True)

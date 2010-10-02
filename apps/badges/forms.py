@@ -37,7 +37,7 @@ class BadgeForm(MyModelForm):
 
     class Meta:
         model = Badge
-        fields = ('title', 'main_image', 'description', 'autoapprove', 'only_creator_can_nominate', 'tags')
+        fields = ('title', 'description', 'tags', 'main_image', 'autoapprove', 'only_creator_can_nominate')
 
 
 class UsernameOrEmailField(forms.CharField):

@@ -9,14 +9,6 @@
 
 * Creative facelift!
 
-* Tags for badges
-
-* Comments on badges
-
-* Karma? Applause? Mood?
-
-* Pagination on badges page
-
 * Localization
     * L10N support for the site itself
     * L10N for badge content... later?
@@ -31,10 +23,6 @@
     * Ning: badge display on profile page (Ning app); share new badges as status updates; show newly granted badges on Ning homepage
     * Twitter: tweet your new badge
     * Gravatar / Signature creator: Generated image that includes that person's name and top badges. Can be downloaded for use in email signatures, blogs, websites.
-
-* Invitation-only at launch?
-    * A badge award constitutes an invite
-    * auto-complete on emails somehow too?
 
 * Delegation of nomination approval
     * Allow badge creator to flag others as co-creators / nomination approvers
@@ -59,11 +47,17 @@
 
 * Reduce SQL queries
 
+* Invitation-only at launch?
+    * A badge award constitutes an invite
+    * auto-complete on emails somehow too?
+
 ## v0.2
 
 * AJAXification
     * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions
     * Lightweight interactions
+
+* Hover overlay for more detailed info on badge thumbs in lists
 
 * Auto-complete on profile name for badge nomination form
 

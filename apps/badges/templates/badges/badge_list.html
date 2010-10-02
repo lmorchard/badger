@@ -1,0 +1,64 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load badge_tags %}
+{% load tagging_tags %}
+
+{% block head_title %}
+    {% if tag %}
+        {% blocktrans %}Badges tagged "{{ tag }}"{% endblocktrans %}
+    {% else %}
+        {% trans "Badges" %}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="badge_list">
+        {% if tag %}
+            <h1>{% blocktrans %}Badges tagged "{{ tag }}"{% endblocktrans %}</h1>
+        {% else %}
+
+            <h1>{% trans "Badges" %}</h1>
+
+            <p><a href="{% url create_badge %}">Create a new badge</a></p>
+
+            {% tag_cloud_for_model badges.Badge as badge_tags with steps=9 min_count=1 distribution=log %}
+
+            {% if badge_tags %}
+                <ul class="tags tag-cloud clearfix">
+                    {% for tag in badge_tags|dictsortreversed:"count" %}
+                        <li class="size-{{ tag.font_size }}">
+                            <a href="{% url badge_tag tag=tag.name %}" title="{{ tag.count }}">{{ tag.name }}</a> 
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% endif %}
+
+        <ul class="badges">
+            {% for badge in badge_list %}
+                {% include "badges/elements/badge_display_thumb.html" %}
+            {% endfor %}
+        </ul>
+
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+        
+    </div>
+{% endblock %}

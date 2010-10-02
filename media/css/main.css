@@ -32,7 +32,7 @@ body #body input[type="text"], body #body input[type="password"], body #body tex
 ul.tabs li { background-color: #eee; }
 #right_tabs ul.tabs li { background-color: #ddd; }
 
-#tabhead .login, #tabhead .login a, #tabhead .login a:visited { color: #333; }
+#tabhead .login, #tabhead .login a, #tabhead .login a:visited, #tabhead .login a:hover { color: #333; }
 body.profile #tab_profile, body.blogs #tab_blogs, body.swaps #tab_swaps, body.photos #tab_photos, body.tribes #tab_tribes, body.tweets #tab_tweets, body.bookmarks #tab_bookmarks, body.locations #tab_locations, body.inbox #tab_inbox { background: #eee; }
 
 #tabhead .login {
@@ -67,6 +67,11 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
 .badge.full .metadata { border-top: 4px solid #ddd; background: #ddd; text-align: right; }
 .badge.full .metadata .creator { padding: 0.5em; margin: 0; font-size: 0.85em; }
 .badge.full .metadata .creator .fn { }
+.badge.full .metadata .tags { font-size: 0.85em; margin: 0.5em 0.5em 0 0 }
+.badge.full .metadata .tags ul { margin: 0; padding: 0; text-indent: 0; display: inline; }
+.badge.full .metadata .tags ul li { display: inline; padding: 0 0 0 0 }
+
+.badge.full .metadata .votes form { display: inline; }
 
 .badge_detail .badge { position: relative; }
 .badge_detail .badge .edit_badge { position: absolute; right: 5px; top: 2px; background: #fff; padding: 2px 5px; font-size: 0.9em; display: block }
@@ -108,11 +113,38 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 
 .badge_detail .pending_awards li { margin-bottom: 1.5em; }
 
-.badge_index .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
-.badge_index .badges li { float: left; margin: 0.75em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px }
-.badge_index .badges li .icon { display: block; height: 90px; padding: 0.75em 0.25em; background: #fff; }
-.badge_index .badges li .icon img { height: 80px; }
-.badge_index .badges li .name { display: block; font-weight: bold; padding: 0.25em; background: #ccc; height: 2.75em; overflow: hidden }
+.badge_list .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
+.badge_list .badges li { float: left; margin: 0.75em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px }
+.badge_list .badges li .icon { display: block; height: 90px; padding: 0.75em 0.25em; background: #fff; }
+.badge_list .badges li .icon img { height: 80px; }
+.badge_list .badges li .name { display: block; font-weight: bold; padding: 0.25em; background: #ccc; height: 2.75em; overflow: hidden }
+
+.pagination { clear: both }
+
+.tags { }
+
+.tag-cloud { 
+    list-style: none;
+    margin: 0.75em; 
+    padding: 0.5em;
+    text-indent: 0;  
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+.tag-cloud li { display: inline; padding: 0 0.25em 0 0; white-space: nowrap; }
+.tag-cloud li a { }
+.tag-cloud li.size-1 a { font-size: 90%; }
+.tag-cloud li.size-2 a { font-size: 100%; }
+.tag-cloud li.size-3 a { font-size: 120%; }
+.tag-cloud li.size-4 a { font-size: 130%; }
+.tag-cloud li.size-5 a { font-size: 140%; }
+.tag-cloud li.size-6 a { font-size: 150%; }
+.tag-cloud li.size-7 a { font-size: 160%; }
+.tag-cloud li.size-8 a { font-size: 170%; }
+.tag-cloud li.size-9 a { font-size: 200%; }
+.tag-cloud li.size- a { font-size: 200%; }
 
 .badge_awards .badges { margin: 1em 0 0 0; padding: 0; text-align: center; }
 .badge_awards .badges li { float: left; margin: 0.25em; list-style:none; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 125px}

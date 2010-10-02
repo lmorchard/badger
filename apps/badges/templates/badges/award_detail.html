@@ -8,6 +8,7 @@
 {% load tagging_tags %}
 {% load humanize i18n %}
 {% load timezone_filters %}
+{% load comments_tag %}
 
 {% block head_title %}{% trans "Award details" %}{% endblock %}
 
@@ -29,6 +30,8 @@
         {% endwith %}
 
         {% include "badges/elements/award_display_full.html" %}
+
+        <div class="comments">{% comments award %}</div>
 
     </div>
 {% endblock %}
