@@ -84,13 +84,8 @@ class MultipleAuthentication(object):
         self.methods = methods
     
     def is_authenticated(self, request):
-        auth_header = request.META.get('HTTP_AUTHORIZATION', None)
-        if not auth_header:
-            return False
-
-        (method, auth) = auth_header.split(" ", 1)
-        if method in self.methods:
-            return self.methods[method].is_authenticated(request)
+        for name, method in self.methods.items():
+            if method.is_authenticated(request): return True
 
         return False
 
