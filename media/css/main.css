@@ -24,10 +24,10 @@ body #body input[type="text"], body #body input[type="password"], body #body tex
     color: #333;
 }
 
-#tabhead { background: #666; }
-#tabhead .logo { height: 79px; color: #fff; font-family: "Comic Sans MS" }
-#tabhead .logo a { background: transparent url(../img/badgers.jpg) no-repeat -5px -55px; line-height: 79px; padding-left: 240px; text-decoration: none; }
-#tabhead .logo a, #tabhead .logo a:visited { font-underline: none; border: 0; font-size: 50px; color: #fff; }
+#tabhead { background: #111; }
+#tabhead .logo { height: 95px; color: #fff; font-family: "Comic Sans MS"; padding: 0; }
+#tabhead .logo a { background: transparent url(../img/badger-logo-working.png) no-repeat 0 0; line-height: 95px; padding-left: 120px; text-decoration: none; }
+#tabhead .logo a, #tabhead .logo a:visited { display: block; text-decoration: none; border: 0; font-size: 50px; color: #fff; }
 
 ul.tabs li { background-color: #eee; }
 #right_tabs ul.tabs li { background-color: #ddd; }
@@ -71,6 +71,7 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
 .badge.full .metadata .tags ul { margin: 0; padding: 0; text-indent: 0; display: inline; }
 .badge.full .metadata .tags ul li { display: inline; padding: 0 0 0 0 }
 
+.badge.full .metadata .votes { font-size: 0.85em; }
 .badge.full .metadata .votes form { display: inline; }
 
 .badge_detail .badge { position: relative; }

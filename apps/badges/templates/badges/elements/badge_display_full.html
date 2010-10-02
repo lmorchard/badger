@@ -14,29 +14,31 @@
 
         <div class="votes">
             <span class="score">
-                {% score_for_object badge as score %}
+                Score: {% score_for_object badge as score %}
                 {{ score.score }} point{{ score.score|pluralize }}
                 / {{ score.num_votes }} vote{{ score.num_votes|pluralize }}
-                &#8212;
             </span>
-            <span class="vote_actions">
-                {% vote_by_user user on badge as vote %}
-                <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
-                    {% csrf_token %}
-                    <input type="submit" value="--" 
-                        {% if -1 == vote.vote %}disabled="disabled"{% endif %} />
-                </form>
-                <form action="{% url badge_vote slug=badge.slug direction="clear" %}" method="POST">
-                    {% csrf_token %}
-                    <input type="submit" value="0" 
-                        {% if not vote.vote %}disabled="disabled"{% endif %}  />
-                </form>
-                <form action="{% url badge_vote slug=badge.slug direction="up" %}" method="POST">
-                    {% csrf_token %}
-                    <input type="submit" value="++" 
-                        {% if 1 == vote.vote %}disabled="disabled"{% endif %}  />
-                </form>
-            </span>
+            {% if user.is_authenticated %}
+                <span class="vote_actions">
+                    &#8212;
+                    {% vote_by_user user on badge as vote %}
+                    <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="--" 
+                            {% if vote and vote.is_downvote %}disabled="disabled"{% endif %} />
+                    </form>
+                    <form action="{% url badge_vote slug=badge.slug direction="clear" %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="0" 
+                            {% if not vote.vote %}disabled="disabled"{% endif %}  />
+                    </form>
+                    <form action="{% url badge_vote slug=badge.slug direction="up" %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="++" 
+                            {% if vote and vote.is_upvote %}disabled="disabled"{% endif %}  />
+                    </form>
+                </span>
+            {% endif %}
         </div>
 
         {% tags_for_object badge as badge_tags %}
