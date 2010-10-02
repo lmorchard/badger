@@ -195,6 +195,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "tagging_ext",
     "voting",
+    "piston",
     
     # Pinax
     "pinax.apps.analytics",
