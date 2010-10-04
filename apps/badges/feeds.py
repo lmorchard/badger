@@ -13,7 +13,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.conf import settings
 
 from badges.models import Badge, BadgeNomination
@@ -57,16 +56,12 @@ class ActivityStreamAtomFeedGenerator(Atom1Feed):
             handler.addQuickElement(u"link", u"", {
                 'type': 'image/jpeg', 'rel':'photo',
                 'media:width': '64', 'media:height': '64',
-                'href': 'http://%s%s' % (
-                    Site.objects.get_current().domain, 
-                    avatar_url(item['obj'].claimed_by, 64)
-                ),
+                'href': self.feed['request'].build_absolute_uri(
+                    avatar_url(item['obj'].claimed_by, 64)),
             })
             avatar_href = avatar_url(item['obj'].claimed_by, 64)
             if avatar_href.startswith('/'):
-                avatar_href = 'http://%s%s' % (
-                    Site.objects.get_current().domain, avatar_href
-                )
+                avatar_href = self.feed['request'].build_absolute_uri(avatar_href)
             handler.addQuickElement(u"link", u"", {
                 'type': 'image/jpeg', 'rel':'preview',
                 'media:width': '64', 'media:height': '64',
@@ -116,9 +111,7 @@ class ActivityStreamJSONFeedGenerator(SyndicationFeed):
             
             avatar_href = avatar_url(item['obj'].claimed_by, 64)
             if avatar_href.startswith('/'):
-                avatar_href = 'http://%s%s' % (
-                    Site.objects.get_current().domain, avatar_href
-                )
+                avatar_href = self.request.build_absolute_uri(avatar_href)
 
             a_object = item['activity']['object']
 
@@ -175,9 +168,7 @@ class AwardActivityStreamFeed(Feed):
         return '%s' % item.claimed_by
 
     def item_author_link(self, item):
-        current_site = Site.objects.get(id=settings.SITE_ID)
-        return 'http://%s%s' % (Site.objects.get_current().domain, 
-                item.claimed_by.get_absolute_url())
+        return self.request.build_absolute_uri(item.claimed_by.get_absolute_url())
 
     def item_pubdate(self, item):
         return item.updated_at
@@ -189,12 +180,10 @@ class AwardActivityStreamFeed(Feed):
         # TODO: Stick this in a template?
         avatar_img = avatar_url(item.claimed_by, 64)
         if avatar_img.startswith('/'):
-            avatar_img = 'http://%s%s' % (
-                Site.objects.get_current().domain, avatar_img)
+            avatar_img = self.request.build_absolute_uri(avatar_img)
         badge_img = badge_url(item.badge, 64) 
         if badge_img.startswith('/'):
-            badge_img = 'http://%s%s' % (
-                Site.objects.get_current().domain, badge_img) 
+            badge_img = self.request.build_absolute_uri(badge_img)
         return """
             <a href="%(claimed_by_url)s"><img src="%(avatar_img)s" width="64" height="64" /> %(claimed_by)s</a>
             <a href="%(award_url)s">claimed</a> the badge
@@ -218,16 +207,12 @@ class AwardActivityStreamFeed(Feed):
                     'object-type': 
                         'http://badger.decafbad.com/activity/1.0/objects/badge',
                     'name': obj.badge.title,
-                    'link': 'http://%s%s' % (
-                        Site.objects.get_current().domain, 
-                        obj.badge.get_absolute_url()
-                    ),
+                    'link': self.request.build_absolute_uri(
+                        obj.badge.get_absolute_url()),
                     'preview': {
                         'width': '64', 'height': '64',
-                        'href': 'http://%s%s' % (
-                            Site.objects.get_current().domain, 
-                            badge_url(obj.badge, 64) 
-                        ),
+                        'href': self.request.build_absolute_uri(
+                            badge_url(obj.badge, 64)),
                     },
                 },
             },
