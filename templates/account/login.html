@@ -31,8 +31,8 @@
 
     <div>
         <p>{% trans "Connect with one of these services" %}:</p>
-        <a href="{% url socialconnect_twitter_signin %}"><img src="{{ STATIC_URL }}socialconnect/img/sign-in-with-twitter-l.png" /></a>
-        <a href="{% url socialconnect_facebook_signin %}"><img src="{{ STATIC_URL }}socialconnect/img/facebook-login-button.png" /></a>
+        <a href="{% url socialconnect_twitter_signin %}?{{ redirect_field_name }}={{ redirect_field_value }}"><img src="{{ STATIC_URL }}socialconnect/img/sign-in-with-twitter-l.png" /></a>
+        <a href="{% url socialconnect_facebook_signin %}?{{ redirect_field_name }}={{ redirect_field_value }}"><img src="{{ STATIC_URL }}socialconnect/img/facebook-login-button.png" /></a>
     </div>
     
     <p>{% trans "Or, sign in with your OpenID" %}:</p>

@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 
 from django.utils.http import urlquote
@@ -36,7 +35,7 @@ FACEBOOK_CONSUMER_SECRET = getattr(settings, 'FACEBOOK_CONSUMER_SECRET', 'YOUR_S
 
 
 class ManagementView(BaseView):
-    """ """
+    """Connection management view, mainly for removing associations"""
     urlname_pattern = 'socialconnect_manage_%s'
 
     def do_associations(self, request):
@@ -75,6 +74,7 @@ class BaseAuthView(BaseView):
     def do_signin(self, request):
         """Perform sign in via OAuth"""
         request.session['socialconnect_mode'] = request.GET.get('mode', 'signin')
+        request.session['redirect_to'] = request.GET.get(REDIRECT_FIELD_NAME, '/')
         return HttpResponseRedirect(self.get_signin_url(request))
 
     def do_callback(self, request):
