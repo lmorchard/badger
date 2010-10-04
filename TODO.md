@@ -7,9 +7,18 @@
 
 ## v0.1
 
-* Creative facelift!
+* Fix all the broken tests
 
-* Flag awards for trophycase on profile and social apps
+* Standardize thumb/full includes for Badges and Profiles
+    * Possibly add rollover popups with further details on each
+
+* Enable notifications on badge and badge award comments
+
+* Show only recent awards on badge detail page, link to paginated award list for more
+
+* Accept flags / alerts to spam / inapproriate content
+
+* Trophy case: Flag awards for highlighting on profile and social apps
 
 * Social sharing
     * Need an URL shortener for tweets
@@ -23,9 +32,29 @@
     * L10N for badge content... later?
         * Delaying it could result in duplicate badges with the same intent in different locales
 
+* Nomination by claim code
+    * Single-use: Changes the nomination's awardee to the code bearer
+    * Multi-use: Generates a cloned nomination with code bearer as awardee
+
+* Aspirations
+    * Badge creator can build a short questionaire of information necessary for aspiration
+        * Human readable (eg. how many widgets did you frob?) or machine readable (eg. bugzilla email addr)
+    * User registers interest in claiming a badge, creates aspiration
+        * Fills out questionaire, if necessary
+    * Aspiration may be made public or private by aspirant
+    * Badge creator is notified
+    * Scripts and API
+        * API offers a list of aspirants for a badge, with questionaire data
+        * API accepts and offers a private JSON block up to 1k for per-aspirant record keeping
+            * Badge creator and delegates can see, but not the aspirant
+            * Useful for tracking scores, progress, etc detected by scanning script
+        * API accepts aspirant-only human-readable progress update message
+        * API offers option to notify aspirant on update
+
 * Meta-badges for auto-nomination
     * Attach a list of badges to a badge
     * Any user who has all of them gets auto-nominated for the meta-badge
+    * Anyone who registers an aspiration for the meta-badge is automatically registered as an aspirant to all the subordinate badges
 
 * Delegation of nomination approval
     * Allow badge creator to flag others as co-creators / nomination approvers
