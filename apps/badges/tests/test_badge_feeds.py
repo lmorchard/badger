@@ -145,7 +145,7 @@ class TestFeeds(TestCase):
             eq_(nominee_name, act.actor.name)
             eq_('http://activitystrea.ms/schema/1.0/person', 
                     act.actor.object_type)
-            eq_('http://example.com/profiles/profile/%s/' % nominee_name,
+            eq_('http://testserver/profiles/profile/%s/' % nominee_name,
                     act.actor.url)
 
             # Check the verb for this activity
@@ -155,7 +155,7 @@ class TestFeeds(TestCase):
             eq_(badge_name, act.object.name)
             eq_('http://badger.decafbad.com/activity/1.0/objects/badge', 
                     act.object.object_type)
-            eq_('http://example.com/badges/badge/%s' % (badge_name),
+            eq_('http://testserver/badges/badge/%s' % (badge_name),
                     act.object.url)
 
     def verify_json_activity_stream(self, badge_awards, path):

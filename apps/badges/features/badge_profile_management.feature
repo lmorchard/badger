@@ -23,7 +23,7 @@ Feature: Managing badge awards on a user profile
         Then I should not see the "claimed_by" section
         When I press "action_claim_award"
         Then I should see a page whose title contains "Badge detail"
-        And I should see "badge award claimed" somewhere on the page
+        And I should see "Badge award claimed" somewhere on the page
         And I should see "user3" somewhere in the "claimed_by" section
         And "user1" should receive a "Badge Award Claimed" notification
         And "user2" should receive a "Badge Award Claimed" notification
@@ -42,7 +42,7 @@ Feature: Managing badge awards on a user profile
         Then I should see a page whose title contains "Award details"
         When I press "action_claim_award"
         Then I should see a page whose title contains "Award details"
-        And I should see "badge award claimed" somewhere on the page
+        And I should see "Badge award claimed" somewhere on the page
         And "user1" should receive a "Badge Award Claimed" notification
         And "user2" should receive a "Badge Award Claimed" notification
         And "user3" should receive a "Badge Award Claimed" notification
@@ -56,7 +56,7 @@ Feature: Managing badge awards on a user profile
         Then I should not see the "claimed_by" section
         When I press "action_reject_award"
         Then I should see a page whose title contains "Badge details"
-        And I should see "badge award rejected" somewhere on the page
+        And I should see "Badge award rejected" somewhere on the page
         And "user1" should receive a "Badge Award Rejected" notification
         And "user2" should receive a "Badge Award Rejected" notification
         And "user3" should receive a "Badge Award Rejected" notification

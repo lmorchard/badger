@@ -9,8 +9,12 @@
 
 * Creative facelift!
 
+* Flag awards for trophycase on profile and social apps
+
 * Social sharing
+    * Need an URL shortener for tweets
     * Remember checkbox state for sharing between badge claims
+    * Facebook: Trophycase app for profile
     * Ning: badge display on profile page (Ning app); share new badges as status updates; show newly granted badges on Ning homepage
     * Gravatar / Signature creator: Generated image that includes that person's name and top badges. Can be downloaded for use in email signatures, blogs, websites.
 
@@ -18,8 +22,6 @@
     * L10N support for the site itself
     * L10N for badge content... later?
         * Delaying it could result in duplicate badges with the same intent in different locales
-
-* Flag awards for trophycase on profile and social apps
 
 * Meta-badges for auto-nomination
     * Attach a list of badges to a badge
