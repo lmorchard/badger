@@ -74,7 +74,9 @@ class BaseAuthView(BaseView):
     def do_signin(self, request):
         """Perform sign in via OAuth"""
         request.session['socialconnect_mode'] = request.GET.get('mode', 'signin')
-        request.session['redirect_to'] = request.GET.get(REDIRECT_FIELD_NAME, '/')
+        next = request.GET.get(REDIRECT_FIELD_NAME, '/') 
+        if next:
+            request.session['redirect_to'] = next
         return HttpResponseRedirect(self.get_signin_url(request))
 
     def do_callback(self, request):
@@ -87,6 +89,8 @@ class BaseAuthView(BaseView):
         request.session[self.session_profile] = profile
 
         success_url = get_default_redirect(request, REDIRECT_FIELD_NAME)
+        if not success_url or 'None' == success_url: 
+            success_url = '/'
 
         try:
             # Try looking for an association to perform a login.

@@ -146,6 +146,41 @@ def badge_details(request, badge_slug):
 
     perms = badge.get_permissions(request.user)
 
+    if not request.user.is_authenticated():
+        nominations = None
+    elif badge.allows_nomination_listing_by(request.user):
+        # List all nominations for this badge
+        nominations = BadgeNomination.objects.filter(badge=badge).exclude(approved=True)
+    else:
+        # List only own nominations for this badge
+        nominations = BadgeNomination.objects.filter(badge=badge, 
+                nominator=request.user).exclude(approved=True)
+
+    award_users = list(BadgeAward.objects.get_users_for_badge(badge))
+
+    if not request.user.is_authenticated():
+        unclaimed_awards = []
+    else:
+        unclaimed_awards = BadgeAward.objects.filter(claimed=False,
+                ignored=False, badge=badge, awardee__user=request.user)
+
+    return render_to_response('badges/badge_detail.html', {
+        'badge': badge,
+        'nomination_form': nomination_form,
+        'nominations': nominations,
+        'award_users': award_users,
+        'permissions': perms,
+        'unclaimed_awards': unclaimed_awards
+    }, context_instance=RequestContext(request))
+
+
+@login_required
+def nomination_create(request, badge_slug):
+    """ """
+    badge = get_object_or_404(Badge, slug=badge_slug)
+    nomination_form = BadgeNominationForm()
+    perms = badge.get_permissions(request.user)
+
     if request.method == "POST":
 
         if (request.user.is_authenticated and 
@@ -170,33 +205,12 @@ def badge_details(request, badge_slug):
                 return HttpResponseRedirect(reverse(
                     'badges.views.badge_details', args=(badge.slug,)))
 
-    if not request.user.is_authenticated():
-        nominations = None
-    elif badge.allows_nomination_listing_by(request.user):
-        # List all nominations for this badge
-        nominations = BadgeNomination.objects.filter(badge=badge
-                ).exclude(approved=True)
-    else:
-        # List only own nominations for this badge
-        nominations = BadgeNomination.objects.filter(badge=badge, 
-                nominator=request.user).exclude(approved=True)
-
-    award_users = list(BadgeAward.objects.get_users_for_badge(badge))
-
-    if not request.user.is_authenticated():
-        unclaimed_awards = []
-    else:
-        unclaimed_awards = BadgeAward.objects.filter(claimed=False,
-                ignored=False, badge=badge, awardee__user=request.user)
-
-    return render_to_response('badges/badge_detail.html', {
+    return render_to_response('badges/nomination_create.html', {
         'badge': badge,
         'nomination_form': nomination_form,
-        'nominations': nominations,
-        'award_users': award_users,
         'permissions': perms,
-        'unclaimed_awards': unclaimed_awards
     }, context_instance=RequestContext(request))
+
 
 def nomination_details(request, badge_slug, nomination_id):
     """Display details on a nomination"""
@@ -290,7 +304,7 @@ def award_details(request, badge_slug, awardee_name, award_id):
                 award.ignore(request.user)
                 messages.add_message(request, messages.SUCCESS,
                     _("Badge award ignored"))
-                do_jump = True
+                do_jump = "badge"
 
             elif request.POST.get('action_claim_award', None) is not None:
 

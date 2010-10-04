@@ -6,7 +6,7 @@
 {% block head_title %}{% trans "Create a badge" %}{% endblock %}
 
 {% block body %}
-    <h1>{% trans "Create a badge" %}</h1>
+    <h1>{% trans "Create a new badge" %}</h1>
 
     <form enctype="multipart/form-data" action="" method="POST" id="badge-form" class="uniForm">
         {% csrf_token %}
@@ -14,7 +14,7 @@
             {{ form|as_uni_form }}
             <div class="form_block">
                 <input type="submit" name="action_create" 
-                    value="{% trans "Create" %}" />
+                    value="{% trans "Create this badge" %}" />
             </div>
         </fieldset>
     </form>

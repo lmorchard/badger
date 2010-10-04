@@ -7,7 +7,7 @@
 {% load avatar_tags %}
 {% load badge_tags %}
 
-{% block head_title %}{% trans "Badge nomination" %}{% endblock %}
+{% block head_title %}{% trans "Nomination details" %}{% endblock %}
 
 {% block body %}
     {% url profile_detail username=nomination.nominator.username as nominator_url %}
@@ -29,54 +29,56 @@
             {% include "badges/elements/badge_display_full.html" %}
         {% endwith %}
 
-        <div>
-            <p>
-                <a href="{{ nominator_url }}" class="avatar"><img src="{% avatar_url nomination.nominator 32 %}" alt="Photo of {{ nomination.nominator }}" class="photo" /></a>
-                {{ nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ nomination.created_at|localtime:account.timezone|time:"P" }},
-                <a href="{{ nominator_url }}">{{ nomination.nominator }}</a>
-                nominated
-                <a href="{{ nomination.nominee.get_absolute_url }}">{{ nomination.nominee }}</a>
-                for the badge
-                "<a href="{{ nomination.badge.get_absolute_url }}">{{ nomination.badge.title }}</a>"
-                because
-                "{{ nomination.reason_why }}"
-            </p>
-            
-            {% if not nomination.approved %}
-                {% if permissions.approval or permissions.rejection %}
+        <div class="sections">
+            <div class="section">
+                <p>
+                    <a href="{{ nominator_url }}" class="avatar"><img src="{% avatar_url nomination.nominator 32 %}" alt="Photo of {{ nomination.nominator }}" class="photo" /></a>
+                    {{ nomination.created_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ nomination.created_at|localtime:account.timezone|time:"P" }},
+                    <a href="{{ nominator_url }}">{{ nomination.nominator }}</a>
+                    nominated
+                    <a href="{{ nomination.nominee.get_absolute_url }}">{{ nomination.nominee }}</a>
+                    for the badge
+                    "<a href="{{ nomination.badge.get_absolute_url }}">{{ nomination.badge.title }}</a>"
+                    because
+                    "{{ nomination.reason_why }}"
+                </p>
+                
+                {% if not nomination.approved %}
+                    {% if permissions.approval or permissions.rejection %}
 
-                    <form action="" method="POST" id="nomination-form" class="uniForm">
-                        {% csrf_token %}
-                        <fieldset class="inlineLabels">
-                            {{ decision_form|as_uni_form }}
-                            <div class="form_block">
-                                {% if permissions.approval %}
-                                    <button type="submit" name="action_approve">Approve</button>
-                                {% endif %}
-                                {% if permissions.rejection %}
-                                    <button type="submit" name="action_reject">Reject</button>
-                                {% endif %}
-                            </div>
-                        </fieldset>
-                    </form>
+                        <form action="" method="POST" id="nomination-form" class="uniForm">
+                            {% csrf_token %}
+                            <fieldset class="inlineLabels">
+                                {{ decision_form|as_uni_form }}
+                                <div class="form_block">
+                                    {% if permissions.approval %}
+                                        <button type="submit" name="action_approve">Approve</button>
+                                    {% endif %}
+                                    {% if permissions.rejection %}
+                                        <button type="submit" name="action_reject">Reject</button>
+                                    {% endif %}
+                                </div>
+                            </fieldset>
+                        </form>
+
+                    {% else %}
+                    
+                        <p>This nomination has not yet been approved.</p>
+
+                    {% endif %}
 
                 {% else %}
-                
-                    <p>This nomination has not yet been approved.</p>
-
+                    <p>
+                        <a href="{{ approved_by_url }}" class="avatar"><img src="{% avatar_url nomination.approved_by 32 %}" alt="Photo of {{ nomination.approved_by }}" class="photo" /></a>
+                        {{ nomination.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ nomination.updated_at|localtime:account.timezone|time:"P" }},
+                        <a href="{{ approved_by_url }}">{{ nomination.approved_by }}</a> approved this nomination 
+                        {% if nomination.approved_why %}
+                            because "{{ nomination.approved_why }}"
+                        {% endif %}
+                    </p>
                 {% endif %}
 
-            {% else %}
-                <p>
-                    <a href="{{ approved_by_url }}" class="avatar"><img src="{% avatar_url nomination.approved_by 32 %}" alt="Photo of {{ nomination.approved_by }}" class="photo" /></a>
-                    {{ nomination.updated_at|naturalday:_("MONTH_DAY_FORMAT")|capfirst }} at {{ nomination.updated_at|localtime:account.timezone|time:"P" }},
-                    <a href="{{ approved_by_url }}">{{ nomination.approved_by }}</a> approved this nomination 
-                    {% if nomination.approved_why %}
-                        because "{{ nomination.approved_why }}"
-                    {% endif %}
-                </p>
-            {% endif %}
-
+            </div>
         </div>
     </div>
     

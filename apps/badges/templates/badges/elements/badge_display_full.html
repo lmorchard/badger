@@ -12,6 +12,12 @@
     <p class="description">{{ badge.description }}</p>
     <div class="metadata">
 
+        {% if user.is_authenticated %}
+            <div class="button nominate_action">
+                <a class="nominate" href="{% url badge_nomination_create badge.slug %}">Nominate someone for this badge</a>
+            </div>
+        {% endif %}
+
         <div class="votes">
             <span class="score">
                 Score: {% score_for_object badge as score %}

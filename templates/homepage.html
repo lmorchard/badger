@@ -37,8 +37,13 @@ Do you know anyone who deserves a prize?
         <li><a href="{% url create_badge %}">Create a new badge</a></li>
         <li><a href="#">Redeem a claim code</a></li>
         {% if user.is_authenticated %}
-            <li><a href="{% url profile_detail user %}">Visit your profile page</a></li>
-            <li><a href="{% url acct_email %}">Manage your profile settings</a></li>
+            <li><a href="{% url profile_detail user %}">View your profile</a></li>
+            <li><a href="{% url acct_email %}">Manage your settings</a></li>
+        {% else %}
+            {% if False %}
+            <li><a href="{% url acct_login %}">Log in</a></li>
+            <li><a href="{% url acct_signup %}">Sign up</a></li>
+            {% endif %}
         {% endif %}
     </ul>
 </div>

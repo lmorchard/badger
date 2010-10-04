@@ -224,6 +224,8 @@ def find_context_form_by_section(context_content, section_title):
 def find_context_form(context_content):
     page = scc.current_page
     form = page('form *:contains("%s")' % context_content).parents('form')
+    #glc.log.debug("PAGE PATH %s" % scc.current_path)
+    #glc.log.debug("PAGE CONTENT %s" % page)
     ok_(len(form) > 0, "the form containing '%s' should be found" % context_content)
     scc.current_form_context = form
     return form

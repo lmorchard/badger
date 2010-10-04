@@ -1,0 +1,45 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load account_tags %}
+{% load avatar_tags %}
+{% load badge_tags %}
+{% load uni_form_tags %}
+{% load humanize i18n %}
+{% load timezone_filters %}
+
+{% block head_title %}{% trans "Nominate someone for this badge" %}{% endblock %}
+
+{% block body %}
+
+    <div class="crumbs">
+        <a href="{% url badge_index %}">Badges</a> 
+        &gt;
+        <a href="{% url badge_details badge.slug %}">{{ badge.title }}</a>
+        &gt;
+        <b>{% trans "Nominate someone for this badge" %}</b>
+    </div>
+
+    {% include "badges/elements/badge_display_full.html" %}
+
+    <div class="sections">
+        <div class="section">
+            {% if not permissions.nomination %}
+                <p>{% trans "Sorry, you don't have permission to nominate someone for this badge" %}</p>
+            {% else %}
+                <div class="nomination_form">
+                    <h3>Nominate someone for this badge</h3>
+                    <form action="" method="POST" id="nomination-form" class="uniForm">
+                        {% csrf_token %}
+                        <fieldset class="inlineLabels">
+                            {{ nomination_form|as_uni_form }}
+                            <div class="form_block">
+                                <input type="submit" name="action_nominate" value="Nominate for badge" />
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

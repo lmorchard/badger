@@ -162,7 +162,7 @@ class TestAPI(TestCase):
 
         # TODO: implement and test image upload
 
-    @attr('current')
+    #@attr('current')
     def test_create_nomination(self):
         """Exercise nominating a user for a badge"""
         badge = self.badges['badge4']

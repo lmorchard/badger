@@ -5,6 +5,7 @@ venv/
 tmp/
 src/
 cache/
+migrations/settings.py
 site_media/
 pip-log.txt
 local_settings.py

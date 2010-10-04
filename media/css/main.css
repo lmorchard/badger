@@ -8,15 +8,27 @@ body {
     font-family: "Helvetica Neue",Helvetica,Arial,default;
     font-size: 10pt; 
 }
-body #body button { 
-    /*
-    font-family: "Comic Sans MS";
-    font-size: 1.125em; font-weight: bold; 
-    */
-    padding: 0.5em 1em 0.5em 1em;
+body #body .uniForm input[type=submit],
+body #body button {
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: #ddd;
+    background: -moz-linear-gradient(center top, #fff, #ccc) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear,left top,left bottom,from(#fff), to(#ccc));
+    -moz-box-shadow: 2px 2px 2px #ddd;
+    -webkit-box-shadow: 2px 2px 2px #ddd;
+    box-shadow: 2px 2px 2px #ddd;
+    font-weight: bold;    
+    padding: 0.25em 0.5em 0.25em 0.5em;
     margin: 5px;
     border: 1px solid #999;
     cursor: pointer;
+    font-size: 15px;
+}
+body #body .uniForm input[type=submit] {
+    margin-top: 10px;
+    margin-left: 25ex;
 }
 h3 { margin: 0; }
 
@@ -75,14 +87,23 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
     font-size: 150%;
     margin: 0.25em; padding: 0.5em;
     -moz-border-radius: 8px 8px 8px 8px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: #ddd;
+    background: -moz-linear-gradient(center top, #fff, #e8e8e8) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear,left top,left bottom,from(#fff), to(#e0e0e0));
+    -moz-box-shadow: 2px 2px 2px #dedede;
+    -webkit-box-shadow: 2px 2px 2px #dedede;
+    box-shadow: 2px 2px 2px #dedede;
 }
 .main_activities .activities li a:hover {
-    background: #eee;
+    background: #fefefe;
 }
 
 
-.badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; float: left; }
+.badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; position: absolute }
 .badge.full h2 { margin: 0; padding: 0.25em 0 0.25em 0; text-align: center; background: #ddd; }
 .badge.full .image { width: 100%; text-align: center; background: #fff; }
 .badge.full .image img { margin: 1em; }
@@ -97,16 +118,17 @@ form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:1
 .badge.full .metadata .votes { font-size: 0.85em; }
 .badge.full .metadata .votes form { display: inline; }
 
-.badge_detail .badge { position: relative; }
 .badge_detail .badge .edit_badge { position: absolute; right: 5px; top: 2px; background: #fff; padding: 2px 5px; font-size: 0.9em; display: block }
 
-ul.sections { margin-left: 375px; }
-ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
+.sections { margin: 0 0 0 375px; padding: 0.5em 1em;  border: 2px solid #ccc; -moz-border-radius: 8px; }
+.sections h3 { font-size: 1.5em; margin: 0 0 0.25em 0 }
+.sections .section { margin: 0 0 1em 0; padding: 0 0 1em 0; border-bottom: 1px dotted #ccc; }
+.sections div:last-child.section { border-bottom: none }
 
 #body .ui-widget { font-family: inherit; font-size: 1em; }
 
-.badge_detail .claimed_by { position: relative; }
-.badge_detail .claimed_by .feed { position: absolute; right: 10px }
+.badge_detail .claimed_by { position: relative; clear: both; }
+.badge_detail .claimed_by .feed { }
 .badge_detail .profiles { margin: 0; padding: 0; text-align: center; list-style-type: none }
 .badge_detail .profiles li { float: left; margin: 0.25em; position: relative; }
 .badge_detail .profiles li { }
@@ -116,28 +138,12 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .badge_detail .profiles li .count { position: absolute; top: -10px; right: 0px; width: 25px; height: 25px; line-height: 25px; background: #080; color: #eee; -moz-border-radius: 25px; }
 .badge_detail .profiles li .count a { display: block; text-decoration: none; color: #eee; font-weight: bold; }
 
-.comments {
-    -moz-border-radius: 8px 8px 8px 8px;
-    border: 2px solid #CCCCCC;
-    margin: 1em 0 0.5em 0;
-    padding: 0.5em 0.75em;
-}    
-.comments fieldset {
-    border: none;
-}
-.claim_badge {
-    border-top: 1px solid #ccc;
-    margin: 1em 0 0 0;
-    padding: 1em 0 0 0;
-}    
-.claim_badge label {
-    display: inline;
-}
-.award_detail .claim_badge {
-}
-.award_detail .comments {
-    margin-left: 375px;
-}
+.comments { }    
+.comments fieldset { border: none; }
+.claim_badge { }    
+.claim_badge label { display: inline; }
+.award_detail .claim_badge { }
+.award_detail .comments { }
 
 .profile div.left_panel { width: auto; }
 
@@ -202,7 +208,7 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .award_list {}
 .award_list ul.awards { list-style: none; margin: 0 0 0 375px; padding: 0; }
 
-.award_display_full { margin: 0 0 0.5em 0; padding: 0.5em 0.75em; border: 2px #ccc solid; -moz-border-radius: 8px; }
+.award_display_full {  }
 
 .award_display_full p.reason_why, .award_display_full p.approved_why { font-size: 95%; margin: 1em 0.25em 0.75em 3em; padding: 0.25em 0.5em; font-style: italic; border-left: 2px #aaa solid; background: #eee; }
 .award_display_full .when { font-size: 85%; }
