@@ -5,6 +5,7 @@
 {% load uni_form_tags %}
 {% load humanize i18n %}
 {% load timezone_filters %}
+{% load socialconnect_tags %}
 
 <div class="award_display_full">
 
@@ -39,7 +40,6 @@
     {% endif %}
     </div>
 
-</div>
     {% if not award.claimed and permissions.claim %}
         <div class="claim_badge">
             <h3>Claim this badge</h3>
@@ -52,7 +52,37 @@
                         <button type="submit" name="action_reject_award">Reject</button>
                         <button type="submit" name="action_ignore_award">Ignore</button>
                     </div>
+
+                    {% socialconnect_by_user user for facebook as connect_facebook %}
+                    {% socialconnect_by_user user for twitter as connect_twitter %}
+
+                    <div class="social_options">
+                        {% if connect_twitter or connect_facebook %}
+                        <p>If claimed, also:</p>
+                        <ul>
+                            {% if connect_twitter %}
+                            <li>
+                                <input type="checkbox" value="twitter" checked="checked"
+                                    id="publish_twitter" name="publish" />
+                                <label for="publish_twitter">Post an update to Twitter</label>
+                            </li>
+                            {% endif %}
+                            {% if connect_facebook %}
+                            <li>
+                                <input type="checkbox" value="facebook" checked="checked"
+                                    id="publish_facebook" name="publish" />
+                                <label for="publish_facebook">Post an update to Facebook</label>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% else %}
+                        {% endif %}
+                        <p>Manage <a href="{% url socialconnect_manage_associations %}">your connected accounts</a>
+                            to enable options for sharing your claimed badges.</p>
+                    </div>
                 </fieldset>
             </form>
         </div>
     {% endif %}
+
+</div>

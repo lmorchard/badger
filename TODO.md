@@ -9,20 +9,21 @@
 
 * Creative facelift!
 
+* Social sharing
+    * Remember checkbox state for sharing between badge claims
+    * Ning: badge display on profile page (Ning app); share new badges as status updates; show newly granted badges on Ning homepage
+    * Gravatar / Signature creator: Generated image that includes that person's name and top badges. Can be downloaded for use in email signatures, blogs, websites.
+
 * Localization
     * L10N support for the site itself
     * L10N for badge content... later?
         * Delaying it could result in duplicate badges with the same intent in different locales
 
+* Flag awards for trophycase on profile and social apps
+
 * Meta-badges for auto-nomination
     * Attach a list of badges to a badge
     * Any user who has all of them gets auto-nominated for the meta-badge
-
-* Social sharing
-    * Facebook: badge display on profile page (Facebook app); share new badges as a Facebook update (Facebook Connect)
-    * Ning: badge display on profile page (Ning app); share new badges as status updates; show newly granted badges on Ning homepage
-    * Twitter: tweet your new badge
-    * Gravatar / Signature creator: Generated image that includes that person's name and top badges. Can be downloaded for use in email signatures, blogs, websites.
 
 * Delegation of nomination approval
     * Allow badge creator to flag others as co-creators / nomination approvers
@@ -30,9 +31,13 @@
 * Allow transfer of badge ownership
     * Another user becomes the new creator
 
+* HTML / markdown descriptions using jsocol's bleach
+
 * Digest notifications of nominations for approval
 
 * Anyone with this badge can also bestow this badge (eg. viral delegates)
+
+* List of badges authored by auth'd user in API
 
 * Register interest in claiming a badge
     * Produces a list in the API for scripts looking to track achievement progress

@@ -18,7 +18,7 @@ body #body button {
     border: 1px solid #999;
     cursor: pointer;
 }
-
+h3 { margin: 0; }
 
 body #body input[type="text"], body #body input[type="password"], body #body textarea {
     color: #333;
@@ -92,6 +92,29 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 .badge_detail .profiles li .fn { display: block }
 .badge_detail .profiles li .count { position: absolute; top: -10px; right: 0px; width: 25px; height: 25px; line-height: 25px; background: #080; color: #eee; -moz-border-radius: 25px; }
 .badge_detail .profiles li .count a { display: block; text-decoration: none; color: #eee; font-weight: bold; }
+
+.comments {
+    -moz-border-radius: 8px 8px 8px 8px;
+    border: 2px solid #CCCCCC;
+    margin: 1em 0 0.5em 0;
+    padding: 0.5em 0.75em;
+}    
+.comments fieldset {
+    border: none;
+}
+.claim_badge {
+    border-top: 1px solid #ccc;
+    margin: 1em 0 0 0;
+    padding: 1em 0 0 0;
+}    
+.claim_badge label {
+    display: inline;
+}
+.award_detail .claim_badge {
+}
+.award_detail .comments {
+    margin-left: 375px;
+}
 
 .profile div.left_panel { width: auto; }
 

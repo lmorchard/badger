@@ -275,10 +275,9 @@ class FacebookAuthView(BaseAuthView):
     def get_signin_url(self, request):
         args = {
             'client_id': self.consumer_key,
-            'redirect_uri': 'http://%s%s' % (
-                Site.objects.get_current().domain, 
-                reverse('socialconnect_facebook_callback'),
-            )
+            'redirect_uri': request.build_absolute_uri(
+                reverse('socialconnect_facebook_callback')),
+            'scope': 'publish_stream,offline_access'
         }
         return ("https://graph.facebook.com/oauth/authorize?" + 
             urllib.urlencode(args))
@@ -289,10 +288,8 @@ class FacebookAuthView(BaseAuthView):
         args = {
             'client_id': self.consumer_key,
             'client_secret': self.consumer_secret,
-            'redirect_uri': 'http://%s%s' % (
-                Site.objects.get_current().domain, 
-                reverse('socialconnect_facebook_callback'),
-            ),
+            'redirect_uri': request.build_absolute_uri(
+                reverse('socialconnect_facebook_callback')),
             'code': code,
         }
         access_token_url = ()

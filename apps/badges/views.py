@@ -22,6 +22,13 @@ from badges.forms import BadgeNominationDecisionForm
 from notification import models as notification
 from django.core.exceptions import ObjectDoesNotExist
 
+from socialconnect import publishing
+from socialconnect.models import UserOauthAssociation
+
+from avatar.templatetags.avatar_tags import avatar_url
+from badges.templatetags.badge_tags import badge_url
+
+
 def index(request):
     """Browse badges"""
     badges = Badge.objects.all()
@@ -273,23 +280,29 @@ def award_details(request, badge_slug, awardee_name, award_id):
 
         if award.claimed == False and award.allows_claim_by(request.user):
                 
-            if request.POST.get('action_claim_award', None) is not None:
-                award.claim(request.user)
-                messages.add_message(request, messages.SUCCESS,
-                    _("badge award claimed"))
-                do_jump = True
-            
-            elif request.POST.get('action_reject_award', None) is not None:
+            if request.POST.get('action_reject_award', None) is not None:
                 award.reject(request.user)
                 messages.add_message(request, messages.SUCCESS,
-                    _("badge award rejected"))
+                    _("Badge award rejected"))
                 do_jump = "badge"
 
             elif request.POST.get('action_ignore_award', None) is not None:
                 award.ignore(request.user)
                 messages.add_message(request, messages.SUCCESS,
-                    _("badge award ignored"))
+                    _("Badge award ignored"))
                 do_jump = True
+
+            elif request.POST.get('action_claim_award', None) is not None:
+
+                publish_services = request.POST.getlist('publish')
+                if publish_services:
+                    _publish_award(award, request, publish_services)
+            
+                award.claim(request.user)
+                messages.add_message(request, messages.SUCCESS,
+                    _("Badge award claimed"))
+                do_jump = True
+
 
         if do_jump is not False:
             if do_jump is True:
@@ -310,6 +323,35 @@ def award_details(request, badge_slug, awardee_name, award_id):
         'awardee': award.awardee,
         'permissions': perms
     }, context_instance=RequestContext(request))
+
+
+def _publish_award(award, request, services):
+    """Convenience method for sharing an award claim"""
+    if not services: 
+        return
+    for service in services:
+        try:
+            assoc = UserOauthAssociation.objects.get(
+                    user=request.user, auth_type=service)
+            publishing.publish(
+                assoc,
+                # TODO: Templatize this badge claimed message and / or allow user customization
+                _('I just claimed the badge "%s"!') % award.badge.title,
+                request.build_absolute_uri(award.get_absolute_url()),
+                request.build_absolute_uri(badge_url(award.badge, 64)),
+                award.badge.title,
+                award.badge.description
+            )
+            messages.add_message(request, messages.SUCCESS,
+                _("Published update to %s") % (service))
+        except publishing.PublisherFailed, e:
+            # TODO: Log a service failure here?
+            # TODO: Create a flash notification for failures (eg. de-auth'd, etc)
+            messages.add_message(request, messages.ERROR,
+                _("Publishing to %s failed because: %s") % (service, e.message))
+            continue
+        except UserOauthAssociation.DoesNotExist:
+            continue
 
 def award_history(request, badge_slug, awardee_name):
     """Detailed history of awards for a badge and user"""
