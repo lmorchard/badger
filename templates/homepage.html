@@ -18,30 +18,35 @@
 
 {% block body %}
 
+{% url acct_login as login_url %}
+{% url acct_signup as signup_url %}
+
 {% filter markdown %}{% blocktrans %}
 # Welcome to Badger!
 
-Badger thinks it might be nice to gift badges and track achievements for people
-on the web.
+Badger thinks it would be nice to gift badges and track achievements for people
+on the web. 
 
-We'll see how well it manages to do this, hopefully with your help!
+Do you know anyone who deserves a prize?
 {% endblocktrans %}{% endfilter %}
-    
-<hr />
-{% if not user.is_authenticated %}
-    {% url acct_login as login_url %}
-    {% ifsetting ACCOUNT_OPEN_SIGNUP %}
-        {% url acct_signup as signup_url %}
-        <p>{% blocktrans %}You can <a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
-    {% else %}
-        <p>{% blocktrans %}You can <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
-    {% endifsetting %}
-{% endif %}
 
-{% recent_badge_awards as recent_awards %}
-<div>
-    <h2>Recent awards <a href="{% url badge_feed_recentawards %}"><img src="{{ STATIC_URL }}badges/img/feed-icon-14x14.png" width="14" height="14" /></a></h2>
+<div class="main_activities clearfix">
+    <h2>Things to see and do</h2>
+    <ul class="activities">
+        <li><a href="{% url badge_index %}">Browse available badges</a></li>
+        <li><a href="{% url create_badge %}">Create a new badge</a></li>
+        <li><a href="#">Redeem a claim code</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url profile_detail user %}">Visit your profile page</a></li>
+            <li><a href="{% url acct_email %}">Manage your profile settings</a></li>
+        {% endif %}
+    </ul>
+</div>
+    
+<div class="recent_awards clearfix">
+    <h2>Recently claimed badges <a href="{% url badge_feed_recentawards %}"><img src="{{ STATIC_URL }}badges/img/feed-icon-14x14.png" width="14" height="14" /></a></h2>
     <ul class="recent_awards">
+        {% recent_badge_awards as recent_awards %}
         {% for award in recent_awards %}
             {% cache 500 homepage_recent_award award.id %}
             <li class="clearfix">

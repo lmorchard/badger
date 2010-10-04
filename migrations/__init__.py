@@ -5,6 +5,7 @@ def db_command(name):
     config = settings.DATABASES[name]
     config['HOST'] = config.get('HOST', 'localhost')
     config['PORT'] = config.get('PORT', '3306')
+    config['USER'] = config.get('USER', 'badger')
 
     if not config['HOST'] or config['HOST'].endswith('.sock'):
         """ Oh you meant 'localhost'! """

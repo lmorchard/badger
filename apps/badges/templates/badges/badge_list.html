@@ -20,7 +20,7 @@
 
             <h1>{% trans "Badges" %}</h1>
 
-            <p><a href="{% url create_badge %}">Create a new badge</a></p>
+            <p><a class="create button" href="{% url create_badge %}">Create a new badge</a></p>
 
             {% tag_cloud_for_model badges.Badge as badge_tags with steps=9 min_count=1 distribution=log %}
 

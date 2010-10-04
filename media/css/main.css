@@ -59,6 +59,29 @@ body #body form.uniForm fieldset.inlineLabels .form_block button:first-child { m
 form.uniForm fieldset.inlineLabels .form_block input[type="submit"]:first-child { margin-left: 19.5ex; }
 form.uniForm input[type="submit"], form.login input[type="submit"] { font-size:14pt; margin:20px 0; }
 
+
+.main_activities .activities {
+    width: 75%;
+    list-style-type: none;
+    margin: 0; padding: 0; text-indent: 0;
+    clear: both;
+}
+.main_activities .activities li {
+    width: 33%;
+    float: left;
+}
+.main_activities .activities li a, a.button {
+    display: block;
+    font-size: 150%;
+    margin: 0.25em; padding: 0.5em;
+    -moz-border-radius: 8px 8px 8px 8px;
+    border: 2px solid #CCCCCC;
+}
+.main_activities .activities li a:hover {
+    background: #eee;
+}
+
+
 .badge.full { border: 4px solid #ddd; width: 350px; border-radius: 4px; -moz-border-radius: 8px; padding: 0; margin: 0 1em 0 0; float: left; }
 .badge.full h2 { margin: 0; padding: 0.25em 0 0.25em 0; text-align: center; background: #ddd; }
 .badge.full .image { width: 100%; text-align: center; background: #fff; }
@@ -189,3 +212,4 @@ ul.sections h3 { padding-left: 1.5em; font-size: 1.5em; }
 #body .openid_large_btn { height: 30px; }
 #body #openid_input_area { padding: 0px; }
 #body form#openid_form input[type="submit"] { margin: 0px }
+
