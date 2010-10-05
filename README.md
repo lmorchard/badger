@@ -73,7 +73,7 @@ These are alterations to the development notes for use when deploying to a live 
     * Yes, many times.
 * Why are you doing it, then?
     * Because I'd like to:
-        1. Revive the idea; 
+        1. <strike>Revive the idea;</strike> Get on the bandwagon, since so many sites seem to be doing badges these days; 
         2. Make it more generative and participatory;
         3. Introduce automated web-wide scanning for achievement conditions.
 
