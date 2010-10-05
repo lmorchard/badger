@@ -7,8 +7,6 @@
 
 ## v0.1
 
-* Fix all the broken tests
-
 * Standardize thumb/full includes for Badges and Profiles
     * Possibly add rollover popups with further details on each
 
