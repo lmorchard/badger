@@ -13,60 +13,67 @@
     <div class="metadata">
 
         {% if user.is_authenticated %}
-            <div class="button nominate_action">
-                <a class="nominate" href="{% url badge_nomination_create badge.slug %}">Nominate someone for this badge</a>
+            <div class="nominate_action">
+                <a class="button nominate" href="{% url badge_nomination_create badge.slug %}">Nominate someone for this badge</a>
             </div>
         {% endif %}
 
         <div class="votes">
-            <span class="score">
-                Score: {% score_for_object badge as score %}
-                {{ score.score }} point{{ score.score|pluralize }}
-                / {{ score.num_votes }} vote{{ score.num_votes|pluralize }}
-            </span>
+            <p>Rate this badge:</p>
             {% if user.is_authenticated %}
                 <span class="vote_actions">
-                    &#8212;
                     {% vote_by_user user on badge as vote %}
                     <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
                         {% csrf_token %}
-                        <input type="submit" value="--" 
+                        <input class="button" type="submit" value="{% trans "--" %}"
                             {% if vote and vote.is_downvote %}disabled="disabled"{% endif %} />
                     </form>
                     <form action="{% url badge_vote slug=badge.slug direction="clear" %}" method="POST">
                         {% csrf_token %}
-                        <input type="submit" value="0" 
+                        <input class="button" type="submit" value="{% trans "0" %}" 
                             {% if not vote.vote %}disabled="disabled"{% endif %}  />
                     </form>
                     <form action="{% url badge_vote slug=badge.slug direction="up" %}" method="POST">
                         {% csrf_token %}
-                        <input type="submit" value="++" 
+                        <input class="button" type="submit" value="{% trans "++" %}" 
                             {% if vote and vote.is_upvote %}disabled="disabled"{% endif %}  />
                     </form>
                 </span>
             {% endif %}
         </div>
 
-        {% tags_for_object badge as badge_tags %}
-        {% if badge_tags %}
-            <div class="tags">
-                <span>Tagged as:</span>
-                <ul>
-                    {% for tag in badge_tags %}
-                        <li>
-                            <a href="{% url badge_tag tag=tag.name %}">{{ tag.name }}</a> 
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
+        <table class="attribs">
 
-        <p class="creator">
-            <span>Created by:</span>
-            <a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a>
-        </p>
+            <tr class="score">
+                <th>{% trans "Rating:" %}</th>
+                <td>
+                    {% score_for_object badge as score %}
+                    {{ score.score }} point{{ score.score|pluralize }}
+                    / {{ score.num_votes }} vote{{ score.num_votes|pluralize }}
+                </td>
+            </tr>
 
-        {% if permissions.editing %}<a class="edit_badge" href="{% url badge_edit badge.slug %}">Edit</a>{% endif %}
+            {% tags_for_object badge as badge_tags %}
+            {% if badge_tags %}
+                <tr class="tags">
+                    <th>{% trans "Tagged as:" %}</th>
+                    <td><ul>
+                        {% for tag in badge_tags %}
+                            <li>
+                                <a href="{% url badge_tag tag=tag.name %}">{{ tag.name }}</a> 
+                            </li>
+                        {% endfor %}
+                    </ul></td>
+                </tr>
+            {% endif %}
+
+            <tr class="creator">
+                <th>{% trans "Created by:" %}</th>
+                <td><a class="fn" href="{{badge.creator.get_profile.get_absolute_url}}">{{badge.creator.get_profile}}</a></td>
+            </tr>
+        </table>
+
+        {% if permissions.editing %}<a class="edit_badge" href="{% url badge_edit badge.slug %}">{% trans "Edit" %}</a>{% endif %}
 
     </div>
 </div>
