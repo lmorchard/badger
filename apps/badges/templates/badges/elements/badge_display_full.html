@@ -19,8 +19,8 @@
         {% endif %}
 
         <div class="votes">
-            <p>Rate this badge:</p>
             {% if user.is_authenticated %}
+                <p>Rate this badge:</p>
                 <span class="vote_actions">
                     {% vote_by_user user on badge as vote %}
                     <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
