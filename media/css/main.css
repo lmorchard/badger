@@ -209,7 +209,8 @@ a.button:hover {
 .pagination { clear: both }
 
 .tags { }
-.tags li a { padding: 0 2px 0 18px; background: transparent url(../img/tag_blue.png) no-repeat 0 0; }
+.tags li { }
+.tags li a { padding: 0 4px 0 18px; background: transparent url(../img/tag_blue.png) no-repeat 0 center; line-height: 1.75em; white-space: nowrap; }
 
 .tag-cloud { 
     list-style: none;
