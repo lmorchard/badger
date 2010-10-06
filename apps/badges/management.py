@@ -61,5 +61,17 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
         _("a badge award has been ignored")
     )
 
+    notification.create_notice_type(
+        "badge_comment", 
+        _("Badge Comment"), 
+        _("a comment has been posted to a badge")
+    )
+
+    notification.create_notice_type(
+        "badge_award_comment", 
+        _("Badge Award Comment"), 
+        _("a comment has been posted to a badge award")
+    )
+
 signals.post_syncdb.connect(create_notice_types, sender=notification)
 

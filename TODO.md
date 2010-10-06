@@ -7,14 +7,22 @@
 
 ## v0.1
 
-* Standardize thumb/full includes for Badges and Profiles
-    * Possibly add rollover popups with further details on each
+* Nomination by claim code
+    * Single-use: Changes the nomination's awardee to the code bearer
+    * Multi-use: Generates a cloned nomination with code bearer as awardee
 
-* Enable notifications on badge and badge award comments
+* Standardize thumb/full includes for Badges and Profiles
+    * Even on front page recent awards list
 
 * Show only recent awards on badge detail page, link to paginated award list for more
 
 * Accept flags / alerts to spam / inapproriate content
+
+* Delegation of nomination approval
+    * Allow badge creator to flag others as co-creators / nomination approvers
+
+* Allow transfer of badge ownership
+    * Another user becomes the new creator
 
 * Trophy case: Flag awards for highlighting on profile and social apps
 
@@ -30,9 +38,33 @@
     * L10N for badge content... later?
         * Delaying it could result in duplicate badges with the same intent in different locales
 
-* Nomination by claim code
-    * Single-use: Changes the nomination's awardee to the code bearer
-    * Multi-use: Generates a cloned nomination with code bearer as awardee
+* Meta-badges for auto-nomination
+    * Attach a list of badges to a badge
+    * Any user who has all of them gets auto-nominated for the meta-badge
+
+* HTML / markdown descriptions using jsocol's bleach
+
+* Digest notifications of nominations for approval
+
+* Anyone with this badge can also bestow this badge (eg. viral delegates)
+
+* List of badges authored by auth'd user in API
+
+* API using valet keys and selective permissions
+    * Valet key = HTTP basic auth user/pass
+    * Simpler than OAuth
+    * Easily disposable
+    * Never enables account actions (eg. password change, etc)
+    * Per-valet key logging and reports?
+    * Should allow for simple external services that track conditions and trigger nominations
+
+* Invitation-only mode at launch?
+    * A badge award constitutes an invite
+    * auto-complete on emails somehow too?
+
+## v0.2
+
+* Reduce SQL queries
 
 * Aspirations
     * Badge creator can build a short questionaire of information necessary for aspiration
@@ -48,44 +80,7 @@
             * Useful for tracking scores, progress, etc detected by scanning script
         * API accepts aspirant-only human-readable progress update message
         * API offers option to notify aspirant on update
-
-* Meta-badges for auto-nomination
-    * Attach a list of badges to a badge
-    * Any user who has all of them gets auto-nominated for the meta-badge
-    * Anyone who registers an aspiration for the meta-badge is automatically registered as an aspirant to all the subordinate badges
-
-* Delegation of nomination approval
-    * Allow badge creator to flag others as co-creators / nomination approvers
-
-* Allow transfer of badge ownership
-    * Another user becomes the new creator
-
-* HTML / markdown descriptions using jsocol's bleach
-
-* Digest notifications of nominations for approval
-
-* Anyone with this badge can also bestow this badge (eg. viral delegates)
-
-* List of badges authored by auth'd user in API
-
-* Register interest in claiming a badge
-    * Produces a list in the API for scripts looking to track achievement progress
-
-* API using valet keys and selective permissions
-    * Valet key = HTTP basic auth user/pass
-    * Simpler than OAuth
-    * Easily disposable
-    * Never enables account actions (eg. password change, etc)
-    * Per-valet key logging and reports?
-    * Should allow for simple external services that track conditions and trigger nominations
-
-* Reduce SQL queries
-
-* Invitation-only at launch?
-    * A badge award constitutes an invite
-    * auto-complete on emails somehow too?
-
-## v0.2
+    * Anyone who registers an aspiration for a meta-badge is automatically registered as an aspirant to all the subordinate badges
 
 * AJAXification
     * Sprinkle in more AJAX / hidden iframe / facebox magic for in-place submissions

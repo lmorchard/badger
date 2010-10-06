@@ -20,6 +20,8 @@ import tagging
 from tagging.fields import TagField
 from tagging.models import Tag
 
+from threadedcomments.models import ThreadedComment
+
 from notification import models as notification
 from mailer import send_mail
 
@@ -560,16 +562,27 @@ class BadgeAward(models.Model):
         self.hidden = False
         self.save()
 
+ 
+# Fire off notifications on posting of new comments.
+def new_comment(sender, instance, **kwargs):
+    obj = instance.content_object
+    if isinstance(obj, Badge):
+        if notification:
+            recipients = dict((x.username, x) for x in reversed((
+                # TODO: Should send this to more people?
+                obj.creator,
+            ))).values()
+            notification.send(recipients, "badge_comment",
+                {"commenter": instance.user, "badge": obj, "comment": instance})
+    if isinstance(obj, BadgeAward):
+        if notification:
+            recipients = dict((x.username, x) for x in reversed((
+                # TODO: Should send this to more people?
+                obj.nomination.nominator, 
+                obj.awardee.user, 
+                obj.nomination.approved_by
+            ))).values()
+            notification.send(recipients, "badge_award_comment",
+                {"commenter": instance.user, "award": obj, "comment": instance})
 
-# handle notification of new comments
-# from threadedcomments.models import ThreadedComment
-# 
-# 
-# def new_comment(sender, instance, **kwargs):
-#     post = instance.content_object
-#     if isinstance(post, Badge):
-#         if notification:
-#             notification.send([post.author], "badge_comment",
-#                 {"user": instance.user, "post": post, "comment": instance})
-# 
-# models.signals.post_save.connect(new_comment, sender=ThreadedComment)
+models.signals.post_save.connect(new_comment, sender=ThreadedComment)

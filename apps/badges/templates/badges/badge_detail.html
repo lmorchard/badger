@@ -10,6 +10,7 @@
 {% load humanize i18n %}
 {% load timezone_filters %}
 {% load comments_tag %}
+{% load flag_tags %}
 
 {% block extra_head %}
     <link rel="alternate" type="application/atom+xml" title="{% trans "Recently Claimed Badges" %}" href="{% url badge_feed_badgeawards badge.slug %}" />
@@ -106,7 +107,7 @@
                 </div>
             {% endif %}
 
-            <div class="section comments">
+            <div id="comments" class="section comments">
                 <h3>Comments</h3>
                 <div>{% comments badge %}</div>
             </div>

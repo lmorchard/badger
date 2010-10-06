@@ -53,7 +53,6 @@ Do you know anyone who deserves a prize?
     <ul class="recent_awards">
         {% recent_badge_awards as recent_awards %}
         {% for award in recent_awards %}
-            {% cache 500 homepage_recent_award award.id %}
             <li class="clearfix">
 
                 <div class="when"><div>
@@ -64,14 +63,13 @@ Do you know anyone who deserves a prize?
                     <a href="{{ award.claimed_by.get_absolute_url }}" class="photo" title="{{ award.claimed_by }}"><img src="{% avatar_url award.claimed_by 64 %}" alt="Photo of {{ award.claimed_by }}" class="photo" /></a>
                 </div>
 
-                <div class="action"><a href="{{ award.get_absolute_url }}">claimed</a></div>
+                <div class="action">{{ award.claimed_by }}<br /><a href="{{ award.get_absolute_url }}">claimed the badge</a><br />{{ award.badge.title }}</div>
 
                 <div class="badge">
                     <a href="{{ award.badge.get_absolute_url }}" class="icon" title="{{ award.badge.title }}">{% badge_image award.badge 64 %}</a>
                 </div>
 
             </li>
-            {% endcache %}
             {% empty %}
             <p>None, yet.</p>
         {% endfor %}

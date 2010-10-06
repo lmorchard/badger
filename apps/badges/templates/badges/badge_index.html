@@ -1,0 +1,43 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load badge_tags %}
+{% load tagging_tags %}
+
+{% block head_title %}{% trans "Badges" %}{% endblock %}
+
+{% block body %}
+    <div class="badge_list">
+
+        <h1>{% trans "Badges" %}</h1>
+
+        <ul class="actions">
+            <li><a class="create" href="{% url badge_browse %}">Browse all badges</a></li>
+            <li><a class="create" href="{% url create_badge %}">Create a new badge</a></li>
+        </ul>
+
+        {% tag_cloud_for_model badges.Badge as badge_tags with steps=9 min_count=1 distribution=log %}
+        {% if badge_tags %}
+            <div>
+                <h2>Tags</h2>
+                <ul class="tags tag-cloud clearfix">
+                    {% for tag in badge_tags|dictsortreversed:"count" %}
+                        <li class="size-{{ tag.font_size }}">
+                        <a href="{% url badge_tag tag=tag.name %}" title="{{ tag.count }}">{{ tag.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div>
+            <h2>Top rated badges</h2>
+            <ul class="badges">
+                {% for badge, score in badge_list %}
+                    <li>{% include "badges/elements/badge_display_thumb.html" %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+    </div>
+{% endblock %}

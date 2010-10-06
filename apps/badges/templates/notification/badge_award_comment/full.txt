@@ -1,0 +1,5 @@
+{% load i18n %}{% load account_tags %}{% load badge_tags %}{% user_display commenter as commenter_display %}{% awardee_display award.awardee as awardee_display %}{% url profile_detail username=commenter.username as commenter_url %}{% blocktrans with award.awardee.get_absolute_url as awardee_url and award.awardee.display as awardee_display and award.get_absolute_url as award_url and award.badge.title as award_title and comment.comment as comment_title %}{{ commenter_display }} has posted a comment to an award of the badge "{{ award_title }}" claimed by {{ awardee_display }}:
+
+{{ comment_title }}
+
+http://{{ current_site }}{{ award_url }}#comments{% endblocktrans %}

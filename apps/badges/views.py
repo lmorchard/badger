@@ -14,11 +14,14 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+
 from badges.models import Badge, BadgeNomination
 from badges.models import BadgeAward, BadgeAwardee
 from badges.models import badge_file_path
+
 from badges.forms import BadgeForm, BadgeNominationForm
 from badges.forms import BadgeNominationDecisionForm
+
 from notification import models as notification
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -28,13 +31,15 @@ from socialconnect.models import UserOauthAssociation
 from avatar.templatetags.avatar_tags import avatar_url
 from badges.templatetags.badge_tags import badge_url
 
+from voting.models import Vote
 
 def index(request):
     """Browse badges"""
-    badges = Badge.objects.all()
+    # TODO: This needs some heavy caching:
+    badge_list = Vote.objects.get_top(Badge, 25)
 
-    return render_to_response('badges/index.html', {
-        'badges': badges
+    return render_to_response('badges/badge_index.html', {
+        'badge_list': badge_list
     }, context_instance=RequestContext(request))
 
 #import pinax.apps.profiles.views

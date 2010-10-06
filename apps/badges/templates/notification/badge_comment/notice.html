@@ -1,0 +1,4 @@
+{% load i18n %}{% load account_tags %}{% load badge_tags %}
+{% user_display commenter as commenter_display %}
+{% url profile_detail username=commenter.username as commenter_url %}
+{% blocktrans with badge.get_absolute_url as badge_url and badge.title as badge_title %}<a href="{{ commenter_url }}">{{ commenter_display }}</a> has posted <a href="{{ badge_url }}#comments">a comment</a> to the badge <a href="{{ badge_url }}#comments">{{ badge_title }}</a>.{% endblocktrans %}

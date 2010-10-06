@@ -14,11 +14,13 @@ from voting.views import vote_on_object
 
 urlpatterns = patterns("badges.views",
 
-    url(r'^$', object_list, 
+    url(r'^$', 'index', name='badge_index'),
+
+    url(r'^all/$', object_list, 
         dict(queryset=Badge.objects.all(), template_object_name='badge', 
             template_name='badges/badge_list.html', paginate_by=25, 
             allow_empty=True), 
-        name='badge_index'),
+        name='badge_browse'),
 
     url(r'^tag/(?P<tag>[^/]+)/$', tagged_object_list,
         dict(queryset_or_model=Badge, paginate_by=25, allow_empty=True,
