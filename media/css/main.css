@@ -129,23 +129,40 @@ a.button:hover {
     -webkit-border-radius: 8px;
     text-align: center;
     border: 2px solid #ccc;
-
-    background: #ddd;
+    background: #f0f0f0;
+    /*
     background: -moz-linear-gradient(center top, #fff, #e8e8e8) repeat scroll 0 0 transparent;
     background: -webkit-gradient(linear,left top,left bottom,from(#fff), to(#e0e0e0));
+    */
+    cursor: pointer;
+}
+
+.metadata .votes .vote_actions input.upvote {
+    background-color: #f0f0f0;
+    background-image: url(../img/thumb_up.png);
+    background-position: center right;
+    background-repeat: no-repeat;
+}
+.metadata .votes .vote_actions input.downvote {
+    background-color: #f0f0f0;
+    background-image: url(../img/thumb_down.png);
+    background-position: center left;
+    background-repeat: no-repeat;
 }
 .badge .metadata .button:hover {
     border: 2px solid #aaa;
 }
-.badge .metadata .button[disabled] {
-    color: #999;
-    border: 2px solid #d0d0d0;
-    background: #d8d8d8;
+.metadata .votes .vote_actions input.button[disabled] {
+    color: #f0f0f0;
+    colorborder: 2px solid #d0d0d0;
+    background-color: #999;
+    cursor: inherit;
 }
+
 .badge .metadata table { width: 100%; margin: 1em 1em 1em 1em }
 .badge .metadata table th { text-align: right; vertical-align: top; white-space: nowrap; padding: 0 0.5em 0.75em 0 }
 .badge .metadata table td { text-align: left;  padding: 0 1em 0.75em 0  }
-.badge .metadata table tr.score td { padding: 0 0 0 18px; background: transparent url(../img/star.png) no-repeat 0 0; }
+.badge .metadata table tr.score td { padding: 0 1em 0.75em 22px; background: transparent url(../img/star.png) no-repeat 0 0; }
 
 .badge .edit_badge { position: absolute; right: 5px; top: 2px; background: #fff; padding: 2px 5px; font-size: 0.9em; display: block }
 

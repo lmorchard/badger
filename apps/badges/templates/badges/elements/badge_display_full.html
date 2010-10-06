@@ -25,17 +25,17 @@
                     {% vote_by_user user on badge as vote %}
                     <form action="{% url badge_vote slug=badge.slug direction="down" %}" method="POST">
                         {% csrf_token %}
-                        <input class="button" type="submit" value="{% trans "-1" %}"
+                        <input class="downvote button" type="submit" value="{% trans "-1" %}"
                             {% if vote and vote.is_downvote %}disabled="disabled"{% endif %} />
                     </form>
                     <form action="{% url badge_vote slug=badge.slug direction="clear" %}" method="POST">
                         {% csrf_token %}
-                        <input class="button" type="submit" value="{% trans "0" %}" 
+                        <input class="novote button" type="submit" value="{% trans "0" %}" 
                             {% if not vote.vote %}disabled="disabled"{% endif %}  />
                     </form>
                     <form action="{% url badge_vote slug=badge.slug direction="up" %}" method="POST">
                         {% csrf_token %}
-                        <input class="button" type="submit" value="{% trans "+1" %}" 
+                        <input class="upvote button" type="submit" value="{% trans "+1" %}" 
                             {% if vote and vote.is_upvote %}disabled="disabled"{% endif %}  />
                     </form>
                 </span>
