@@ -145,6 +145,7 @@ a.button:hover {
 .badge .metadata table { width: 100%; margin: 1em 1em 1em 1em }
 .badge .metadata table th { text-align: right; vertical-align: top; white-space: nowrap; padding: 0 0.5em 0.75em 0 }
 .badge .metadata table td { text-align: left;  padding: 0 1em 0.75em 0  }
+.badge .metadata table tr.score td { padding: 0 0 0 18px; background: transparent url(../img/star.png) no-repeat 0 0; }
 
 .badge .edit_badge { position: absolute; right: 5px; top: 2px; background: #fff; padding: 2px 5px; font-size: 0.9em; display: block }
 
@@ -198,16 +199,17 @@ a.button:hover {
 
 .badge_list .badges li { float: left; list-style: none; }
 
-.badge_thumb {  margin: 0.75em; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 110px }
+.badge_thumb {  margin: 0.75em; border: 4px solid #ccc; text-align: center; -moz-border-radius: 8px; width: 120px }
 .badge_thumb .icon { display: block; padding: 5px; background: #fff; }
 .badge_thumb .icon img { height: 80px; }
-.badge_thumb .name { display: block; font-size: 85%; font-weight: bold; padding: 0.25em; background: #ccc; height: 2.75em; overflow: hidden }
+.badge_thumb .name { display: block; font-size: 100%; font-weight: bold; padding: 0.25em; background: #ccc; height: 2.75em; overflow: hidden }
 .badge_thumb .score { display: block; background: #ccc; overflow: hidden; padding: 4px 20% 2px 20%; }
-.badge_thumb .score span { display: block; background: #fff; font-size: 90%; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px }
+.badge_thumb .score span { font-size: 100%; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; padding: 1px 8px 1px 24px; background: #fff url(../img/star.png) no-repeat 4px 1px; }
 
 .pagination { clear: both }
 
 .tags { }
+.tags li a { padding: 0 2px 0 18px; background: transparent url(../img/tag_blue.png) no-repeat 0 0; }
 
 .tag-cloud { 
     list-style: none;
