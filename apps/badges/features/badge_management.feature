@@ -9,7 +9,7 @@ Feature: Badge creation and management
             And a user named "user3"
             And there are no existing badges
             And the "create badge" page is at "/badges/create"
-            And the "browse badges" page is at "/badges/"
+            And the "browse badges" page is at "/badges/all/"
 
     Scenario: Create a new badge
         Given I am logged in as "user1"
