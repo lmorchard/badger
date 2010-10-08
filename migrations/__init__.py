@@ -11,7 +11,7 @@ def db_command(name):
         """ Oh you meant 'localhost'! """
         config['HOST'] = 'localhost'
 
-    s = 'mysql5 --silent {NAME} -h{HOST} -u{USER}'
+    s = 'mysql --silent {NAME} -h{HOST} -u{USER}'
 
     if config['PASSWORD']:
         s += ' -p{PASSWORD}'
